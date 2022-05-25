@@ -1,0 +1,151 @@
+type Query {
+  """
+  Get the current user
+  """
+  me: User
+  """
+  Find a user by their id
+  """
+  findUserById(id: ID!): User
+  """
+  Get Teaching Preference Survey
+  """
+  survey: TeachingPreferenceSurvey!
+}
+
+type Mutation {
+  """
+  Login into a user account using email and password
+  """
+  login(username: String!, password: String!): AuthPayload!
+  """
+  Logout the currently logged in user
+  """
+  logout: AuthPayload!
+  """
+  Register a new user account
+  """
+  createUser(username: String!): RegisterUserMutationResult!
+  """
+  Updates a user given the user id.
+  """
+  updateUser(input: UpdateUserInput!): UpdateUserMutationResult
+  """
+  Change the password of the currently logged in user
+  """
+  changeUserPassword(
+    input: ChangeUserPasswordInput!
+  ): ChangeUserPasswordMutationResult!
+  """
+  Reset a users password.
+  """
+  resetPassword(id: ID!): ResetPasswordMutationResult!
+  """
+  Teaching preferences
+  """
+  createTeachingPreference(
+    input: CreateTeachingPreferenceInput!
+  ): CreateTeachingPreferenceMutationResult!
+}
+
+input CreateTeachingPreferenceInput {
+  peng: Boolean!
+  userId: ID!
+  courses: [CoursePreference!]!
+}
+
+type TeachingPreferenceSurvey {
+  courses: [CourseID!]!
+}
+
+type CoursePreference implements CourseID {
+  course: CourseID!
+  preference: Int!
+}
+
+type CourseID {
+  subject: String!
+  number: String!
+  term: Term!
+}
+
+enum Term {
+  Fall
+  Spring
+  Summer
+}
+
+input ChangeUserPasswordInput {
+  oldPassword: String!
+  newPassword: String!
+}
+
+type ChangeUserPasswordMutationResult {
+  success: Boolean!
+  message: String
+}
+
+type ResetPasswordMutationResult {
+  success: Boolean!
+  message: String
+  password: String
+}
+
+input UpdateUserInput {
+  id: ID!
+}
+
+type UpdateUserMutationResult {
+  user: User
+  errors: [Error!]
+}
+
+type CreateUserMutationResult {
+  success: Boolean!
+  message: String
+  username: String
+  password: String
+}
+
+"""
+Returned when a user logs in our logs out.
+"""
+type AuthPayload {
+  """
+  Whether auth operation was successful or not
+  """
+  success: Boolean!
+  """
+  Optional error message
+  """
+  message: String
+}
+
+"""
+User
+"""
+type User {
+  id: ID!
+  username: String!
+  firstName: String!
+  lastName: String!
+  role: Role!
+  """
+  Determine if the user is marked active
+  """
+  active: Boolean!
+}
+
+"""
+User role
+"""
+enum Role {
+  """
+  Administrator role (department staff etc.)
+  """
+  ADMIN
+  """
+  User role (professor, student etc.)
+  """
+  USER
+}
