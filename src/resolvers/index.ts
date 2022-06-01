@@ -3,19 +3,22 @@ import { Resolvers } from "../schema";
 
 export const resolvers: Resolvers<Context> = {
   Query: {
-    me: (_, c, { username }) => {
+    me: (_, _params, _context) => {
       return null;
     },
   },
   Mutation: {
-    login: () => {
+    login: (_, params, _ctx) => {
+      console.log("params: ", JSON.stringify(params));
       return {
         token: "",
         success: false,
         message: "Not implemented",
       };
     },
-    logout: () => {
+    logout: (_, params, ctx) => {
+      console.log("username:" + ctx.username);
+      console.log("params:" + JSON.stringify(params));
       return {
         token: "",
         success: false,
