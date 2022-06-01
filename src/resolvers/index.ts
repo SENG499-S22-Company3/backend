@@ -3,7 +3,7 @@ import { Resolvers } from "../schema";
 
 export const resolvers: Resolvers<Context> = {
   Query: {
-    me: (_, _params, _context) => {
+    me: (_, _params, _ctx) => {
       return null;
     },
   },
