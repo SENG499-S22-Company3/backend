@@ -50,7 +50,7 @@ CourseSections {1..n}-Implements-{1} Courses
 
 Users {0..n}-Teaches-{0..n} CourseSections
 
-Users {1}-Assigned Role-{1} RolesEnum
+Users {0..n}-Assigned Role-{1} RolesEnum
 
 Users {1}- Has Preferences -{01} TeachingPreferences
 
