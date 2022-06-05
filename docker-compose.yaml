@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  # Container name "database"
+  Database:
+    # Official Postgres image from DockerHub (we use the last version)
+    container_name: database
+    image: "postgres:latest"
+    ports:
+      - 5432:5432
+
+    environment:
+      POSTGRES_USER: "ADMIN" # The PostgreSQL user (useful to connect to the database)
+      POSTGRES_PASSWORD: "ADMIN" # The PostgreSQL password (useful to connect to the database)
+      POSTGRES_DB: default_database # The PostgreSQL default database (automatically created at first launch)
+
+    volumes:
+      # the default PostgreSQL data path.
+      # It means that every time the repository is modifying the data inside
+      # of `/var/lib/postgresql/data/`, automatically the change will appear in `db-data`.
+      # You don't need to create the `db-data` folder. Docker Compose will do it for you.
+      - ./db-data/:/var/lib/postgresql/data/
+#TODO:
+# BackendServer:
+#  build:
+#     context: ./
+#     dockerfile: Dockerfile
+#   ports:
+#       - "4000:4000"
+
