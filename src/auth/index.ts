@@ -1,67 +1,50 @@
-export {};
+export { verify };
+//
+import type { AuthPayload, User } from '../schema/graphql';
+import { Role } from '../schema/graphql';
+//
+const bcrypt = require('bcrypt');
 
-import type { AuthPayload, User } from '../schema/graphql'
-import { Role } from '../schema/graphql'
-
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const crypto = require('crypto');
-
-
-interface Callback<T> {
-  (error: Error): void;
-  (error: null, value: T): void;
-}
-
-passport.use(new LocalStrategy(function verify(username: string, password: string, cb: Callback<AuthPayload>) {
-  console.log('Retreiving the username/password from DB!');
+async function verify(username: string, password: string): Promise<AuthPayload> {
+  console.log('Fetching the username and password from DB!');
   // Add DB lookup and create userInfo
-  console.log('DB LOOKUP NOT IMPLEMENTED, Allowing all passwords');
+  console.log('DB LOOKUP NOT IMPLEMENTED, ONLY ALLOWING "testuser:testpassword"');
+  // const pwsalt = 'dummysalt';
+  const pwsalt = '$2b$10$ogZBif.TabQ/LoAk8LjlG.';
+  // const pwsalt = bcrypt.genSaltSync(10);
+  const pwhash = bcrypt.hashSync(password, pwsalt);
 
-  const pwsalt = "dummysalt";
+  console.log('Given password: ', password);
+  console.log('hash: ', pwhash);
+  console.log('salt: ', pwsalt);
+
   const userInfo: User = {
     id: 1,
-    username: "Test",
+    username: 'Test',
     active: true,
-    password: "665e66e4d16835f18c88a5c1a4204e75e68169c9",
-    role: Role.Admin
-  }
+    password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
+    role: Role.Admin,
+  };
 
-  crypto.pbkdf2(password, pwsalt, 310000, 32, 'sha256', function(err: Error, hashedPassword: string) {
-    if (err) { return cb(err); }
-    //Currently will allow if if passwords DO NOT MATCH. Negate the statement to fix.
-    if (crypto.timingSafeEqual(userInfo.password, password)) {
-      const payload: AuthPayload = {
-        message: 'Incorrect username or password',
-        success: false,
-        token: 'There should not be a token required for failed logins'
-      }
-      return cb(null, payload);
-    }
-    const SuccessPayload: AuthPayload = {
+  const valid = await bcrypt.compare(password, userInfo.password);
+  console.log('Valid:', valid);
+
+  const token = require('crypto').randomBytes(32).toString('hex');
+  console.log('Token:', token);
+  console.log('STORING TOKEN IN DB');
+  console.log('NOT IMPLEMENTED');
+
+  if (!valid) {
+    return {
+      message: 'Incorrect username or password',
+      success: false,
+      token: 'Invalid',
+    };
+  } else {
+    return {
       message: 'Success',
       success: true,
-      token: 'I do not know where this token is supposed to come from at the moment'
-    }
-    return cb(null, SuccessPayload);
-});
-
-
-
-/*
-class LoginHandler {
-  readonly username: string;
-  readonly passwordHash: string;
-  isAuthenticated: boolean = false;
-
-  constructor(username: string, passwordHash: string) {
-    this.username = username;
-    this.passwordHash= passwordHash;
-  }
-
-  check_password(givenPassword: string): boolean {
-    // Put the password checking logic here
-    return false;
-  }
+      token: token,
+    };
+  };
 }
-*/

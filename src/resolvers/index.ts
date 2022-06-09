@@ -1,5 +1,7 @@
 import { Context } from "../context";
 import { Resolvers } from "../schema";
+import type { AuthPayload } from '../schema';
+import { verify } from '../auth';
 
 export const resolvers: Resolvers<Context> = {
   Query: {
@@ -9,15 +11,12 @@ export const resolvers: Resolvers<Context> = {
     },
   },
   Mutation: {
-    login: (_, params, ctx) => {
-      console.log("params: ", JSON.stringify(params));
+    login: async (_, params, ctx) => {
+      console.log('params: ', JSON.stringify(params));
       // set user in session
       ctx.session.username = params.username;
-      return {
-        token: "",
-        success: false,
-        message: "Not implemented",
-      };
+      const verified: AuthPayload = await verify(params.username, params.password);
+      return verified;
     },
     logout: async (_, _params, ctx) => {
       if (ctx.session.username) {
