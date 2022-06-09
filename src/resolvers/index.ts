@@ -1,7 +1,7 @@
 import { Context } from "../context";
 import { Resolvers } from "../schema";
 import type { AuthPayload } from '../schema';
-import { verify } from '../auth';
+import { login, logout } from '../auth';
 
 export const resolvers: Resolvers<Context> = {
   Query: {
@@ -15,23 +15,21 @@ export const resolvers: Resolvers<Context> = {
       console.log('params: ', JSON.stringify(params));
       // set user in session
       ctx.session.username = params.username;
-      const verified: AuthPayload = await verify(params.username, params.password);
+      const verified: AuthPayload = await login(params.username, params.password);
       return verified;
     },
     logout: async (_, _params, ctx) => {
       if (ctx.session.username) {
         await ctx.logout();
+        const result: AuthPayload = await logout(ctx.token);
+        return result;
+      } else {
         return {
-          token: "",
+          token: '',
           success: true,
-          message: "Logged out",
+          message: 'Not logged in',
         };
       }
-      return {
-        token: "",
-        success: false,
-        message: "Not logged in",
-      };
     },
   },
 };

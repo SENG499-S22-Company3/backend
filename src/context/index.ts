@@ -7,6 +7,7 @@ export interface Context {
   // TODO: keep here until we have login implemented. a partial given it could be undefined
   session: Session & Partial<SessionData>;
   // TODO: add context (aka. prisma, auth, etc.)
+  token: string;
   logout: () => Promise<void>;
 }
 
@@ -20,7 +21,8 @@ export async function createContext({
   const { session } = req;
   return {
     session,
-    username: "some username",
+    username: 'some username',
+    token: 'some token that should be sent back with every request',
     logout: async () => new Promise((resolve) => session.destroy(resolve)),
   };
 }
