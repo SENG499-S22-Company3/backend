@@ -3,26 +3,35 @@ import { Resolvers } from "../schema";
 
 export const resolvers: Resolvers<Context> = {
   Query: {
-    me: (_, _params, _ctx) => {
+    me: (_, _params, ctx) => {
+      console.log(ctx.session.username);
       return null;
     },
   },
   Mutation: {
-    login: (_, params, _ctx) => {
+    login: (_, params, ctx) => {
       console.log("params: ", JSON.stringify(params));
+      // set user in session
+      ctx.session.username = params.username;
       return {
         token: "",
         success: false,
         message: "Not implemented",
       };
     },
-    logout: (_, params, ctx) => {
-      console.log("username:" + ctx.username);
-      console.log("params:" + JSON.stringify(params));
+    logout: async (_, _params, ctx) => {
+      if (ctx.session.username) {
+        await ctx.logout();
+        return {
+          token: "",
+          success: true,
+          message: "Logged out",
+        };
+      }
       return {
         token: "",
         success: false,
-        message: "Not implemented",
+        message: "Not logged in",
       };
     },
   },
