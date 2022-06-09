@@ -6,7 +6,7 @@
     "start": "node build/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && copyfiles --flat src/schema/*.graphql build/src/schema/",
     "codegen": "graphql-codegen --config codegen.yml",
     "lint": "eslint . --ext js,ts --fix"
   },
@@ -28,19 +28,19 @@
     "@graphql-codegen/cli": "2.6.2",
     "@graphql-codegen/typescript": "2.4.11",
     "@graphql-codegen/typescript-resolvers": "2.6.4",
-    "@types/express-session": "^1.17.4",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "eslint": "^8.16.0",
     "eslint-config-google": "^0.14.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.3"
   },
   "dependencies": {
     "apollo-server-core": "^3.8.1",
     "apollo-server-express": "^3.8.1",
+    "copyfiles": "^2.4.1",
     "express": "^4.18.1",
-    "express-session": "^1.17.3",
-    "graphql": "^16.5.0"
+    "graphql": "^16.5.0",
+    "rm": "^0.1.8"
   }
 }
