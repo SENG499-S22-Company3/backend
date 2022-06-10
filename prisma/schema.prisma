@@ -10,65 +10,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id                    Int @id @default(autoincrement())
   username              String @unique
   password              String
   active                Boolean
   hasPeng               Boolean
   role                  Role @default(USER)
-  courseSection         CourseSections[]
+  courseSection         CourseSection[]
 }
 
-model Schedules {
+model Schedule {
   id                    Int @id @default(autoincrement())
   year                  Int
   createdOn             DateTime @default(now())
-  courseSection         CourseSections[]
+  courseSection         CourseSection[]
 }
 
-model CourseSections {
+model CourseSection {
   id                    Int @id @default(autoincrement())
   hoursPerWeek          Float
   capacity              Int
   startDate             DateTime
   endDate               DateTime
-  meetingTimes          MeetingTimes @relation(fields: [meetingTimesId], references: [id])
-  meetingTimesId        Int
-  user                  Users? @relation(fields: [userId], references: [id])
+  meetingTime           MeetingTime @relation(fields: [meetingTimeId], references: [id])
+  meetingTimeId         Int
+  user                  User? @relation(fields: [userId], references: [id])
   userId                Int?
-  course                Courses @relation(fields: [courseId], references: [id])
+  course                Course @relation(fields: [courseId], references: [id])
   courseId              Int
-  schedule              Schedules? @relation(fields: [scheduleId], references: [id])
+  schedule              Schedule? @relation(fields: [scheduleId], references: [id])
   scheduleId            Int?
-  teachingPreference    TeachingPreferences[]
+  teachingPreference    TeachingPreference[]
 
 }
 
-model Courses {
+model Course {
   id                    Int @id @default(autoincrement())
   subject               String
   courseCode            String
   term                  String
-  courseSection         CourseSections[]
-  teachingPreference    TeachingPreferences[]
+  courseSection         CourseSection[]
+  teachingPreference    TeachingPreference[]
 }
 
-model TeachingPreferences {
+model TeachingPreference {
   id                    Int @id @default(autoincrement())
   preference            Int
-  course                Courses @relation(fields: [courseId], references: [id])
-  courseSection         CourseSections? @relation(fields: [courseSectionId], references: [id])
+  course                Course @relation(fields: [courseId], references: [id])
+  courseSection         CourseSection? @relation(fields: [courseSectionId], references: [id])
   courseSectionId       Int?
   courseId              Int
 }
 
-model MeetingTimes {
+model MeetingTime {
   id                    Int @id @default(autoincrement())
   startTime             DateTime
   endTime               DateTime
   days                  Day[]
-  courseSection         CourseSections[]
+  courseSection         CourseSection[]
 }
 
 enum Role {
