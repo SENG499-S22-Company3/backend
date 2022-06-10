@@ -1,4 +1,4 @@
-export { login, logout, changePassword };
+export { login, logout, changePassword, verifyToken };
 //
 import type { AuthPayload, User, ChangeUserPasswordInput, Response} from '../schema/graphql';
 import { Role } from '../schema/graphql';
@@ -86,4 +86,9 @@ async function logout(token: string): Promise<AuthPayload> {
     message: 'NOT IMPLEMENTED',
     success: false,
   };
+}
+
+async function verifyToken(token: string): Promise<boolean> {
+  console.log('NOT IMPLEMENTED');
+  return false;
 }
