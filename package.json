@@ -1,46 +1,51 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "start": "node build/src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc -p tsconfig.json",
-    "codegen": "graphql-codegen --config codegen.yml",
-    "lint": "eslint . --ext js,ts --fix"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SENG499-S22-Company3/backend.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/SENG499-S22-Company3/backend/issues"
-  },
-  "homepage": "https://github.com/SENG499-S22-Company3/backend#readme",
-  "devDependencies": {
-    "@graphql-codegen/cli": "2.6.2",
-    "@graphql-codegen/typescript": "2.4.11",
-    "@graphql-codegen/typescript-resolvers": "2.6.4",
-    "@types/express-session": "^1.17.4",
-    "@typescript-eslint/eslint-plugin": "^5.27.0",
-    "@typescript-eslint/parser": "^5.27.0",
-    "eslint": "^8.16.0",
-    "eslint-config-google": "^0.14.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.2"
-  },
-  "dependencies": {
-    "apollo-server-core": "^3.8.1",
-    "apollo-server-express": "^3.8.1",
-    "express": "^4.18.1",
-    "express-session": "^1.17.3",
-    "graphql": "^16.5.0"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"start": "node build/src/index.js",
+		"test": "jest",
+		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+		"build": "tsc -p tsconfig.json",
+		"codegen": "graphql-codegen --config codegen.yml",
+		"lint": "eslint . --ext js,ts --fix"
+	},
+	"engines": {
+		"node": ">=14.0.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SENG499-S22-Company3/backend.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/SENG499-S22-Company3/backend/issues"
+	},
+	"homepage": "https://github.com/SENG499-S22-Company3/backend#readme",
+	"devDependencies": {
+		"@graphql-codegen/cli": "2.6.2",
+		"@graphql-codegen/typescript": "2.4.11",
+		"@graphql-codegen/typescript-resolvers": "2.6.4",
+		"@types/express-session": "^1.17.4",
+		"@typescript-eslint/eslint-plugin": "^5.27.0",
+		"@typescript-eslint/parser": "^5.27.0",
+		"@types/jest": "^27.5.2",
+		"@types/supertest": "^2.0.12",
+		"eslint": "^8.16.0",
+		"eslint-config-google": "^0.14.0",
+		"jest": "^28.1.0",
+		"supertest": "^6.2.3",
+		"ts-jest": "^28.0.3",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^4.7.2"
+	},
+	"dependencies": {
+		"apollo-server-core": "^3.8.1",
+		"apollo-server-express": "^3.8.1",
+		"express": "^4.18.1",
+		"express-session": "^1.17.3",
+		"graphql": "^16.5.0"
+	}
 }
