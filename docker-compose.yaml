@@ -14,6 +14,9 @@ services:
       POSTGRES_PASSWORD: "admin" # The PostgreSQL password (useful to connect to the database)
       POSTGRES_DB: postgresql # The PostgreSQL default database (automatically created at first launch)
 
+    .env_file:
+      - .env
+
     volumes:
       # the default PostgreSQL data path.
       # It means that every time the repository is modifying the data inside
