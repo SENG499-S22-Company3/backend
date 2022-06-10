@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node build/src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc -p tsconfig.json && cp ./src/schema/schema.graphql ./build/src/schema",
     "codegen": "graphql-codegen --config codegen.yml",
@@ -31,15 +31,22 @@
     "@types/express-session": "^1.17.4",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
+    "@types/jest": "^27.5.2",
+    "@types/supertest": "^2.0.12",
     "eslint": "^8.16.0",
     "eslint-config-google": "^0.14.0",
+    "jest": "^28.1.0",
+    "supertest": "^6.2.3",
+    "ts-jest": "^28.0.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.7.2"
   },
   "dependencies": {
+    "@prisma/client": "^3.14.0",
     "apollo-server-core": "^3.8.1",
     "apollo-server-express": "^3.8.1",
     "express": "^4.18.1",
+    "prisma": "^3.14.0",
     "express-session": "^1.17.3",
     "graphql": "^16.5.0"
   }
