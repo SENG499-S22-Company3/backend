@@ -21,6 +21,7 @@ export const resolvers: Resolvers<Context> = {
       return loginResult;
     },
     logout: async (_, _params, ctx) => {
+      console.log("Logging out");
       if (ctx.session.username) {
         await ctx.logout();
         return {
@@ -35,6 +36,15 @@ export const resolvers: Resolvers<Context> = {
           message: 'Not logged in',
         };
       }
+    },
+    createUser: async (_, _params, ctx) => {
+      //DUMMY RESOLVER TEST
+      return {
+        success: false,
+        message: "",
+        username: _params.username,
+        password: "",
+      };
     },
   },
 };
