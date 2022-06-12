@@ -14,11 +14,11 @@ export const resolvers: Resolvers<Context> = {
     login: async (_, params, ctx) => {
       console.log('params: ', JSON.stringify(params));
       // set user in session
-      const verified: AuthPayload = await login(params.username, params.password);
-      // not logged in
-      // return an error
-      ctx.session.username = params.username;
-      return verified;
+      const loginResult: AuthPayload = await login(params.username, params.password);
+      if (loginResult.success) {
+        ctx.session.username = params.username;
+      }
+      return loginResult;
     },
     logout: async (_, _params, ctx) => {
       if (ctx.session.username) {
