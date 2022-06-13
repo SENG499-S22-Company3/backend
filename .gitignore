@@ -1,7 +1,6 @@
 # source: https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 #
 *.swp
-prisma/migrations/*
 
 # Logs
 logs
