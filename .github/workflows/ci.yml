@@ -55,5 +55,9 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Build Dockerfile
-        run: docker image build -t seng499
+        name: Build Dockerfile
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: false
+          tags: seng499-c3/backend:latest
