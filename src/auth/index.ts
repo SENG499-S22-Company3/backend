@@ -1,31 +1,17 @@
-import type { AuthPayload, User, ChangeUserPasswordInput, Response} from '../schema/graphql';
-import { Role } from '../schema/graphql';
-//
+import { PrismaClient, Prisma, Role } from '@prisma/client';
 const bcrypt = require('bcrypt');
+import type { AuthPayload, ChangeUserPasswordInput, Response, CreateUserMutationResult} from '../schema/graphql';
+
+// User with username testuser and password testpassword
+// username: 'testuser',
+// password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
+
+const prisma = new PrismaClient();
 
 export async function login(username: string, password: string): Promise<AuthPayload> {
-  console.log('Fetching the username and password from DB!');
-  // Add DB lookup and create userInfo
-  console.log('DB LOOKUP NOT IMPLEMENTED, ONLY ALLOWING "testuser:testpassword"');
+  const user = await lookupUser(username);
 
-  const pwsalt = '$2b$10$ogZBif.TabQ/LoAk8LjlG.';
-  // const pwsalt = bcrypt.genSaltSync(10);
-  const pwhash = bcrypt.hashSync(password, pwsalt);
-
-  console.log('Given password: ', password);
-  console.log('hash: ', pwhash);
-  console.log('salt: ', pwsalt);
-
-  const userInfo: User = {
-    id: 1,
-    username: 'Test',
-    active: true,
-    password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
-    role: Role.Admin,
-  };
-
-  const valid = await bcrypt.compare(password, userInfo.password);
-  console.log('Valid:', valid);
+  const valid = await bcrypt.compare(password, user!.password);
 
   if (!valid) {
     return {
@@ -42,31 +28,77 @@ export async function login(username: string, password: string): Promise<AuthPay
   };
 }
 
-async function lookupUser(username: string): Promise<User> {
-  return {
-    id: -1,
-    username: 'DB LOOKUP NOT IMPLEMENTED, password is "testpassword"',
-    active: true,
-    password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
-    role: Role.Admin,
-  };
-}
-
-
 export async function changePassword(username: string, pwchangeinput: ChangeUserPasswordInput): Promise<Response> {
-  const userInfo = await lookupUser(username);
-  const valid = await bcrypt.compare(pwchangeinput.currentPassword, userInfo.password);
+  const user = await lookupUser(username);
+  const valid = await bcrypt.compare(pwchangeinput.currentPassword, user!.password);
   if (!valid) { // basic validation
     return {
       message: 'Incorrect previous password',
       success: false,
     };
   } else {
-    // PASSWORD CHANGE DB LOGIC HERE
     console.log('UPDATING PASSWORD TO ', pwchangeinput.newPassword);
+    const pwsalt = bcrypt.genSaltSync(10);
+    const pwhash = bcrypt.hashSync(pwchangeinput.newPassword, pwsalt);
+    await prisma.user.update({
+      where: {
+        username: username,
+      },
+      data: {
+        password: pwhash,
+      },
+    });
     return {
       message: 'Password Changed Succesfully',
       success: true,
     };
   }
+}
+
+
+export async function createNewUser(username: string): Promise<CreateUserMutationResult> {
+  try {
+    await prisma.user.create({
+      data: {
+        username: username,
+        password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
+        active: false,
+        hasPeng: false,
+      },
+    });
+  } catch (e: unknown) {// P2002 is the code for unique constraint violation
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+      return {
+        message: `Failed to create user, username '${username}' already exists.`,
+        success: false,
+      };
+    } else {
+      throw e;
+    }
+  }
+
+  return {
+    message: 'User created successfully with password \'testpassword\'. Please login and change it.',
+    success: true,
+    username: username,
+    password: 'testpassword',
+  };
+}
+
+export async function isAdmin(username: string): Promise<boolean> {
+  const user = await lookupUser(username);
+  if (user === null) {
+    throw Error(`User ${username} was not found in the database`);
+  }
+  return user!.role === Role.ADMIN;
+}
+
+async function lookupUser(username: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: username,
+    },
+  });
+  console.log(user);
+  return user;
 }
