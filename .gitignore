@@ -1,7 +1,6 @@
 # source: https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 #
 *.swp
-package-lock.json
 prisma/migrations/*
 
 # Logs
