@@ -1,44 +1,45 @@
 //Crows Foot Notation
 //ERD created by pasting text below into app.gleek.io with the ERD option set
 Schedules
-	int id
-	int year
-	date createdOn
+        int id
+        int year
+        date createdOn
 
 Courses
-	string subject
-	string courseCode
+        string subject
+        string courseCode
 
 CourseSections
-	int id
-	float hoursPerWeek
-	int capacity
-	date startDate
-	date endDate
+        int id
+        float hoursPerWeek
+        int capacity
+        date startDate
+        date endDate
 
 MeetingTimes
-	int id
-	date startTime
-	date endTime
+        int id
+        date startTime
+        date endTime
 
 Users
-	int id
-	bool active
+        int id
+        bool active
         bool hasPeng
-	string username
-	hash password
+        string username
+        string password
+        string pwdsalt
 
 TeachingPreferences
-	int preference
+        int preference
 
 RolesEnum
-	string role
+        string role
 
 TermsEnum
-	string term
+        string term
 
 DaysEnum
-	string day
+        string day
 
 MeetingTimes {0..n}-MeetsOnDay-{1} DaysEnum
 

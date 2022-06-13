@@ -1,5 +1,24 @@
-import { Context } from "../context";
-import { Resolvers } from "../schema";
+import { Context } from '../context';
+import { Resolvers } from '../schema';
+import type { AuthPayload } from '../schema';
+import { login, createNewUser, changePassword, isAdmin } from '../auth';
+
+const noLogin = {
+  success: false,
+  message: 'Not logged in',
+  token: '',
+};
+
+const alreadyLoggedIn = {
+  success: false,
+  message: 'Already logged in',
+  token: '',
+};
+
+const noPerms = {
+  message: 'Insufficient permisions',
+  success: false,
+};
 
 export const resolvers: Resolvers<Context> = {
   Query: {
@@ -9,40 +28,36 @@ export const resolvers: Resolvers<Context> = {
     },
   },
   Mutation: {
-    login: (_, params, ctx) => {
-      console.log("params: ", JSON.stringify(params));
-      // set user in session
-      ctx.session.username = params.username;
-      return {
-        token: "",
-        success: false,
-        message: "Not implemented",
-      };
+    login: async (_, params, ctx) => {
+      if (ctx.session.username) return alreadyLoggedIn;
+
+      const loginResult: AuthPayload = await login(params.username, params.password);
+
+      if (loginResult.success) {
+        // set user in session
+        ctx.session.username = params.username;
+      }
+      return loginResult;
     },
     logout: async (_, _params, ctx) => {
-      console.log("Logging out");
-      if (ctx.session.username) {
+      if (!ctx.session.username) return noLogin;
+      else {
         await ctx.logout();
         return {
-          token: "",
+          token: '',
           success: true,
-          message: "Logged out",
+          message: 'Logged out',
         };
-      }
-      return {
-        token: "",
-        success: false,
-        message: "Not logged in",
       };
     },
+    changeUserPassword: async (_, _params, ctx) => {
+      if (!ctx.session.username) return noLogin;
+      else return changePassword(ctx.session.username, _params.input);
+    },
     createUser: async (_, _params, ctx) => {
-      //DUMMY RESOLVER TEST
-      return {
-        success: false,
-        message: "",
-        username: _params.username,
-        password: "",
-      };
+      if (!ctx.session.username) return noLogin;
+      else if (! await isAdmin(ctx.session.username)) return noPerms;
+      else return await createNewUser(_params.username);
     },
   },
 };

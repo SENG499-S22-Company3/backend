@@ -2,8 +2,6 @@ import { Request } from "express";
 import { Session, SessionData } from "express-session";
 
 export interface Context {
-  // example context value
-  username?: string;
   // TODO: keep here until we have login implemented. a partial given it could be undefined
   session: Session & Partial<SessionData>;
   // TODO: add context (aka. prisma, auth, etc.)
@@ -20,7 +18,6 @@ export async function createContext({
   const { session } = req;
   return {
     session,
-    username: "some username",
     logout: async () => new Promise((resolve) => session.destroy(resolve)),
   };
 }
