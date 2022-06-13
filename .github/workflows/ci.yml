@@ -58,6 +58,5 @@ jobs:
       - name: Build Dockerfile
         uses: docker/build-push-action@v3
         with:
-          context: .
           push: false
           tags: seng499-c3/backend:latest
