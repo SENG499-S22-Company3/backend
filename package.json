@@ -10,7 +10,7 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "lint": "eslint . --ext js,ts --fix",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma db migrate",
+    "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "postinstall": "npm run db:generate"
   },

@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma, Role } from '@prisma/client';
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 import type { AuthPayload, ChangeUserPasswordInput, Response, CreateUserMutationResult} from '../schema/graphql';
 
 // User with username testuser and password testpassword
@@ -10,6 +10,15 @@ const prisma = new PrismaClient();
 
 export async function login(username: string, password: string): Promise<AuthPayload> {
   const user = await lookupUser(username);
+
+  const failedAuth = {
+    message: 'Incorrect username or password',
+    success: false,
+    token: '', // Won't be needed anymore
+  };
+
+  if (user === null) return failedAuth;
+
 
   const valid = await bcrypt.compare(password, user!.password);
 
