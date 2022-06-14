@@ -13,6 +13,7 @@
         "sourceType": "module"
     },
     "plugins": [
+        "prettier",
         "@typescript-eslint"
     ],
     "rules": {
@@ -20,12 +21,10 @@
         "require-jsdoc": "off",
         "object-curly-spacing": "off",
         "max-len": "off",
-        "quotes": [
-            "error",
-            "single"
-        ]
+        "prettier/prettier": ["error"]
     },
     "ignorePatterns": [
+        "*.d.ts",
         "node_modules",
         "build",
         "src/schema/graphql.ts"
