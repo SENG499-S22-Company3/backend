@@ -24,7 +24,42 @@ export const resolvers: Resolvers<Context> = {
   Query: {
     me: (_, _params, ctx) => {
       console.log(ctx.session.username);
-      return null;
+      return {
+        id: 1,
+        username: "jimmy",
+        password: "Why is this accessible in the API????",
+        role: Role.Admin,
+        active: true,
+        preferences: [],
+      };
+    },
+    survey: () => {
+      return {
+        courses: [
+          {
+            subject: "CHEM",
+            code: "101",
+            term: Term.Fall,
+          },
+          {
+            subject: "PHYS",
+            code: "110",
+            term: Term.Fall,
+          },
+          {
+            subject: "SENG",
+            code: "265",
+            term: Term.Fall,
+          },
+        ],
+      };
+    },
+    schedule: () => {
+      return {
+        id: "12345",
+        year: 2022,
+        createdAt: "2022-01-01",
+      };
     },
     courses: (_, params) => {
       const fall = [
