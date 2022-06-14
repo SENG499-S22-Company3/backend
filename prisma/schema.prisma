@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  id            Int                  @id @default(autoincrement())
-  username      String               @unique
+  id            Int                @id @default(autoincrement())
+  username      String             @unique
   password      String
   active        Boolean
   hasPeng       Boolean
-  role          Role                 @default(USER)
+  role          Role               @default(USER)
   courseSection CourseSection[]
-  preference    TeachingPreference[]
+  preference    CoursePreference[]
 }
 
 model Schedule {
@@ -46,21 +46,35 @@ model CourseSection {
 }
 
 model Course {
-  id                 Int                  @id @default(autoincrement())
-  subject            String
-  courseCode         String
-  term               String
-  courseSection      CourseSection[]
-  teachingPreference TeachingPreference[]
+  id               Int                @id @default(autoincrement())
+  subject          String
+  courseCode       String
+  term             String
+  courseSection    CourseSection[]
+  coursePreference CoursePreference[]
 }
 
 model TeachingPreference {
+  id                 Int                @id @default(autoincrement())
+  coursePreference   CoursePreference[]
+  nonTeachingTerm1   Term?
+  nonTeachingTerm2   Term?
+  hasRelief          Boolean
+  reliefReason       String?
+  studyLeave         Boolean
+  studyLeaveReason   String?
+  topicsOrGradCourse Boolean
+}
+
+model CoursePreference {
   id         Int    @id @default(autoincrement())
   preference Int
   course     Course @relation(fields: [courseId], references: [id])
   courseId   Int
   User       User?  @relation(fields: [userId], references: [id])
   userId     Int?
+  TeachPreference   TeachingPreference? @relation(fields: [teachPreferenceId], references: [id])
+  teachPreferenceId Int?
 }
 
 model MeetingTime {
@@ -84,4 +98,10 @@ enum Day {
   FRIDAY
   SATURDAY
   SUNDAY
+}
+
+enum Term {
+  FALL
+  SPRING
+  SUMMER
 }
