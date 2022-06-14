@@ -47,6 +47,8 @@ jobs:
         run: npm run lint
       - name: Migrate database
         run: npx prisma migrate dev
+      - name: Seed database
+        run: npx prisma db seed
       - name: Test
         run: npm test
   build:
