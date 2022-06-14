@@ -31,7 +31,10 @@ export const resolvers: Resolvers<Context> = {
     login: async (_, params, ctx) => {
       if (ctx.session.username) return alreadyLoggedIn;
 
-      const loginResult: AuthPayload = await login(params.username, params.password);
+      const loginResult: AuthPayload = await login(
+        params.username,
+        params.password
+      );
 
       if (loginResult.success) {
         // set user in session
@@ -48,7 +51,7 @@ export const resolvers: Resolvers<Context> = {
           success: true,
           message: 'Logged out',
         };
-      };
+      }
     },
     changeUserPassword: async (_, _params, ctx) => {
       if (!ctx.session.username) return noLogin;
@@ -56,7 +59,7 @@ export const resolvers: Resolvers<Context> = {
     },
     createUser: async (_, _params, ctx) => {
       if (!ctx.session.username) return noLogin;
-      else if (! await isAdmin(ctx.session.username)) return noPerms;
+      else if (!(await isAdmin(ctx.session.username))) return noPerms;
       else return await createNewUser(_params.username);
     },
   },

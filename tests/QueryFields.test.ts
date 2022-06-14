@@ -1,9 +1,9 @@
-import { gql } from "graphql-tag";
-import { ApolloServer, ExpressContext } from "apollo-server-express";
-import { resolvers } from "../src/resolvers";
-import fs from "fs";
+import { gql } from 'graphql-tag';
+import { ApolloServer, ExpressContext } from 'apollo-server-express';
+import { resolvers } from '../src/resolvers';
+import fs from 'fs';
 
-const typeDefs = fs.readFileSync("./src/schema/schema.graphql", "utf8");
+const typeDefs = fs.readFileSync('./src/schema/schema.graphql', 'utf8');
 let testServer: ApolloServer<ExpressContext>;
 
 beforeAll(() => {
@@ -65,20 +65,20 @@ const finduseridquery = gql`
   }
 `;
 
-describe("QUERY FIELD TESTS", () => {
-  it("Valid Query Fields and types for me", async () => {
+describe('QUERY FIELD TESTS', () => {
+  it('Valid Query Fields and types for me', async () => {
     const result = await testServer.executeOperation({
       query: meQuery,
     });
 
-    //Will pass now as 'me' is giving null for now
+    // Will pass now as 'me' is giving null for now
     expect(result.data?.me).toBeNull;
     // expect(typeof result.data?.me.id).toBe("number");
     // expect(typeof result.data?.me.username).toBe("string");
     // expect(typeof result.data?.me.password).toBe("string");
   });
 
-  it("Invalid Query Fields and types for me", async () => {
+  it('Invalid Query Fields and types for me', async () => {
     const result = await testServer.executeOperation({
       query: gql`
         query {
@@ -89,21 +89,21 @@ describe("QUERY FIELD TESTS", () => {
       `,
     });
 
-    //will pass as me as null, but will pass in future as well as these fields are not there
+    // will pass as me as null, but will pass in future as well as these fields are not there
     expect(result.data?.me.email).toBeUndefined;
   });
 
-  it("Valid Query Fields for survey", async () => {
+  it('Valid Query Fields for survey', async () => {
     const result = await testServer.executeOperation({
       query: surveyQuery,
     });
 
-    //Will give null as there is no data
+    // Will give null as there is no data
     expect(result.data?.survey).toBeNull;
     // expect(typeof result.data?.survey.courses).toBe("Array");
   });
 
-  it("Invalid Query Fields for survey", async () => {
+  it('Invalid Query Fields for survey', async () => {
     const result = await testServer.executeOperation({
       query: gql`
         query {
@@ -114,22 +114,22 @@ describe("QUERY FIELD TESTS", () => {
       `,
     });
 
-    //will pass as me as null, but will pass in future as well as these fields are not there
+    // will pass as me as null, but will pass in future as well as these fields are not there
     expect(result.data?.me.survey).toBeUndefined;
     // expect(typeof result.data?.survey.courses).toBe("Array");
   });
 
-  it("Valid Query Fields for findUserByID", async () => {
+  it('Valid Query Fields for findUserByID', async () => {
     const result = await testServer.executeOperation({
       query: finduseridquery,
     });
 
-    //Will give null as there is no data
+    // Will give null as there is no data
     expect(result.data?.findUserByID).toBeNull;
     // expect(typeof result.data?.survey.courses).toBe("Array");
   });
 
-  it("Invalid Query Fields for findUserByID", async () => {
+  it('Invalid Query Fields for findUserByID', async () => {
     const result = await testServer.executeOperation({
       query: gql`
         query {
@@ -140,7 +140,7 @@ describe("QUERY FIELD TESTS", () => {
       `,
     });
 
-    //Will give null as there is no data
+    // Will give null as there is no data
     expect(result.data?.findUserByID).toBeNull;
     // expect(typeof result.data?.survey.courses).toBe("Array");
   });

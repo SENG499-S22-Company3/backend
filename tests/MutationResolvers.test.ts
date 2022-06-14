@@ -1,9 +1,9 @@
-import { gql } from "graphql-tag";
-import { ApolloServer, ExpressContext } from "apollo-server-express";
-import { resolvers } from "../src/resolvers";
-import fs from "fs";
+import { gql } from 'graphql-tag';
+import { ApolloServer, ExpressContext } from 'apollo-server-express';
+import { resolvers } from '../src/resolvers';
+import fs from 'fs';
 
-const typeDefs = fs.readFileSync("./src/schema/schema.graphql", "utf8");
+const typeDefs = fs.readFileSync('./src/schema/schema.graphql', 'utf8');
 let testServer: ApolloServer<ExpressContext>;
 
 beforeAll(() => {
@@ -46,31 +46,31 @@ const loginMutation = gql`
   }
 `;
 
-describe("MUTATION TESTS", () => {
-  it("create user test", async () => {
+describe('MUTATION TESTS', () => {
+  it('create user test', async () => {
     const result = await testServer.executeOperation({
       query: CreatingUser,
-      variables: { username: "test" },
+      variables: { username: 'test' },
     });
 
     //
     expect(result.data).toEqual({
       createUser: {
-        message: "",
+        message: '',
         success: false,
-        password: "",
-        username: "test",
+        password: '',
+        username: 'test',
       },
     });
   });
 
-  it("login test", async () => {
+  it('login test', async () => {
     const result = await testServer.executeOperation({
       query: loginMutation,
-      variables: { username: "test", password: "test123" },
+      variables: { username: 'test', password: 'test123' },
     });
 
-    //will be throwing error as username and password cannot be set for now Error:***GraphQLError: Cannot set properties of undefined (setting 'username')]]**
+    // will be throwing error as username and password cannot be set for now Error:***GraphQLError: Cannot set properties of undefined (setting 'username')]]**
     // However, params.username and params.passwords gets logged!
     expect(result.data).toThrowErrorMatchingSnapshot;
     // if database is set then
@@ -85,12 +85,12 @@ describe("MUTATION TESTS", () => {
     // )};
   });
 
-  it("logout test", async () => {
+  it('logout test', async () => {
     const result = await testServer.executeOperation({
       query: logoutMutation,
     });
 
-    //will be throwing error as username and password cannot be set for now Error:***GraphQLError: Cannot set properties of undefined (setting 'username')]]**
+    // will be throwing error as username and password cannot be set for now Error:***GraphQLError: Cannot set properties of undefined (setting 'username')]]**
     // However, gets logged
     expect(result.data).toThrowErrorMatchingSnapshot;
     // if database is set then
@@ -105,5 +105,5 @@ describe("MUTATION TESTS", () => {
     // )};
   });
 
-  //ToDo: Other Mutations after DB is set
+  // ToDo: Other Mutations after DB is set
 });
