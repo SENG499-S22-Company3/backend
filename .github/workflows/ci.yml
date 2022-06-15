@@ -2,10 +2,32 @@ name: Continuous Integration
 on:
   push:
     branches: [main]
+  pull_request:
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:14-alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
@@ -20,9 +42,13 @@ jobs:
           restore-keys: |
             npm-
       - name: Install dependencies
-        run: npm ci --ignore-scripts --no-audit --no-progress
+        run: npm ci --no-audit --no-progress
       - name: Code Linting
         run: npm run lint
+      - name: Migrate database
+        run: npx prisma migrate dev
+      - name: Seed database
+        run: npx prisma db seed
       - name: Test
         run: npm test
   build:
@@ -42,6 +68,6 @@ jobs:
           restore-keys: |
             npm-
       - name: Install dependencies
-        run: npm ci --ignore-scripts --no-audit --no-progress
+        run: npm ci --no-audit --no-progress
       - name: Build
         run: npm run build
