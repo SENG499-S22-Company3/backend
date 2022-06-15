@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  id            Int                @id @default(autoincrement())
-  username      String             @unique
+  id            Int                  @id @default(autoincrement())
+  username      String               @unique
   password      String
   active        Boolean
   hasPeng       Boolean
-  role          Role               @default(USER)
+  role          Role                 @default(USER)
   courseSection CourseSection[]
-  preference    CoursePreference[]
+  preference    TeachingPreference[]
 }
 
 model Schedule {
@@ -64,15 +64,15 @@ model TeachingPreference {
   studyLeave         Boolean
   studyLeaveReason   String?
   topicsOrGradCourse Boolean
+  User               User?              @relation(fields: [userId], references: [id])
+  userId             Int?
 }
 
 model CoursePreference {
-  id         Int    @id @default(autoincrement())
-  preference Int
-  course     Course @relation(fields: [courseId], references: [id])
-  courseId   Int
-  User       User?  @relation(fields: [userId], references: [id])
-  userId     Int?
+  id                Int                 @id @default(autoincrement())
+  preference        Int
+  course            Course              @relation(fields: [courseId], references: [id])
+  courseId          Int
   TeachPreference   TeachingPreference? @relation(fields: [teachPreferenceId], references: [id])
   teachPreferenceId Int?
 }
