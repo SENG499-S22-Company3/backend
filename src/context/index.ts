@@ -1,7 +1,6 @@
 import { Request } from 'express';
 import { Session, SessionData } from 'express-session';
 
-
 export interface Context {
   // TODO: keep here until we have login implemented. a partial given it could be undefined
   session: Session & Partial<SessionData>;

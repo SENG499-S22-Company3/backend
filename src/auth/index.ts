@@ -20,9 +20,7 @@ async function login(username: string, password: string, ctx: Context): Promise<
 
   if (user === null) return failedAuth;
 
-
   const valid = await bcrypt.compare(password, user.password);
-
 
   if (!valid) {
     // ctx.session.username = username;
@@ -38,7 +36,7 @@ async function login(username: string, password: string, ctx: Context): Promise<
       success: true,
       token: '',
     };
-  };
+  }
 }
 
 async function changePassword(usr: User, pwchangeinput: ChangeUserPasswordInput): Promise<Response> {
@@ -67,19 +65,23 @@ async function changePassword(usr: User, pwchangeinput: ChangeUserPasswordInput)
   }
 }
 
-
 async function createNewUser(username: string): Promise<CreateUserMutationResult> {
   try {
     await prisma.user.create({
       data: {
         username: username,
-        password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
+        password:
+          '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
         active: false,
         hasPeng: false,
       },
     });
-  } catch (e: unknown) {// P2002 is the code for unique constraint violation
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+  } catch (e: unknown) {
+    // P2002 is the code for unique constraint violation
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === 'P2002'
+    ) {
       return {
         message: `Failed to create user, username '${username}' already exists.`,
         success: false,
@@ -90,7 +92,8 @@ async function createNewUser(username: string): Promise<CreateUserMutationResult
   }
 
   return {
-    message: 'User created successfully with password \'testpassword\'. Please login and change it.',
+    message:
+      "User created successfully with password 'testpassword'. Please login and change it.",
     success: true,
     username: username,
     password: 'testpassword',

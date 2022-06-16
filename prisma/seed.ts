@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { Role } from "../src/schema";
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import { Role } from '../src/schema';
 
 const prisma = new PrismaClient();
 
@@ -9,8 +9,8 @@ async function main() {
   // create default development admin user
   const user = await prisma.user.create({
     data: {
-      username: "testuser",
-      password: await bcrypt.hash("testpassword", 10),
+      username: 'testuser',
+      password: await bcrypt.hash('testpassword', 10),
       active: true,
       hasPeng: false,
       role: Role.Admin,

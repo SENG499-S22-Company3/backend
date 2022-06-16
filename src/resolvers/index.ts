@@ -43,7 +43,7 @@ export const resolvers: Resolvers<Context> = {
           success: true,
           message: 'Logged out',
         };
-      };
+      }
     },
     changeUserPassword: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
