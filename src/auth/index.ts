@@ -1,28 +1,32 @@
-import { PrismaClient, Prisma, Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
+import { prisma } from '../prisma';
 import bcrypt from 'bcrypt';
 import type { AuthPayload, ChangeUserPasswordInput, Response, CreateUserMutationResult} from '../schema/graphql';
+// import type { Context } from '../context';
 
 // User with username testuser and password testpassword
 // username: 'testuser',
 // password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
-
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export async function login(username: string, password: string): Promise<AuthPayload> {
   const user = await lookupUser(username);
-
+  const users = await prisma.user.findMany();
+  console.log(users);
   const failedAuth = {
     message: 'Incorrect username or password',
     success: false,
     token: '', // Won't be needed anymore
   };
 
+  console.log(user);
   if (user === null) return failedAuth;
 
 
   const valid = await bcrypt.compare(password, user!.password);
 
   if (!valid) {
+    // ctx.session.username = username;
     return {
       message: 'Incorrect username or password',
       success: false,
@@ -103,6 +107,7 @@ export async function isAdmin(username: string): Promise<boolean> {
 }
 
 async function lookupUser(username: string) {
+  console.log(username);
   const user = await prisma.user.findUnique({
     where: {
       username: username,

@@ -31,13 +31,15 @@ export const resolvers: Resolvers<Context> = {
     login: async (_, params, ctx) => {
       if (ctx.session.username) return alreadyLoggedIn;
 
-      const loginResult: AuthPayload = await login(params.username, params.password);
+      //const loginResult: AuthPayload = await login(params.username, params.password, ctx);
 
-      if (loginResult.success) {
-        // set user in session
-        ctx.session.username = params.username;
-      }
-      return loginResult;
+     // if (loginResult.success) {
+     //   // set user in session
+     //   ctx.session.username = params.username;
+     // }
+     // return loginResult;
+
+      return await ctx.login(params.username, params.password);
     },
     logout: async (_, _params, ctx) => {
       if (!ctx.session.username) return noLogin;
