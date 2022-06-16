@@ -1,7 +1,12 @@
 import { Prisma, User } from '@prisma/client';
 import { prisma, lookupUser } from '../prisma';
 import bcrypt from 'bcrypt';
-import type { AuthPayload, ChangeUserPasswordInput, Response, CreateUserMutationResult} from '../schema/graphql';
+import type {
+  AuthPayload,
+  ChangeUserPasswordInput,
+  Response,
+  CreateUserMutationResult,
+} from '../schema/graphql';
 import type { Context } from '../context';
 export { login, changePassword, createNewUser };
 
@@ -15,7 +20,11 @@ const failedAuth = {
   token: '', // Won't be needed anymore
 };
 
-async function login(username: string, password: string, ctx: Context): Promise<AuthPayload> {
+async function login(
+  username: string,
+  password: string,
+  ctx: Context
+): Promise<AuthPayload> {
   const user = await lookupUser(username);
 
   if (user === null) return failedAuth;
@@ -39,9 +48,16 @@ async function login(username: string, password: string, ctx: Context): Promise<
   }
 }
 
-async function changePassword(usr: User, pwchangeinput: ChangeUserPasswordInput): Promise<Response> {
-  const valid = await bcrypt.compare(pwchangeinput.currentPassword, usr.password);
-  if (!valid) { // basic validation
+async function changePassword(
+  usr: User,
+  pwchangeinput: ChangeUserPasswordInput
+): Promise<Response> {
+  const valid = await bcrypt.compare(
+    pwchangeinput.currentPassword,
+    usr.password
+  );
+  if (!valid) {
+    // basic validation
     return {
       message: 'Incorrect previous password',
       success: false,
@@ -65,7 +81,9 @@ async function changePassword(usr: User, pwchangeinput: ChangeUserPasswordInput)
   }
 }
 
-async function createNewUser(username: string): Promise<CreateUserMutationResult> {
+async function createNewUser(
+  username: string
+): Promise<CreateUserMutationResult> {
   try {
     await prisma.user.create({
       data: {

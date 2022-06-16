@@ -20,7 +20,6 @@ const noPerms = {
   success: false,
 };
 
-
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: (_, _params, ctx) => {
@@ -51,7 +50,7 @@ export const resolvers: Resolvers<Context> = {
     },
     createUser: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else if (! await utils.isAdmin(ctx.session.user)) return noPerms;
+      else if (!(await utils.isAdmin(ctx.session.user))) return noPerms;
       else return await createNewUser(_params.username);
     },
   },
