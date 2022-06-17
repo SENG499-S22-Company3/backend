@@ -21,9 +21,9 @@ const failedAuth = {
 };
 
 async function login(
+  ctx: Context,
   username: string,
-  password: string,
-  ctx: Context
+  password: string
 ): Promise<AuthPayload> {
   const user = await lookupUser(username);
 
@@ -32,7 +32,6 @@ async function login(
   const valid = await bcrypt.compare(password, user.password);
 
   if (!valid) {
-    // ctx.session.username = username;
     return {
       message: 'Incorrect username or password',
       success: false,
@@ -49,26 +48,22 @@ async function login(
 }
 
 async function changePassword(
-  usr: User,
-  pwchangeinput: ChangeUserPasswordInput
+  user: User,
+  { currentPassword, newPassword }: ChangeUserPasswordInput
 ): Promise<Response> {
-  const valid = await bcrypt.compare(
-    pwchangeinput.currentPassword,
-    usr.password
-  );
+  const valid = await bcrypt.compare(currentPassword, user.password);
   if (!valid) {
-    // basic validation
     return {
       message: 'Incorrect previous password',
       success: false,
     };
   } else {
-    console.log('UPDATING PASSWORD TO', pwchangeinput.newPassword);
+    console.log('UPDATING PASSWORD TO', newPassword);
     const pwsalt = bcrypt.genSaltSync(10);
-    const pwhash = bcrypt.hashSync(pwchangeinput.newPassword, pwsalt);
+    const pwhash = bcrypt.hashSync(newPassword, pwsalt);
     await prisma.user.update({
       where: {
-        username: usr.username,
+        username: user.username,
       },
       data: {
         password: pwhash,

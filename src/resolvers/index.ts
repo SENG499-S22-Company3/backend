@@ -31,7 +31,7 @@ export const resolvers: Resolvers<Context> = {
   Mutation: {
     login: async (_, params, ctx) => {
       if (ctx.session.user) return alreadyLoggedIn;
-      else return await login(params.username, params.password, ctx);
+      else return await login(ctx, params.username, params.password);
     },
     logout: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
