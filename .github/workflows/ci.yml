@@ -19,7 +19,7 @@ jobs:
           node-version: 14
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci --no-audit --no-progress
+        run: npm ci --no-audit --no-progress --no-optional
       - name: Code Linting
         run: npm run lint
   test:
@@ -53,8 +53,8 @@ jobs:
         with:
           node-version: 14
           cache: 'npm'
-      - name: Code Linting
-        run: npm run lint
+      - name: Install dependencies
+        run: npm ci --no-audit --no-progress --no-optional
       - name: Migrate database
         run: npx prisma migrate dev
       - name: Seed database
@@ -73,6 +73,6 @@ jobs:
           node-version: 14
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci --no-audit --no-progress
+        run: npm ci --no-audit --no-progress --no-optional
       - name: Build
         run: npm run build
