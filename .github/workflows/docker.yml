@@ -7,6 +7,7 @@ on:
   pull_request:
 jobs:
   docker:
+    name: Docker
     runs-on: ubuntu-latest
     steps:
       # Only build and push docker image if this action is triggered from the main branch.
