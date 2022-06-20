@@ -8,6 +8,20 @@ env:
   IMAGE_NAME: backend
 
 jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --no-audit --no-progress
+      - name: Code Linting
+        run: npm run lint
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -33,20 +47,12 @@ jobs:
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
-      - name: Cache npm dependencies
-        uses: actions/cache@v1
-        with:
-          key: npm-${{ hashFiles('package-lock.json') }}
-          path: ~/.npm
-          restore-keys: |
-            npm-
-      - name: Install dependencies
-        run: npm ci --no-audit --no-progress
+          node-version: 14
+          cache: 'npm'
       - name: Code Linting
         run: npm run lint
       - name: Migrate database
@@ -58,48 +64,15 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: [lint]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
-      - name: Cache npm dependencies
-        uses: actions/cache@v1
-        with:
-          key: npm-${{ hashFiles('package-lock.json') }}
-          path: ~/.npm
-          restore-keys: |
-            npm-
+          node-version: 14
+          cache: 'npm'
       - name: Install dependencies
         run: npm ci --no-audit --no-progress
       - name: Build
         run: npm run build
-
-        # Only build and push docker image if this action is triggered from the main branch.
-
-      - name: Build Docker image
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-
-      - name: Log in to Github Package registry
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo "${{ secrets.GITHUB_TOKEN}}" | docker login ghcr.io -u $ --password-stdin
-
-      - name: Push image to registry
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-          
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "main" ] && VERSION=latest
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
