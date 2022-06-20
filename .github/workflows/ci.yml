@@ -75,8 +75,8 @@ jobs:
         # Only build and push docker image if this action is triggered from the main branch.
 
       - name: Build Docker image
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
 
       - name: Log in to Github Package registry
         if: ${{ github.ref == 'refs/heads/main' }}
