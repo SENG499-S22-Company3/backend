@@ -3,6 +3,10 @@ on:
   push:
     branches: [main]
   pull_request:
+
+env:
+  IMAGE_NAME: backend
+
 jobs:
   test:
     name: Test
