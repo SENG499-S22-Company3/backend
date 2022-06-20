@@ -1,7 +1,8 @@
 import { Context } from '../context';
-import { Resolvers } from '../schema';
-import type { AuthPayload } from '../schema';
-import { login, createNewUser, changePassword, isAdmin } from '../auth';
+import { CourseId, Resolvers, Role } from '../schema';
+import { prisma, lookupUser } from '../prisma';
+import { login, createNewUser, changePassword } from '../auth';
+import * as utils from '../utils';
 
 const noLogin = {
   success: false,
@@ -22,28 +23,84 @@ const noPerms = {
 
 export const resolvers: Resolvers<Context> = {
   Query: {
-    me: (_, _params, ctx) => {
-      console.log(ctx.session.username);
-      return null;
+    me: async (_, _params, ctx) => {
+      const user = await prisma.user.findUnique({
+        where: { username: ctx.session.user?.username }, //replace testuser with session.username?
+      });
+      if (!user) return null;
+
+      return {
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        role: user.role as Role,
+        preferences: [],
+        active: user.active
+      };
+    },
+    findUserById: async (_, _params, ctx) => {
+
+      const finduser = await prisma.user.findUnique({
+        where: { id: +_params.id},
+      });
+
+      if (!finduser) return null;
+
+      return {
+        id: finduser.id,
+        username: finduser.username,
+        password: finduser.password,
+        role: finduser.role as Role,
+        preferences: [],
+        active: finduser.active
+      };
+
+    },
+    courses: async (_, _params, ctx) => {
+     
+      const courses = await prisma.course.findMany({
+          where: { term: _params.term || undefined },
+          include: { courseSection: true, coursePreference: true}
+      });
+
+      
+      return [{
+        CourseID: courses[0].courseSection[0].courseId as unknown as CourseId,
+        hoursPerWeek: courses[0].courseSection[0].hoursPerWeek,
+        capacity: courses[0].courseSection[0].capacity,
+        professors: [], 
+        startDate: courses[0].courseSection[0].startDate,
+        endDate: courses[0].courseSection[0].endDate,
+        meetingTimes: []
+      }]
+    
+      
+    },
+    schedule: async (_, _params, ctx) => {
+     
+      const schedule = await prisma.schedule.findUnique({
+          where: {},
+          include: {courseSection: true}
+      });
+
+      if (!schedule) return null;
+
+      return{
+        id: "test", // schedule.id.toString not working
+        year: schedule.year,
+        createdAt: schedule.createdOn,
+        courses: []
+
+      }
     },
   },
   Mutation: {
     login: async (_, params, ctx) => {
-      if (ctx.session.username) return alreadyLoggedIn;
-
-      const loginResult: AuthPayload = await login(
-        params.username,
-        params.password
-      );
-
-      if (loginResult.success) {
-        // set user in session
-        ctx.session.username = params.username;
-      }
-      return loginResult;
+      if (ctx.session.user) return alreadyLoggedIn;
+      else return await login(ctx, params.username, params.password);
     },
     logout: async (_, _params, ctx) => {
-      if (!ctx.session.username) return noLogin;
+      if (!ctx.session.user) return noLogin;
       else {
         await ctx.logout();
         return {
@@ -54,12 +111,12 @@ export const resolvers: Resolvers<Context> = {
       }
     },
     changeUserPassword: async (_, _params, ctx) => {
-      if (!ctx.session.username) return noLogin;
-      else return changePassword(ctx.session.username, _params.input);
+      if (!ctx.session.user) return noLogin;
+      else return changePassword(ctx.session.user, _params.input);
     },
     createUser: async (_, _params, ctx) => {
-      if (!ctx.session.username) return noLogin;
-      else if (!(await isAdmin(ctx.session.username))) return noPerms;
+      if (!ctx.session.user) return noLogin;
+      else if (!(await utils.isAdmin(ctx.session.user))) return noPerms;
       else return await createNewUser(_params.username);
     },
   },

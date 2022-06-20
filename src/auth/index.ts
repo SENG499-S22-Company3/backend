@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma, Role } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { prisma, lookupUser } from '../prisma';
 import bcrypt from 'bcrypt';
 import type {
   AuthPayload,
@@ -6,28 +7,29 @@ import type {
   Response,
   CreateUserMutationResult,
 } from '../schema/graphql';
+import type { Context } from '../context';
+export { login, changePassword, createNewUser };
 
 // User with username testuser and password testpassword
 // username: 'testuser',
 // password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
 
-const prisma = new PrismaClient();
+const failedAuth = {
+  message: 'Incorrect username or password',
+  success: false,
+  token: '', // Won't be needed anymore
+};
 
-export async function login(
+async function login(
+  ctx: Context,
   username: string,
   password: string
 ): Promise<AuthPayload> {
   const user = await lookupUser(username);
 
-  const failedAuth = {
-    message: 'Incorrect username or password',
-    success: false,
-    token: '', // Won't be needed anymore
-  };
-
   if (user === null) return failedAuth;
 
-  const valid = await bcrypt.compare(password, user!.password);
+  const valid = await bcrypt.compare(password, user.password);
 
   if (!valid) {
     return {
@@ -36,6 +38,7 @@ export async function login(
       token: '', // Won't be needed anymore
     };
   } else {
+    ctx.session.user = user;
     return {
       message: 'Success',
       success: true,
@@ -44,41 +47,36 @@ export async function login(
   }
 }
 
-export async function changePassword(
-  username: string,
-  pwchangeinput: ChangeUserPasswordInput
+async function changePassword(
+  user: User,
+  { currentPassword, newPassword }: ChangeUserPasswordInput
 ): Promise<Response> {
-  const user = await lookupUser(username);
-  const valid = await bcrypt.compare(
-    pwchangeinput.currentPassword,
-    user!.password
-  );
+  const valid = await bcrypt.compare(currentPassword, user.password);
   if (!valid) {
-    // basic validation
     return {
       message: 'Incorrect previous password',
       success: false,
     };
   } else {
-    console.log('UPDATING PASSWORD TO ', pwchangeinput.newPassword);
+    console.log('UPDATING PASSWORD TO', newPassword);
     const pwsalt = bcrypt.genSaltSync(10);
-    const pwhash = bcrypt.hashSync(pwchangeinput.newPassword, pwsalt);
+    const pwhash = bcrypt.hashSync(newPassword, pwsalt);
     await prisma.user.update({
       where: {
-        username: username,
+        username: user.username,
       },
       data: {
         password: pwhash,
       },
     });
     return {
-      message: 'Password Changed Succesfully',
+      message: 'Password Changed Successfully',
       success: true,
     };
   }
 }
 
-export async function createNewUser(
+async function createNewUser(
   username: string
 ): Promise<CreateUserMutationResult> {
   try {
@@ -113,22 +111,4 @@ export async function createNewUser(
     username: username,
     password: 'testpassword',
   };
-}
-
-export async function isAdmin(username: string): Promise<boolean> {
-  const user = await lookupUser(username);
-  if (user === null) {
-    throw Error(`User ${username} was not found in the database`);
-  }
-  return user!.role === Role.ADMIN;
-}
-
-async function lookupUser(username: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      username: username,
-    },
-  });
-  console.log(user);
-  return user;
 }
