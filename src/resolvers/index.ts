@@ -1,8 +1,8 @@
 import { Context } from '../context';
-import { CourseId, Resolvers, Role } from '../schema';
-import { prisma, lookupUser } from '../prisma';
+import { Resolvers } from '../schema';
 import { login, createNewUser, changePassword } from '../auth';
 import * as utils from '../utils';
+import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
 
 const noLogin = {
   success: false,
@@ -24,74 +24,26 @@ const noPerms = {
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: async (_, _params, ctx) => {
-      const user = await prisma.user.findUnique({
-        where: { username: ctx.session.user?.username }, //replace testuser with session.username?
-      });
-      if (!user) return null;
+      let username;
+      if (!ctx.session.user) return null;
+      else if (!ctx.session.user.username) return null;
+      else username = ctx.session.user.username;
 
-      return {
-        id: user.id,
-        username: user.username,
-        password: user.password,
-        role: user.role as Role,
-        preferences: [],
-        active: user.active
-      };
+      return await getMe(username);
     },
     findUserById: async (_, _params, ctx) => {
-
-      const finduser = await prisma.user.findUnique({
-        where: { id: +_params.id},
-      });
-
-      if (!finduser) return null;
-
-      return {
-        id: finduser.id,
-        username: finduser.username,
-        password: finduser.password,
-        role: finduser.role as Role,
-        preferences: [],
-        active: finduser.active
-      };
-
+      if (!ctx.session.user) return null;
+      else if (!_params.id) return null;
+      else return await getUserByID(+_params.id);
     },
     courses: async (_, _params, ctx) => {
-     
-      const courses = await prisma.course.findMany({
-          where: { term: _params.term || undefined },
-          include: { courseSection: true, coursePreference: true}
-      });
-
-      
-      return [{
-        CourseID: courses[0].courseSection[0].courseId as unknown as CourseId,
-        hoursPerWeek: courses[0].courseSection[0].hoursPerWeek,
-        capacity: courses[0].courseSection[0].capacity,
-        professors: [], 
-        startDate: courses[0].courseSection[0].startDate,
-        endDate: courses[0].courseSection[0].endDate,
-        meetingTimes: []
-      }]
-    
-      
+      if (!ctx.session.user) return null;
+      else if (!_params.term) return null;
+      else return [await getCourses(_params.term)];
     },
     schedule: async (_, _params, ctx) => {
-     
-      const schedule = await prisma.schedule.findUnique({
-          where: {},
-          include: {courseSection: true}
-      });
-
-      if (!schedule) return null;
-
-      return{
-        id: "test", // schedule.id.toString not working
-        year: schedule.year,
-        createdAt: schedule.createdOn,
-        courses: []
-
-      }
+      if (!ctx.session.user) return null;
+      else return getSchedule(_params.year || undefined);
     },
   },
   Mutation: {
