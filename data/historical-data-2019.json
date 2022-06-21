@@ -1,0 +1,1968 @@
+{
+  "fallTermCourses": [
+    {
+      "courseNumber": "101",
+      "subject": "CHEM",
+      "sequenceNumber": "A01",
+      "courseTitle": "Properties of Materials",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "CHEM",
+      "sequenceNumber": "A02",
+      "courseTitle": "Properties of Materials",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "CHEM",
+      "sequenceNumber": "A03",
+      "courseTitle": "Properties of Materials",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1230",
+        "endTime": "1320",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "110",
+      "subject": "PHYS",
+      "sequenceNumber": "A01",
+      "courseTitle": "Introductory Physics I",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1030",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "110",
+      "subject": "PHYS",
+      "sequenceNumber": "A02",
+      "courseTitle": "Introductory Physics I",
+      "meetingTime": {
+        "startDate": "Nov 17, 2018",
+        "endDate": "Nov 17, 2018",
+        "beginTime": "1400",
+        "endTime": "1530",
+        "hoursWeek": 1.5,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": true
+      }
+    },
+    {
+      "courseNumber": "110",
+      "subject": "PHYS",
+      "sequenceNumber": "A03",
+      "courseTitle": "Introductory Physics I",
+      "meetingTime": {
+        "startDate": "Nov 17, 2018",
+        "endDate": "Nov 17, 2018",
+        "beginTime": "1400",
+        "endTime": "1530",
+        "hoursWeek": 1.5,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": true
+      }
+    },
+    {
+      "courseNumber": "110",
+      "subject": "PHYS",
+      "sequenceNumber": "A04",
+      "courseTitle": "Introductory Physics I",
+      "meetingTime": {
+        "startDate": "Nov 17, 2018",
+        "endDate": "Nov 17, 2018",
+        "beginTime": "1400",
+        "endTime": "1530",
+        "hoursWeek": 1.5,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": true
+      }
+    },
+    {
+      "courseNumber": "265",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Software Development Methods",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "265",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Software Development Methods",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "321",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Requirements Engineering",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "350",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Software Architecture and Design",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "360",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Security Engineering",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1600",
+        "endTime": "1650",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "360",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Security Engineering",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1600",
+        "endTime": "1650",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "474",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Data Mining",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "260",
+      "subject": "STAT",
+      "sequenceNumber": "A01",
+      "courseTitle": "Introduction to Probability and Statistics I",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "260",
+      "subject": "STAT",
+      "sequenceNumber": "A02",
+      "courseTitle": "Introduction to Probability and Statistics I",
+      "meetingTime": {
+        "startDate": "Sep 05, 2018",
+        "endDate": "Dec 05, 2018",
+        "beginTime": "1230",
+        "endTime": "1320",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    }
+  ],
+  "springTermCourses": [
+    {
+      "courseNumber": "150",
+      "subject": "CHEM",
+      "sequenceNumber": "A01",
+      "courseTitle": "Engineering Chemistry",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0830",
+        "endTime": "0950",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "111",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Fundamentals of Programming with Engineering Applications",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "111",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Fundamentals of Programming with Engineering Applications",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "115",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Fundamentals of Programming II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "115",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Fundamentals of Programming II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "115",
+      "subject": "CSC",
+      "sequenceNumber": "A03",
+      "courseTitle": "Fundamentals of Programming II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "115",
+      "subject": "CSC",
+      "sequenceNumber": "A04",
+      "courseTitle": "Fundamentals of Programming II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "225",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Algorithms and Data Structures I",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "226",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Algorithms and Data Structures II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "226",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Algorithms and Data Structures II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "230",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Introduction to Computer Architecture",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1230",
+        "endTime": "1320",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "320",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Foundations of Computer Science",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1220",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "360",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Operating Systems",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "360",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Operating Systems",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "361",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Computer Communications and Networks",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1230",
+        "endTime": "1320",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "370",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Database Systems",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1630",
+        "endTime": "1750",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "460",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Design and Analysis of Real-time Systems",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1550",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "460",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Design and Analysis of Real-time Systems",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1550",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "300",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Linear Circuits II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "310",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Digital Signal Processing I",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1030",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "310",
+      "subject": "ECE",
+      "sequenceNumber": "A02",
+      "courseTitle": "Digital Signal Processing I",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1030",
+        "endTime": "1120",
+        "hoursWeek": 2.5,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "320",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Electronic Devices I",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0830",
+        "endTime": "0920",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "330",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Electronic Circuits I",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1220",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "340",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Applied Electromagnetics and Photonics",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "360",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Control Theory and Systems I",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "455",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Real Time Computer Systems Design Project",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0830",
+        "endTime": "0920",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "458",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Communication Networks",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A01",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A02",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A03",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A04",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A05",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A06",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A07",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A08",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A09",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A10",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A11",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "120",
+      "subject": "ENGR",
+      "sequenceNumber": "A12",
+      "courseTitle": "Design and Communication II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "141",
+      "subject": "ENGR",
+      "sequenceNumber": "A01",
+      "courseTitle": "Engineering Mechanics",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "141",
+      "subject": "ENGR",
+      "sequenceNumber": "A02",
+      "courseTitle": "Engineering Mechanics",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1650",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "MATH",
+      "sequenceNumber": "A01",
+      "courseTitle": "Calculus II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1430",
+        "endTime": "1520",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "MATH",
+      "sequenceNumber": "A02",
+      "courseTitle": "Calculus II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0830",
+        "endTime": "0920",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "MATH",
+      "sequenceNumber": "A03",
+      "courseTitle": "Calculus II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1230",
+        "endTime": "1320",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "MATH",
+      "sequenceNumber": "A04",
+      "courseTitle": "Calculus II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1330",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "101",
+      "subject": "MATH",
+      "sequenceNumber": "A05",
+      "courseTitle": "Calculus II",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "265",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Software Development Methods",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "265",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Software Development Methods",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "310",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Human Computer Interaction",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "321",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Requirements Engineering",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "321",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Requirements Engineering",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "371",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Software Evolution",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "371",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Software Evolution",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "401",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Social and Professional Issues",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1630",
+        "endTime": "1750",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "401",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Social and Professional Issues",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1630",
+        "endTime": "1750",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "468",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Software System Scalability",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1330",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "468",
+      "subject": "SENG",
+      "sequenceNumber": "A02",
+      "courseTitle": "Software System Scalability",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "1330",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "474",
+      "subject": "SENG",
+      "sequenceNumber": "A01",
+      "courseTitle": "Data Mining",
+      "meetingTime": {
+        "startDate": "Jan 07, 2019",
+        "endDate": "Apr 05, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    }
+  ],
+  "summerTermCourses": [
+    {
+      "courseNumber": "115",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Fundamentals of Programming II",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "115",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Fundamentals of Programming II",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "225",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Algorithms and Data Structures I",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "225",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Algorithms and Data Structures I",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "225",
+      "subject": "CSC",
+      "sequenceNumber": "A03",
+      "courseTitle": "Algorithms and Data Structures I",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "226",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Algorithms and Data Structures II",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "226",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Algorithms and Data Structures II",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0930",
+        "endTime": "1020",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "230",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Introduction to Computer Architecture",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "230",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Introduction to Computer Architecture",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1300",
+        "endTime": "1420",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "320",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Foundations of Computer Science",
+      "meetingTime": {
+        "startDate": "May 01, 2019",
+        "endDate": "Jun 28, 2019",
+        "beginTime": "1030",
+        "endTime": "1220",
+        "hoursWeek": 4,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "320",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Foundations of Computer Science",
+      "meetingTime": {
+        "startDate": "May 01, 2019",
+        "endDate": "Jun 28, 2019",
+        "beginTime": "1030",
+        "endTime": "1220",
+        "hoursWeek": 4,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "370",
+      "subject": "CSC",
+      "sequenceNumber": "A01",
+      "courseTitle": "Database Systems",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "370",
+      "subject": "CSC",
+      "sequenceNumber": "A02",
+      "courseTitle": "Database Systems",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "180",
+      "subject": "ECON",
+      "sequenceNumber": "A01",
+      "courseTitle": "Introduction to Principles of Microeconomics and Financial Project Evaluation",
+      "meetingTime": {
+        "startDate": "May 13, 2019",
+        "endDate": "Jun 28, 2019",
+        "beginTime": "1430",
+        "endTime": "1620",
+        "hoursWeek": 6,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "216",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Electricity and Magnetism",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0830",
+        "endTime": "0950",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "216",
+      "subject": "ECE",
+      "sequenceNumber": "A02",
+      "courseTitle": "Electricity and Magnetism",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "0830",
+        "endTime": "0950",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "220",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Electrical Properties of Materials",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1130",
+        "endTime": "1220",
+        "hoursWeek": 0.83,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "250",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Linear Circuits I",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1130",
+        "endTime": "1250",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "260",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Continuous-Time Signals and Systems",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1030",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "260",
+      "subject": "ECE",
+      "sequenceNumber": "A02",
+      "courseTitle": "Continuous-Time Signals and Systems",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1030",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "299",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Introduction to Electrical and Computer Engineering Design",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1530",
+        "endTime": "1620",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "310",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Digital Signal Processing I",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "310",
+      "subject": "ECE",
+      "sequenceNumber": "A02",
+      "courseTitle": "Digital Signal Processing I",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1000",
+        "endTime": "1120",
+        "hoursWeek": 3,
+        "sunday": false,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    },
+    {
+      "courseNumber": "499",
+      "subject": "ECE",
+      "sequenceNumber": "A01",
+      "courseTitle": "Design Project II",
+      "meetingTime": {
+        "startDate": "May 06, 2019",
+        "endDate": "Aug 02, 2019",
+        "beginTime": "1630",
+        "endTime": "1720",
+        "hoursWeek": 1,
+        "sunday": false,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false
+      }
+    }
+  ]
+}
