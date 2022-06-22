@@ -68,7 +68,6 @@ jobs:
         run: npm ci --no-audit --no-progress
       - name: Database migrations
         run: npx -y prisma migrate dev && npx -y prisma db seed
-        working-directory: c3/backend
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
       - name: Start backend
