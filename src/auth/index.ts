@@ -6,9 +6,17 @@ import type {
   ChangeUserPasswordInput,
   Response,
   CreateUserMutationResult,
+  // GenerateScheduleInput,
+  CreateTeachingPreferenceInput,
 } from '../schema/graphql';
 import type { Context } from '../context';
-export { login, changePassword, createNewUser };
+export {
+  login,
+  changePassword,
+  createNewUser,
+  /* generateSchedule,*/
+  createTeachingPreference,
+};
 
 // User with username testuser and password testpassword
 // username: 'testuser',
@@ -19,6 +27,20 @@ const failedAuth = {
   success: false,
   token: '', // Won't be needed anymore
 };
+/*
+const failScheduleGenerate = {
+  message: `No schedule available for the input year`,
+  success: false,
+};
+const invalidYearInput = {
+  message: `Invalid year input. Year format: YYYY`,
+  success: false,
+};
+*/
+const invalidUserId = {
+  message: `userId does not exist. Please input valid userId`,
+  success: false,
+}
 
 async function login(
   ctx: Context,
@@ -112,3 +134,83 @@ async function createNewUser(
     password: 'testpassword',
   };
 }
+
+/*
+function checkDigits(year: number){
+  const numOfDigits = year.toString().length;
+  return numOfDigits;
+}
+async function generateSchedule(
+  year: GenerateScheduleInput
+): Promise<Response> {
+  const numOfDigits = checkDigits(year.year);
+  if (numOfDigits !== 4) return invalidYearInput;
+  else if (!year.year || year.year < 1990) return failScheduleGenerate;
+  return {
+    message: `Generating Schedule for Year: ${year.year}`,
+    success: true,
+  };
+}
+*/
+
+async function createTeachingPreference(
+  user: User,
+  { peng, userId, courses }: CreateTeachingPreferenceInput
+): Promise<Response> {
+  try {
+    if (Number(userId) !== user.id) {
+      console.log('userId: ', Number(userId), 'id: ', user.id);
+      return invalidUserId;
+    }
+    // userId in teachingPreference model === id in user model
+    await prisma.teachingPreference.create({
+      data: {
+        userId: Number(userId),
+        // Hardcoded values populated for now
+        hasRelief: false,
+        studyLeave: false,
+        topicsOrGradCourse: false,
+      }
+    });
+
+    await prisma.course.create({
+      data: { 
+        courseCode: courses[0].code,
+        subject: courses[0].subject,
+        term: courses[0].term, 
+      },
+    });
+    // Update hasPeng property (which is by default false) based on survey input
+    await prisma.user.update({
+      where: {
+        id: +userId
+      },
+      data: {
+        hasPeng: peng,
+      },
+    });
+
+    await prisma.coursePreference.create({
+      data: { 
+        preference: courses[0].preference,
+        // Hardcoded for now. Doesnt work without it
+        courseId: 14,
+      },
+    });
+
+  } catch (error: any) {
+    if (error.code === 'P2003') {
+      return {
+        message: `Course has no id 1`,
+        success: false,
+      };
+    }
+    throw error
+  }
+
+  return {
+    message: 'Preference Survey Created',
+    success: true,
+  };
+}
+

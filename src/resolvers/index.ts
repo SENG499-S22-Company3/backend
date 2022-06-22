@@ -1,8 +1,11 @@
+/* eslint-disable prettier/prettier */
 import { Context } from '../context';
 import { CourseId, Resolvers, Role } from '../schema';
 import { prisma, lookupUser } from '../prisma';
-import { login, createNewUser, changePassword } from '../auth';
+import { login, createNewUser, changePassword, /* generateSchedule  , */ createTeachingPreference} from '../auth';
 import * as utils from '../utils';
+import { __InputValue } from 'graphql';
+import { util } from 'prettier';
 
 const noLogin = {
   success: false,
@@ -20,6 +23,20 @@ const noPerms = {
   message: 'Insufficient permisions',
   success: false,
 };
+/*
+const teachingPrefInput = {
+  peng: true,
+  userId: '5',
+  courses: [
+    {
+      subject: 'SENG',
+      code: '499',
+      term: 'FALL',
+      preference: 0
+    },
+  ],
+};
+*/
 
 export const resolvers: Resolvers<Context> = {
   Query: {
@@ -56,11 +73,24 @@ export const resolvers: Resolvers<Context> = {
       };
 
     },
+    
+    /* survey: async (_, _params, ctx) =>{
+      /*const surveyResults = await prisma.user.findUnique({
+        where: { id: _params. }
+      })
+      return {
+        courses: [{ subject: teachingPrefInput.courses[0].subject,
+          code: teachingPrefInput.courses[0].code,
+          term: teachingPrefInput.courses[0].term }],
+        // subject: teachingPrefInput.courses[0].subject
+      }
+    },*/
+    
     courses: async (_, _params, ctx) => {
-     
+
       const courses = await prisma.course.findMany({
-          where: { term: _params.term || undefined },
-          include: { courseSection: true, coursePreference: true}
+        where: { term: _params.term || undefined },
+        include: { courseSection: true, coursePreference: true}
       });
 
       
@@ -119,5 +149,19 @@ export const resolvers: Resolvers<Context> = {
       else if (!(await utils.isAdmin(ctx.session.user))) return noPerms;
       else return await createNewUser(_params.username);
     },
+    /*
+    generateSchedule: async (_, _params, ctx) => {
+      if (!ctx.session.user) return noLogin;
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
+      return generateSchedule(_params.input);
+    },
+    */
+    
+    createTeachingPreference: async (_, _params, ctx) =>{
+      if (!ctx.session.user) return noLogin;
+      console.log(_params.input);
+      return await createTeachingPreference(ctx.session.user, _params.input);
+    },
+    
   },
 };
