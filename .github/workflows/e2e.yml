@@ -70,6 +70,8 @@ jobs:
         run: npx -y prisma migrate dev && npx -y prisma db seed
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+      - name: Build
+        run: npm run build
       - name: Start backend
         run: npm start &
       - name: Test
