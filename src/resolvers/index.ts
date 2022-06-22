@@ -26,7 +26,7 @@ export const resolvers: Resolvers<Context> = {
     me: async (_, _params, ctx) => {
       if (!ctx.session.user) return null;
       else if (!ctx.session.user.username) return null;
-      return await getMe(ctx.session.user.username);
+      return await getMe(ctx);
     },
     findUserById: async (_, params, ctx) => {
       if (!ctx.session.user || !params.id) return null;

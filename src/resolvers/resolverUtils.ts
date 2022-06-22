@@ -1,7 +1,8 @@
-import { findUserByUsername, findUserById } from '../prisma/user';
+import { findUserById } from '../prisma/user';
 import { findCourses, findMeetingTime } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
 import { User, CourseSection, Schedule, Term, Role, Day } from '../schema';
+import { Context } from '../context';
 export { getMe, getUserByID, getCourses, getSchedule };
 
 const failedMeandID = {
@@ -40,18 +41,16 @@ const failedCourses = {
   meetingTimes: [],
 };
 
-async function getMe(username: string): Promise<User> {
-  const user = await findUserByUsername(username);
-
-  if (!user) return failedMeandID;
+async function getMe(ctx: Context): Promise<User> {
+  if (!ctx.session.user) return failedMeandID;
 
   return {
-    id: user.id,
-    username: user.username,
-    password: user.password,
-    role: user.role as Role,
+    id: ctx.session.user.id,
+    username: ctx.session.user.username,
+    password: ctx.session.user.password,
+    role: ctx.session.user.role as Role,
     preferences: [],
-    active: user.active,
+    active: ctx.session.user.active,
   };
 }
 
