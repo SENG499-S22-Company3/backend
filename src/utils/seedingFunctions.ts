@@ -19,11 +19,11 @@ export const addCourseSections = async (
   for (const courseSection of courseSections) {
     const meetingTime = courseSection.meetingTime;
 
-    //Time
+    // Time
     const beginTimeISO = getISOTime(meetingTime.beginTime);
     const endTimeISO = getISOTime(meetingTime.endTime);
 
-    //Day
+    // Day
     const days = getMeetingDays(meetingTime);
 
     const startDate = zonedTimeToUtc(

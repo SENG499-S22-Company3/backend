@@ -1,7 +1,5 @@
 import { PrismaClient, Term } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import {} from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
 import { Role } from '../src/schema';
 import historicalData from '../data/historical-data-2019.json';
 import { addCourseSections } from '../src/utils';
@@ -18,7 +16,7 @@ async function main() {
   const spring: Term = 'SPRING';
   const summer: Term = 'SUMMER';
 
-  //Add a years worth of course sections
+  // Add a years worth of course sections
   await Promise.all([
     addCourseSections(fallSections, fall),
     addCourseSections(springSections, spring),
@@ -26,7 +24,7 @@ async function main() {
   ]);
 
   // create default development admin user
-  const user = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: {
       username: 'testuser',
     },
