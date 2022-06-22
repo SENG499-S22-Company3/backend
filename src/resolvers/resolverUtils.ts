@@ -1,5 +1,7 @@
-import { lookupUser, lookupId, lookupCourses, lookupSchedule } from '../prisma';
-import { User, CourseSection, Schedule, CourseId, Term, Role } from '../schema';
+import { findUserByUsername, findUserById } from '../prisma/user';
+import { findCourses, findMeetingTime } from '../prisma/course';
+import { findSchedule } from '../prisma/schedule';
+import { User, CourseSection, Schedule, Term, Role, Day } from '../schema';
 export { getMe, getUserByID, getCourses, getSchedule };
 
 const failedMeandID = {
@@ -18,8 +20,28 @@ const failedSchedule = {
   courses: [],
 };
 
+const failedMeeting = {
+  day: Day.Sunday,
+  startTime: 0,
+  endTime: 0,
+};
+
+const failedCourses = {
+  CourseID: {
+    subject: 'not found',
+    code: 'not found',
+    term: Term.Fall,
+  },
+  hoursPerWeek: 0,
+  capacity: 0,
+  professors: [],
+  startDate: 0,
+  endDate: 0,
+  meetingTimes: [],
+};
+
 async function getMe(username: string): Promise<User> {
-  const user = await lookupUser(username);
+  const user = await findUserByUsername(username);
 
   if (!user) return failedMeandID;
 
@@ -34,7 +56,7 @@ async function getMe(username: string): Promise<User> {
 }
 
 async function getUserByID(id: number): Promise<User> {
-  const user = await lookupId(id);
+  const user = await findUserById(id);
 
   if (!user) return failedMeandID;
 
@@ -49,26 +71,77 @@ async function getUserByID(id: number): Promise<User> {
 }
 
 async function getCourses(term: Term): Promise<CourseSection> {
-  const courses = await lookupCourses(term);
+  const courses = await findCourses(term);
+  if (!courses) return failedCourses;
+  let user;
+  let profs;
+  let meetingTimes;
+  let meetingSlots;
+  if (courses[0].courseSection[0].userId)
+    user = await findUserById(courses[0].courseSection[0].userId);
+
+  if (!user) profs = failedMeandID;
+  else
+    profs = {
+      id: user.id,
+      username: user.username,
+      password: user.password,
+      role: user.role as Role,
+      preferences: [],
+      active: user.active,
+    };
+
+  if (courses[0].courseSection[0].meetingTimeId)
+    meetingTimes = await findMeetingTime(
+      courses[0].courseSection[0].meetingTimeId
+    );
+
+  if (!meetingTimes) meetingSlots = failedMeeting;
+  else
+    meetingSlots = {
+      day: meetingTimes.days[0] as Day, // How to include all the values in the array day[]
+      startTime: meetingTimes.startTime,
+      endTime: meetingTimes.endTime,
+    };
+
+  // return courses.map((course) => {
+  //   return {
+  //       CourseID: {
+  //         subject: course.subject,
+  //         code: course.courseCode,
+  //         term: course.term as Term,
+  //       },
+  //       hoursPerWeek: course.courseSection[0].hoursPerWeek,
+  //       capacity: course.courseSection[0].capacity,
+  //       professors: [],
+  //       startDate: course.courseSection[0].startDate,
+  //       endDate: course.courseSection[0].endDate,
+  //       meetingTimes: [],
+  //     };
+  // })
 
   return {
-    CourseID: courses[0].courseSection[0].courseId as unknown as CourseId,
+    CourseID: {
+      subject: courses[0].subject,
+      code: courses[0].courseCode,
+      term: courses[0].term as Term,
+    },
     hoursPerWeek: courses[0].courseSection[0].hoursPerWeek,
     capacity: courses[0].courseSection[0].capacity,
-    professors: [],
+    professors: [profs],
     startDate: courses[0].courseSection[0].startDate,
     endDate: courses[0].courseSection[0].endDate,
-    meetingTimes: [],
+    meetingTimes: [meetingSlots],
   };
 }
 
-async function getSchedule(year: number | undefined): Promise<Schedule> {
-  const schedule = await lookupSchedule(year || undefined);
+async function getSchedule(year: number): Promise<Schedule> {
+  const schedule = await findSchedule(year);
 
   if (!schedule) return failedSchedule;
 
   return {
-    id: 'test', // schedule.id.toString not working
+    id: `${schedule.id}`, // schedule.id.toString not working
     year: schedule.year,
     createdAt: schedule.createdOn,
     courses: [],

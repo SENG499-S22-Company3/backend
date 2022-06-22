@@ -1,5 +1,5 @@
 import { Prisma, User } from '@prisma/client';
-import { prisma, lookupUser } from '../prisma';
+import { prisma, findUserByUsername } from '../prisma/user';
 import bcrypt from 'bcrypt';
 import type {
   AuthPayload,
@@ -25,7 +25,7 @@ async function login(
   username: string,
   password: string
 ): Promise<AuthPayload> {
-  const user = await lookupUser(username);
+  const user = await findUserByUsername(username);
 
   if (user === null) return failedAuth;
 

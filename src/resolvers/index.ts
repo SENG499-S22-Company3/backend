@@ -24,26 +24,21 @@ const noPerms = {
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: async (_, _params, ctx) => {
-      let username;
       if (!ctx.session.user) return null;
       else if (!ctx.session.user.username) return null;
-      else username = ctx.session.user.username;
-
-      return await getMe(username);
+      return await getMe(ctx.session.user.username);
     },
-    findUserById: async (_, _params, ctx) => {
-      if (!ctx.session.user) return null;
-      else if (!_params.id) return null;
-      else return await getUserByID(+_params.id);
+    findUserById: async (_, params, ctx) => {
+      if (!ctx.session.user || !params.id) return null;
+      return await getUserByID(+params.id);
     },
-    courses: async (_, _params, ctx) => {
-      if (!ctx.session.user) return null;
-      else if (!_params.term) return null;
-      else return [await getCourses(_params.term)];
+    courses: async (_, params, ctx) => {
+      if (!ctx.session.user || !params.term) return null;
+      return await [getCourses(params.term)];
     },
-    schedule: async (_, _params, ctx) => {
+    schedule: async (_, params, ctx) => {
       if (!ctx.session.user) return null;
-      else return getSchedule(_params.year || undefined);
+      return getSchedule(params.year || 2021);
     },
   },
   Mutation: {
