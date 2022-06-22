@@ -36,3 +36,12 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+      - name: Trigger event to execute integration tests
+        uses: peter-evans/repository-dispatch@v2
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: seng499-s22-company3/shared
+          event-type: backend
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "repo": "backend"}'
