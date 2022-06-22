@@ -74,6 +74,8 @@ jobs:
         run: npm run build
       - name: Start backend
         run: npm start &
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
       - name: Test
         working-directory: shared
         env:
