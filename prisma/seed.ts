@@ -4,21 +4,32 @@ import { Role } from '../src/schema';
 
 const prisma = new PrismaClient();
 
-// A `main` function so that you can use async/await
-async function main() {
+async function seedUsers(): Promise<void> {
   // create default development admin user
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
-      username: 'testuser',
+      username: 'testadmin',
       password: await bcrypt.hash('testpassword', 10),
       active: true,
       hasPeng: false,
       role: Role.Admin,
     },
   });
-  // use `console.dir` to print nested objects
-  // console.dir(allUsers, { depth: null });
-  console.log(user);
+
+  await prisma.user.create({
+    data: {
+      username: 'testuser',
+      password: await bcrypt.hash('testpassword', 10),
+      active: true,
+      hasPeng: false,
+      role: Role.User,
+    },
+  });
+}
+
+// A `main` function so that you can use async/await
+async function main() {
+  await seedUsers();
 }
 
 main()
