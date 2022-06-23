@@ -5,6 +5,10 @@ on:
     branches:
       - 'main'
   pull_request:
+
+env:
+  IMAGE_NAME: backend
+
 jobs:
   docker:
     name: Docker
