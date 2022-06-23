@@ -1,6 +1,6 @@
 import { Context } from '../context';
 import { Resolvers } from '../schema';
-import { login, createNewUser, changePassword } from '../auth';
+import { login, createNewUser, changePassword, generateSchedule } from '../auth';
 import * as utils from '../utils';
 
 const noLogin = {
@@ -53,5 +53,15 @@ export const resolvers: Resolvers<Context> = {
       else if (!(await utils.isAdmin(ctx.session.user))) return noPerms;
       else return await createNewUser(_params.username);
     },
+
+    generateSchedule: async (_, _params, ctx) => {
+      if (!ctx.session.user) return noLogin;
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
+      return generateSchedule(_params.input);
+    },
+
   },
+
+  
 };
+
