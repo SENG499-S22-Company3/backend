@@ -1,5 +1,6 @@
 import { Prisma, User } from '@prisma/client';
-import { prisma, findUserByUsername } from '../prisma/user';
+import { findUserByUsername } from '../prisma/user';
+import { prisma } from '../prisma';
 import bcrypt from 'bcrypt';
 import type {
   AuthPayload,
