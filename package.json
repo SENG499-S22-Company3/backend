@@ -14,7 +14,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "setup": "husky install && npm run db:generate",
+    "setup": "husky install && npm run db:generate"
   },
   "engines": {
     "node": ">=14.0.0"
