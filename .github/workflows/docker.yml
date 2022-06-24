@@ -4,12 +4,17 @@ on:
   push:
     branches:
       - 'main'
-  pull_request:
+
+env:
+  IMAGE_NAME: backend
+
 jobs:
   docker:
     name: Docker
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
       # Only build and push docker image if this action is triggered from the main branch.
       - name: Build Docker image
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -36,3 +41,12 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+      - name: Trigger event to execute integration tests
+        uses: peter-evans/repository-dispatch@v2
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: seng499-s22-company3/shared
+          event-type: backend
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "repo": "backend"}'
