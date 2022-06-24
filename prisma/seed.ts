@@ -16,6 +16,17 @@ async function main() {
   const spring: Term = 'SPRING';
   const summer: Term = 'SUMMER';
 
+  // Create a schedule object
+  await prisma.schedule.upsert({
+    where: {
+      id: 1,
+    },
+    create: {
+      year: 2019,
+    },
+    update: {},
+  });
+
   // Add a years worth of course sections
   await Promise.all([
     addCourseSections(fallSections, fall),
