@@ -1,23 +1,11 @@
 import { findUserById } from '../prisma/user';
-import {
-  findCourses,
-  findMeetingTime,
-  findCourseSection,
-} from '../prisma/course';
+import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
-import {
-  User,
-  CourseSection,
-  Schedule,
-  Term,
-  Role,
-  Day,
-  MeetingTime,
-} from '../schema';
+import { User, CourseSection, Schedule, Term, Role, Day } from '../schema';
 import { Context } from '../context';
 export { getMe, getUserByID, getCourses, getSchedule };
 
-const failedMeandID = {
+const failedMeandID: User = {
   id: 0,
   username: 'Not Found',
   password: 'Not Found',
@@ -26,20 +14,14 @@ const failedMeandID = {
   active: false,
 };
 
-const failedSchedule = {
+const failedSchedule: Schedule = {
   id: 'Not Found',
   year: 0,
   createdAt: Date,
   courses: [],
 };
 
-const failedMeeting = {
-  day: Day.Sunday,
-  startTime: 0,
-  endTime: 0,
-};
-
-const failedCourses = {
+const failedCourses: CourseSection = {
   CourseID: {
     subject: 'not found',
     code: 'not found',
@@ -82,38 +64,28 @@ async function getUserByID(id: number): Promise<User> {
 }
 
 async function getCourses(term: Term): Promise<CourseSection[]> {
-  const courses = await findCourses(term);
+  const courses = await findCourseSection(term);
 
   if (!courses) return [failedCourses];
-  let user: User;
-  let meetingTimes: MeetingTime;
 
-  const result = await Promise.all(
-    courses.map(async (course) => {
-      const courseSection = await findCourseSection(course.id);
-      if (!courseSection) return failedCourses;
-
-      if (courseSection.userId) user = await getUserByID(courseSection.userId);
-      if (courseSection.meetingTimeId)
-        meetingTimes = await getMeetingTime(courseSection.meetingTimeId);
-
-      return {
-        CourseID: {
-          subject: course.subject,
-          code: course.courseCode,
-          term: course.term as Term,
-        },
-        hoursPerWeek: courseSection.hoursPerWeek,
-        capacity: courseSection.capacity,
-        professors: [user],
-        startDate: courseSection.startDate,
-        endDate: courseSection.endDate,
-        meetingTimes: [meetingTimes],
-      };
-    })
-  );
-
-  return result;
+  return courses.map<CourseSection>((course: any) => {
+    return {
+      CourseID: {
+        code: course.course.courseCode,
+        subject: course.course.subject,
+        term: course.course.term as any,
+      },
+      capacity: course.capacity,
+      hoursPerWeek: course.hoursPerWeek,
+      startDate: course.startDate,
+      endDate: course.endDate,
+      meetingTimes: course.meetingTime.days.map((day: Day) => ({
+        day: day as Day,
+        endTime: course.meetingTime.endTime,
+        startTime: course.meetingTime.startTime,
+      })),
+    };
+  });
 }
 
 async function getSchedule(year: number): Promise<Schedule> {
@@ -121,25 +93,10 @@ async function getSchedule(year: number): Promise<Schedule> {
 
   if (!schedule) return failedSchedule;
   const course = await getCourses(Term.Fall); // Have to add term in schedule? As of now it is hardcoded
-  console.log(course);
   return {
     id: `${schedule.id}`,
     year: schedule.year,
     createdAt: schedule.createdOn,
     courses: course,
   };
-}
-
-async function getMeetingTime(id: number): Promise<MeetingTime> {
-  const meetingtime = await findMeetingTime(id);
-
-  if (!meetingtime) return failedMeeting;
-
-  const meetingSlots = {
-    day: meetingtime.days[0] as Day, // How to include all the values of day as graphql day has a type of Day not Day[]
-    startTime: meetingtime.startTime,
-    endTime: meetingtime.endTime,
-  };
-
-  return meetingSlots;
 }
