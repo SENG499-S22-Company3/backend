@@ -1,8 +1,29 @@
 import { Context } from '../context';
 import { Resolvers } from '../schema';
-import { login, createNewUser, changePassword, generateSchedule } from '../auth';
+import { APIS, DefaultApi } from '../generated-sources/openapi/api';
+import {
+  login,
+  createNewUser,
+  changePassword,
+  generateSchedule,
+} from '../auth';
 import * as utils from '../utils';
+const apiClient: DefaultApi = new DefaultApi();
 
+/*
+const schedule = {
+  hist:  [
+  fallCourses: [], SpringCourses: [],
+  SummerCourses: []
+  ]
+}
+const course = {
+  "fallCourses": [],
+  "SpringCourses": [],
+  "SummerCourses": []
+}
+const profs: never[] = []
+*/
 const noLogin = {
   success: false,
   message: 'Not logged in',
@@ -17,6 +38,10 @@ const alreadyLoggedIn = {
 
 const noPerms = {
   message: 'Insufficient permisions',
+  success: false,
+};
+const EncounteredError = {
+  message: `API call error: Error getting response from algorithm`,
   success: false,
 };
 
@@ -57,6 +82,13 @@ export const resolvers: Resolvers<Context> = {
     generateSchedule: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
+      // Call Algorithm 1 API
+      // schedulePost requires 3 parameters - {Historic data}, {coursesToSchedule} & [professors]
+      const response = apiClient.schedulePost();
+      //const response = APIS[DefaultApi.arguments.schedulePost()].toString;
+      console.log('Response from Alg1', response);
+      if (!response) return EncounteredError;
+
       return generateSchedule(_params.input);
     },
 
