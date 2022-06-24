@@ -1,6 +1,7 @@
 import { Context } from '../context';
 import { Resolvers } from '../schema';
-import { APIS, DefaultApi } from '../generated-sources/openapi/api';
+import { Algorithm1Api } from '../clientAPI/openapi/algorithm1/api';
+import { Algorithm2API } from '../clientAPI/openapi/algorithm2/api'
 import {
   login,
   createNewUser,
@@ -8,7 +9,11 @@ import {
   generateSchedule,
 } from '../auth';
 import * as utils from '../utils';
-const apiClient: DefaultApi = new DefaultApi();
+
+// Instanciate api clients
+const apiClientAlg1: Algorithm1Api = new Algorithm1Api();
+const apiClientAlg2: Algorithm2API = new Algorithm2API();
+
 
 /*
 const schedule = {
@@ -82,10 +87,10 @@ export const resolvers: Resolvers<Context> = {
     generateSchedule: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
+
       // Call Algorithm 1 API
       // schedulePost requires 3 parameters - {Historic data}, {coursesToSchedule} & [professors]
-      const response = apiClient.schedulePost();
-      //const response = APIS[DefaultApi.arguments.schedulePost()].toString;
+      const response = apiClientAlg1.schedulePost();
       console.log('Response from Alg1', response);
       if (!response) return EncounteredError;
 
@@ -93,7 +98,5 @@ export const resolvers: Resolvers<Context> = {
     },
 
   },
-
-  
 };
 
