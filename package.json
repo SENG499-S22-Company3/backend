@@ -15,7 +15,6 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "setup": "husky install && npm run db:generate",
-    "algapigen": "rm rf src/generated-sources/openapi; openapi-generator-cli generate -i ./alg-api.json -o src/generated-sources/openapi -g typescript-node --additional-properties=supportsES6=true"
   },
   "engines": {
     "node": ">=14.0.0"
