@@ -1,7 +1,19 @@
 import { findUserById } from '../prisma/user';
-import { findCourses, findMeetingTime } from '../prisma/course';
+import {
+  findCourses,
+  findMeetingTime,
+  findCourseSection,
+} from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
-import { User, CourseSection, Schedule, Term, Role, Day } from '../schema';
+import {
+  User,
+  CourseSection,
+  Schedule,
+  Term,
+  Role,
+  Day,
+  MeetingTime,
+} from '../schema';
 import { Context } from '../context';
 export { getMe, getUserByID, getCourses, getSchedule };
 
@@ -69,80 +81,65 @@ async function getUserByID(id: number): Promise<User> {
   };
 }
 
-async function getCourses(term: Term): Promise<CourseSection> {
+async function getCourses(term: Term): Promise<CourseSection[]> {
   const courses = await findCourses(term);
-  if (!courses) return failedCourses;
-  let user;
-  let profs;
-  let meetingTimes;
-  let meetingSlots;
-  if (courses[0].courseSection[0].userId)
-    user = await findUserById(courses[0].courseSection[0].userId);
 
-  if (!user) profs = failedMeandID;
-  else
-    profs = {
-      id: user.id,
-      username: user.username,
-      password: user.password,
-      role: user.role as Role,
-      preferences: [],
-      active: user.active,
-    };
+  if (!courses) return [failedCourses];
+  let user: User;
+  let meetingTimes: MeetingTime;
 
-  if (courses[0].courseSection[0].meetingTimeId)
-    meetingTimes = await findMeetingTime(
-      courses[0].courseSection[0].meetingTimeId
-    );
+  const result = await Promise.all(
+    courses.map(async (course) => {
+      const courseSection = await findCourseSection(course.id);
+      if (!courseSection) return failedCourses;
 
-  if (!meetingTimes) meetingSlots = failedMeeting;
-  else
-    meetingSlots = {
-      day: meetingTimes.days[0] as Day, // How to include all the values in the array day[]
-      startTime: meetingTimes.startTime,
-      endTime: meetingTimes.endTime,
-    };
+      if (courseSection.userId) user = await getUserByID(courseSection.userId);
+      if (courseSection.meetingTimeId)
+        meetingTimes = await getMeetingTime(courseSection.meetingTimeId);
 
-  // return courses.map((course) => {
-  //   return {
-  //       CourseID: {
-  //         subject: course.subject,
-  //         code: course.courseCode,
-  //         term: course.term as Term,
-  //       },
-  //       hoursPerWeek: course.courseSection[0].hoursPerWeek,
-  //       capacity: course.courseSection[0].capacity,
-  //       professors: [],
-  //       startDate: course.courseSection[0].startDate,
-  //       endDate: course.courseSection[0].endDate,
-  //       meetingTimes: [],
-  //     };
-  // })
+      return {
+        CourseID: {
+          subject: course.subject,
+          code: course.courseCode,
+          term: course.term as Term,
+        },
+        hoursPerWeek: courseSection.hoursPerWeek,
+        capacity: courseSection.capacity,
+        professors: [user],
+        startDate: courseSection.startDate,
+        endDate: courseSection.endDate,
+        meetingTimes: [meetingTimes],
+      };
+    })
+  );
 
-  return {
-    CourseID: {
-      subject: courses[0].subject,
-      code: courses[0].courseCode,
-      term: courses[0].term as Term,
-    },
-    hoursPerWeek: courses[0].courseSection[0].hoursPerWeek,
-    capacity: courses[0].courseSection[0].capacity,
-    professors: [profs],
-    startDate: courses[0].courseSection[0].startDate,
-    endDate: courses[0].courseSection[0].endDate,
-    meetingTimes: [meetingSlots],
-  };
+  return result;
 }
 
 async function getSchedule(year: number): Promise<Schedule> {
   const schedule = await findSchedule(year);
 
   if (!schedule) return failedSchedule;
-
+  const course = await getCourses(Term.Fall); // Have to add term in schedule? As of now it is hardcoded
+  console.log(course);
   return {
-    id: `${schedule.id}`, // schedule.id.toString not working
+    id: `${schedule.id}`,
     year: schedule.year,
     createdAt: schedule.createdOn,
-    courses: [],
+    courses: course,
   };
+}
+
+async function getMeetingTime(id: number): Promise<MeetingTime> {
+  const meetingtime = await findMeetingTime(id);
+
+  if (!meetingtime) return failedMeeting;
+
+  const meetingSlots = {
+    day: meetingtime.days[0] as Day, // How to include all the values of day as graphql day has a type of Day not Day[]
+    startTime: meetingtime.startTime,
+    endTime: meetingtime.endTime,
+  };
+
+  return meetingSlots;
 }

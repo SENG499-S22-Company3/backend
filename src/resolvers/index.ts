@@ -24,8 +24,7 @@ const noPerms = {
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: async (_, _params, ctx) => {
-      if (!ctx.session.user) return null;
-      else if (!ctx.session.user.username) return null;
+      if (!ctx.session.user || !ctx.session.user.username) return null;
       return await getMe(ctx);
     },
     findUserById: async (_, params, ctx) => {
@@ -34,7 +33,7 @@ export const resolvers: Resolvers<Context> = {
     },
     courses: async (_, params, ctx) => {
       if (!ctx.session.user || !params.term) return null;
-      return await [getCourses(params.term)];
+      return await getCourses(params.term);
     },
     schedule: async (_, params, ctx) => {
       if (!ctx.session.user) return null;

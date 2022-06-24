@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './index';
 export { findSchedule };
-
-const prisma = new PrismaClient();
 
 async function findSchedule(scheduleyear: number) {
   const schedule = await prisma.schedule.findFirst({
