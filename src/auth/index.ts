@@ -123,7 +123,7 @@ async function createNewUser(
   };
 }
 
-function checkDigits(year: number){
+function checkDigits(year: number) {
   const numOfDigits = year.toString().length;
   return numOfDigits;
 }

@@ -1,7 +1,6 @@
 export * from './defaultApi';
 import { Algorithm1Api } from './defaultApi';
 import * as http from 'http';
-import { Schedule } from '../api';
 
 export class HttpError extends Error {
   constructor(

@@ -1,7 +1,7 @@
 import { Context } from '../context';
 import { Resolvers } from '../schema';
 import { Algorithm1Api } from '../clientAPI/openapi/algorithm1/api';
-import { Algorithm2API } from '../clientAPI/openapi/algorithm2/api'
+// import { Algorithm2API } from '../clientAPI/openapi/algorithm2/api';
 import {
   login,
   createNewUser,
@@ -12,23 +12,8 @@ import * as utils from '../utils';
 
 // Instanciate api clients
 const apiClientAlg1: Algorithm1Api = new Algorithm1Api();
-const apiClientAlg2: Algorithm2API = new Algorithm2API();
+// const apiClientAlg2: Algorithm2API = new Algorithm2API();
 
-
-/*
-const schedule = {
-  hist:  [
-  fallCourses: [], SpringCourses: [],
-  SummerCourses: []
-  ]
-}
-const course = {
-  "fallCourses": [],
-  "SpringCourses": [],
-  "SummerCourses": []
-}
-const profs: never[] = []
-*/
 const noLogin = {
   success: false,
   message: 'Not logged in',
@@ -96,7 +81,5 @@ export const resolvers: Resolvers<Context> = {
 
       return generateSchedule(_params.input);
     },
-
   },
 };
-

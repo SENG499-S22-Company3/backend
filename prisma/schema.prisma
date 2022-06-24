@@ -43,7 +43,7 @@ model CourseSection {
   courseId      Int
   schedule      Schedule?   @relation(fields: [scheduleId], references: [id])
   scheduleId    Int?
-
+  
 }
 
 model Course {
