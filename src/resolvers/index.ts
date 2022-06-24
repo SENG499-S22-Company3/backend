@@ -9,6 +9,7 @@ import {
   generateSchedule,
 } from '../auth';
 import * as utils from '../utils';
+import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
 
 // Instanciate api clients
 const apiClientAlg1: Algorithm1Api = new Algorithm1Api();
@@ -37,10 +38,21 @@ const EncounteredError = {
 
 export const resolvers: Resolvers<Context> = {
   Query: {
-    me: (_, _params, ctx) => {
+    me: async (_, _params, ctx) => {
+      if (!ctx.session.user || !ctx.session.user.username) return null;
+      return await getMe(ctx);
+    },
+    findUserById: async (_, params, ctx) => {
+      if (!ctx.session.user || !params.id) return null;
+      return await getUserByID(+params.id);
+    },
+    courses: async (_, params, ctx) => {
+      if (!ctx.session.user || !params.term) return null;
+      return await getCourses(params.term);
+    },
+    schedule: async (_, params, ctx) => {
       if (!ctx.session.user) return null;
-      console.log(ctx.session.user.username);
-      return null;
+      return getSchedule(params.year || new Date().getFullYear());
     },
   },
   Mutation: {

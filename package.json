@@ -14,7 +14,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "setup": "husky install && npm run db:generate"
+    "setup": "docker-compose up -d && husky install && npm run db:generate && npx -y prisma migrate deploy && npm run db:seed"
   },
   "engines": {
     "node": ">=14.0.0"

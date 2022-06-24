@@ -1,15 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-export { prisma, lookupUser };
+export { prisma };
 
 const prisma = new PrismaClient();
-
-async function lookupUser(username: string) {
-  console.log(`looking up ${username}`);
-  const user = await prisma.user.findUnique({
-    where: {
-      username: username,
-    },
-  });
-  console.log(user);
-  return user;
-}
