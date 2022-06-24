@@ -1,0 +1,83 @@
+name: E2E Testing
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      algorithm1:
+        image: ghcr.io/seng499-s22-company3/algorithm-1:latest
+        env:
+          PORT: 4040
+        ports:
+          - 4040:4040
+      algorithm2:
+        image: ghcr.io/seng499-s22-company3/algorithm-2:latest
+        env:
+          PORT: 4041
+        ports:
+          - 4041:4041
+      # backend:
+      #   image: ghcr.io/seng499-s22-company3/backend:latest
+      #   env:
+      #     PORT: 4000
+      #     DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+      #   ports:
+      #     - 4000:4000
+      #   # options: >-
+      #   #   --health-cmd "curl -f http://localhost:4000/healthcheck"
+      #   #   --health-interval 10s
+      #   #   --health-timeout 5s
+      #   #   --health-retries 5
+      postgres:
+        # Docker Hub image
+        image: postgres:14-alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+      - name: Checkout shared repo
+        uses: actions/checkout@v3
+        with:
+          repository: SENG499-S22-Company3/shared
+          path: shared
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm ci --no-audit --no-progress
+      - name: Install test dependencies
+        working-directory: shared
+        run: npm ci --no-audit --no-progress
+      - name: Database migrations
+        run: npx -y prisma migrate dev && npx -y prisma db seed
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+      - name: Build
+        run: npm run build
+      - name: Start backend
+        run: npm start &
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+      - name: Test
+        working-directory: shared
+        env:
+          BACKEND_URL: http://localhost:4000
+        run: npm test
