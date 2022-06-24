@@ -5,38 +5,8 @@ import { User, CourseSection, Schedule, Term, Role, Day } from '../schema';
 import { Context } from '../context';
 export { getMe, getUserByID, getCourses, getSchedule };
 
-const failedMeandID: User = {
-  id: 0,
-  username: 'Not Found',
-  password: 'Not Found',
-  role: Role.User,
-  preferences: [],
-  active: false,
-};
-
-const failedSchedule: Schedule = {
-  id: 'Not Found',
-  year: 0,
-  createdAt: Date,
-  courses: [],
-};
-
-const failedCourses: CourseSection = {
-  CourseID: {
-    subject: 'not found',
-    code: 'not found',
-    term: Term.Fall,
-  },
-  hoursPerWeek: 0,
-  capacity: 0,
-  professors: [],
-  startDate: 0,
-  endDate: 0,
-  meetingTimes: [],
-};
-
-async function getMe(ctx: Context): Promise<User> {
-  if (!ctx.session.user) return failedMeandID;
+async function getMe(ctx: Context): Promise<User | null> {
+  if (!ctx.session.user) return null;
 
   return {
     id: ctx.session.user.id,
@@ -48,10 +18,10 @@ async function getMe(ctx: Context): Promise<User> {
   };
 }
 
-async function getUserByID(id: number): Promise<User> {
+async function getUserByID(id: number): Promise<User | null> {
   const user = await findUserById(id);
 
-  if (!user) return failedMeandID;
+  if (!user) return null;
 
   return {
     id: user.id,
@@ -63,10 +33,10 @@ async function getUserByID(id: number): Promise<User> {
   };
 }
 
-async function getCourses(term: Term): Promise<CourseSection[]> {
+async function getCourses(term: Term): Promise<CourseSection[] | null> {
   const courses = await findCourseSection(term);
 
-  if (!courses) return [failedCourses];
+  if (!courses) return null;
 
   return courses.map<CourseSection>((course: any) => {
     return {
@@ -88,10 +58,10 @@ async function getCourses(term: Term): Promise<CourseSection[]> {
   });
 }
 
-async function getSchedule(year: number): Promise<Schedule> {
+async function getSchedule(year: number): Promise<Schedule | null> {
   const schedule = await findSchedule(year);
 
-  if (!schedule) return failedSchedule;
+  if (!schedule) return null;
   const course = await getCourses(Term.Fall); // Have to add term in schedule? As of now it is hardcoded
   return {
     id: `${schedule.id}`,

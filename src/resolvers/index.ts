@@ -37,7 +37,7 @@ export const resolvers: Resolvers<Context> = {
     },
     schedule: async (_, params, ctx) => {
       if (!ctx.session.user) return null;
-      return getSchedule(params.year || 2021);
+      return getSchedule(params.year || new Date().getFullYear());
     },
   },
   Mutation: {
