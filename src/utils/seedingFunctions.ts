@@ -46,7 +46,21 @@ export const addCourseSections = async (
     });
 
     if (!currentCourse) {
+      // Create course
       currentCourse = await prisma.course.create({
+        data: {
+          subject: courseSection.subject,
+          courseCode: courseSection.courseNumber,
+          term: term,
+          title: courseSection.courseTitle,
+        },
+      });
+    } else {
+      // Update course
+      await prisma.course.update({
+        where: {
+          id: currentCourse.id,
+        },
         data: {
           subject: courseSection.subject,
           courseCode: courseSection.courseNumber,
@@ -70,6 +84,7 @@ export const addCourseSections = async (
     });
 
     if (!section) {
+      // Create section
       section = await prisma.courseSection.create({
         data: {
           course: {
@@ -82,6 +97,11 @@ export const addCourseSections = async (
           endDate: endDate,
           hoursPerWeek: meetingTime.hoursWeek,
           capacity: 100,
+          schedule: {
+            connect: {
+              id: 1,
+            },
+          },
         },
       });
 
@@ -93,6 +113,30 @@ export const addCourseSections = async (
           courseSection: {
             connect: {
               id: section.id,
+            },
+          },
+        },
+      });
+    } else {
+      // Update section
+      await prisma.courseSection.update({
+        where: {
+          id: section.id,
+        },
+        data: {
+          course: {
+            connect: {
+              id: currentCourse.id,
+            },
+          },
+          sectionNumber: courseSection.sequenceNumber,
+          startDate: startDate,
+          endDate: endDate,
+          hoursPerWeek: meetingTime.hoursWeek,
+          capacity: 100,
+          schedule: {
+            connect: {
+              id: 1,
             },
           },
         },
