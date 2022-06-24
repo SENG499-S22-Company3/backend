@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QUERY MOCK TESTS Mocking Courses 1`] = `
+Object {
+  "courses": Array [
+    Object {
+      "CourseID": Object {
+        "code": "159.92.65.89",
+        "subject": "Feil LLC",
+        "term": "FALL",
+      },
+      "capacity": 20029,
+      "endDate": "s<}OBCgCDy",
+      "hoursPerWeek": 43086,
+      "meetingTimes": Array [
+        Object {
+          "day": "FRIDAY",
+          "endTime": "Tp63?3y)7^",
+          "startTime": "6YrK^sVZ[j",
+        },
+      ],
+      "professors": Array [
+        Object {
+          "active": true,
+          "id": 97681,
+          "password": "Investment Account",
+          "preferences": Array [
+            Object {
+              "id": Object {
+                "code": "221.82.180.4",
+                "subject": "Mayer, Dach and Welch",
+                "term": "FALL",
+              },
+              "preference": 30725,
+            },
+          ],
+          "role": "USER",
+          "username": "Graham",
+        },
+      ],
+      "startDate": "uu?Hu&Htq&",
+    },
+    Object {
+      "CourseID": Object {
+        "code": "174.54.38.60",
+        "subject": "Lowe - Lesch",
+        "term": "FALL",
+      },
+      "capacity": 55907,
+      "endDate": "(Kr.g_jaXV",
+      "hoursPerWeek": 32957,
+      "meetingTimes": Array [
+        Object {
+          "day": "FRIDAY",
+          "endTime": "G9]yHv\\"A6y",
+          "startTime": "/M,Z]_)uJJ",
+        },
+      ],
+      "professors": Array [
+        Object {
+          "active": true,
+          "id": 67266,
+          "password": "Personal Loan Account",
+          "preferences": Array [
+            Object {
+              "id": Object {
+                "code": "221.82.180.4",
+                "subject": "Mayer, Dach and Welch",
+                "term": "FALL",
+              },
+              "preference": 30725,
+            },
+          ],
+          "role": "USER",
+          "username": "Georgette",
+        },
+      ],
+      "startDate": "};{IV/B<,w",
+    },
+  ],
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking Schedule 1`] = `
+Object {
+  "schedule": Object {
+    "courses": Array [
+      Object {
+        "CourseID": Object {
+          "code": "150.130.71.90",
+          "subject": "Ullrich Group",
+          "term": "FALL",
+        },
+        "capacity": 48741,
+        "endDate": "#xdz?Ff^vW",
+        "hoursPerWeek": 68523,
+        "meetingTimes": Array [
+          Object {
+            "day": "FRIDAY",
+            "endTime": "1_c%evIJc.",
+            "startTime": "rvr''iVSTK",
+          },
+        ],
+        "professors": Array [
+          Object {
+            "active": true,
+            "id": 57382,
+            "password": "Credit Card Account",
+            "preferences": Array [
+              Object {
+                "id": Object {
+                  "code": "221.82.180.4",
+                  "subject": "Mayer, Dach and Welch",
+                  "term": "FALL",
+                },
+                "preference": 30725,
+              },
+            ],
+            "role": "USER",
+            "username": "Boyd",
+          },
+        ],
+        "startDate": "]KotXv\\"Ccr",
+      },
+    ],
+    "createdAt": "IbI^qQLvKt",
+    "id": "Bahamas",
+    "year": 3,
+  },
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking me 1`] = `
+Object {
+  "me": Object {
+    "active": true,
+    "id": 74186,
+    "password": "Savings Account",
+    "preferences": Array [
+      Object {
+        "id": Object {
+          "code": "221.82.180.4",
+          "subject": "Mayer, Dach and Welch",
+          "term": "FALL",
+        },
+        "preference": 30725,
+      },
+    ],
+    "role": "USER",
+    "username": "Joanne",
+  },
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking survey 1`] = `
+Object {
+  "survey": Object {
+    "courses": Array [
+      Object {
+        "code": "93.213.43.160",
+        "subject": "Metz, Prosacco and Rutherford",
+        "term": "FALL",
+      },
+    ],
+  },
+}
+`;

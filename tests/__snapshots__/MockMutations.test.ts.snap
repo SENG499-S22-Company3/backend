@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MUTATION MOCK TESTS Mock changePassword 1`] = `
+Object {
+  "changeUserPassword": Object {
+    "message": "Large Münsterländer",
+    "success": true,
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock createUser 1`] = `undefined`;
+
+exports[`MUTATION MOCK TESTS Mock logout 1`] = `
+Object {
+  "logout": Object {
+    "message": "optimizing",
+    "success": true,
+    "token": "34.151.14.178",
+  },
+}
+`;
