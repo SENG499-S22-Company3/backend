@@ -1,7 +1,6 @@
 import { Context } from '../context';
 import { Resolvers } from '../schema';
-import { Algorithm1Api } from '../clientAPI/openapi/algorithm1/api';
-// import { Algorithm2API } from '../clientAPI/openapi/algorithm2/api';
+
 import {
   login,
   createNewUser,
@@ -10,10 +9,6 @@ import {
 } from '../auth';
 import * as utils from '../utils';
 import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
-
-// Instanciate api clients
-const apiClientAlg1: Algorithm1Api = new Algorithm1Api();
-// const apiClientAlg2: Algorithm2API = new Algorithm2API();
 
 const noLogin = {
   success: false,
@@ -85,10 +80,9 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
-      // Call Algorithm 1 API
-      // schedulePost requires 3 parameters - {Historic data}, {coursesToSchedule} & [professors]
-      const response = apiClientAlg1.schedulePost();
-      console.log('Response from Alg1', response);
+      const { response, body } = await ctx.algorithm1.schedulePost();
+      console.log('response(alg1)', JSON.stringify(response));
+      console.log('body(alg1)', JSON.stringify(body));
       if (!response) return EncounteredError;
 
       return generateSchedule(_params.input);
