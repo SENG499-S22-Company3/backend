@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-// import { RequestFile } from './models';
+import { RequestFile } from './models';
 
 export class CourseObject {
   'subject': string;
@@ -68,8 +68,9 @@ export class CourseObject {
 }
 
 export namespace CourseObject {
-  export enum SemesterEnum {}
-  // Fall = <any>'FALL',
-  // Spring = <any>'SPRING',
-  // Summer = <any>'SUMMER',
+  export enum SemesterEnum {
+    Fall = <any>'FALL',
+    Spring = <any>'SPRING',
+    Summer = <any>'SUMMER',
+  }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable valid-jsdoc */
 /**
  * Algorithm 2 API
  * This is an API for SENG499 Capstone Company 3 & 4. The request input body and response output body are identical, the only thing that changes is the \"capacity\" attribute. If it is 0, it will be updated to the Alg\'s predicted value. If it is non-zero, it will not be updated (assumed that it has been manually edited or current prediction should not be updated).
@@ -24,7 +23,7 @@ import {
   Interceptor,
 } from '../model/models';
 
-// import { HttpError, RequestFile } from './apis';
+import { HttpError, RequestFile } from './apis';
 
 const defaultBasePath =
   'https://virtserver.swaggerhub.com/SENG499-Algorithm2/Algorithm2API/1.0.0';
@@ -35,7 +34,7 @@ const defaultBasePath =
 
 export enum DefaultApiApiKeys {}
 
-export class Algorithm2API {
+export class DefaultApi {
   protected _basePath = defaultBasePath;
   protected _defaultHeaders: any = {};
   protected _useQuerystring: boolean = false;

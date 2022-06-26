@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-// import { RequestFile } from './models';
+import { RequestFile } from './models';
 
 export class Preference {
   'courseNum': string;
@@ -47,8 +47,9 @@ export class Preference {
 }
 
 export namespace Preference {
-  export enum TermEnum {}
-  // Fall = <any>'FALL',
-  // Spring = <any>'SPRING',
-  // Summer = <any>'SUMMER',
+  export enum TermEnum {
+    Fall = <any>'FALL',
+    Spring = <any>'SPRING',
+    Summer = <any>'SUMMER',
+  }
 }

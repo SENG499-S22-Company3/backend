@@ -1,5 +1,5 @@
 export * from './defaultApi';
-import { Algorithm2API } from './defaultApi';
+import { DefaultApi } from './defaultApi';
 import * as http from 'http';
 
 export class HttpError extends Error {
@@ -15,4 +15,4 @@ export class HttpError extends Error {
 
 export { RequestFile } from '../model/models';
 
-export const Algorithm2 = [Algorithm2API];
+export const APIS = [DefaultApi];

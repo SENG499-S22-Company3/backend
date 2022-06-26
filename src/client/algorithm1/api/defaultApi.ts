@@ -1,4 +1,3 @@
-/* eslint-disable valid-jsdoc */
 /**
  * algorithm-1
  * This is the Algorithm-1 API endpoint specs for SENG499 Capstone Company 3 & 4.
@@ -24,7 +23,7 @@ import {
   Interceptor,
 } from '../model/models';
 
-import { HttpError } from './apis';
+import { HttpError, RequestFile } from './apis';
 
 const defaultBasePath =
   'https://virtserver.swaggerhub.com/GAGNE16/algorithm-1/1.0';
@@ -35,7 +34,7 @@ const defaultBasePath =
 
 export enum DefaultApiApiKeys {}
 
-export class Algorithm1Api /* DefaultApi*/ {
+export class DefaultApi {
   protected _basePath = defaultBasePath;
   protected _defaultHeaders: any = {};
   protected _useQuerystring: boolean = false;
@@ -172,7 +171,6 @@ export class Algorithm1Api /* DefaultApi*/ {
               body = ObjectSerializer.deserialize(body, 'Array<Schedule>');
               resolve({ response: response, body: body });
             } else {
-              console.log(response.statusCode);
               reject(new HttpError(response, body, response.statusCode));
             }
           }
