@@ -17,8 +17,8 @@
     "setup": "docker-compose up -d && husky install && npm run db:generate && npx -y prisma migrate deploy && npm run db:seed",
     "client:generate": "npm run client:clean && npm run client:build",
     "client:build": "npm run client:build:algo1 && npm run client:build:algo2",
-    "client:build:algo1": "openapi-generator generate -i ./algorithm1-api.json -o src/client/algorithm1 -g typescript-node --additional-properties=supportsES6=true",
-    "client:build:algo2": "openapi-generator generate -i ./algorithm2-api.json -o src/client/algorithm2 -g typescript-node --additional-properties=supportsES6=true",
+    "client:build:algo1": "openapi-generator generate -i ./GAGNE16-algorithm-1-2.0-resolved.yaml -o src/client/algorithm1 -g typescript-axios --additional-properties=supportsES6=true",
+    "client:build:algo2": "openapi-generator generate -i ./algorithm2-api.json -o src/client/algorithm2 -g typescript-axios --additional-properties=supportsES6=true",
     "client:clean": "rm -rf ./src/client"
   },
   "engines": {
@@ -65,6 +65,7 @@
     "@prisma/client": "^3.15.2",
     "apollo-server-core": "^3.8.1",
     "apollo-server-express": "^3.8.1",
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
