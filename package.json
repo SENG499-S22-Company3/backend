@@ -14,7 +14,12 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "setup": "docker-compose up -d && husky install && npm run db:generate && npx -y prisma migrate deploy && npm run db:seed"
+    "setup": "docker-compose up -d && husky install && npm run db:generate && npx -y prisma migrate deploy && npm run db:seed",
+    "client:generate": "npm run client:clean && npm run client:build",
+    "client:build": "npm run client:build:algo1 && npm run client:build:algo2",
+    "client:build:algo1": "openapi-generator generate -i ./algorithm1-api.json -o src/client/algorithm1 -g typescript-node --additional-properties=supportsES6=true",
+    "client:build:algo2": "openapi-generator generate -i ./algorithm2-api.json -o src/client/algorithm2 -g typescript-node --additional-properties=supportsES6=true",
+    "client:clean": "rm -rf ./src/client"
   },
   "engines": {
     "node": ">=14.0.0"
