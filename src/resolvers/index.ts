@@ -9,6 +9,7 @@ import {
 } from '../auth';
 import * as utils from '../utils';
 import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
+import { prisma } from '../prisma';
 
 const noLogin = {
   success: false,
@@ -53,39 +54,57 @@ export const resolvers: Resolvers<Context> = {
   Mutation: {
     login: async (_, params, ctx) => {
       if (ctx.session.user) return alreadyLoggedIn;
-      else return await login(ctx, params.username, params.password);
+      return await login(ctx, params.username, params.password);
     },
     logout: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else {
-        await ctx.logout();
-        return {
-          token: '',
-          success: true,
-          message: 'Logged out',
-        };
-      }
+      await ctx.logout();
+      return {
+        token: '',
+        success: true,
+        message: 'Logged out',
+      };
     },
     changeUserPassword: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else return changePassword(ctx.session.user, _params.input);
+      return changePassword(ctx.session.user, _params.input);
     },
-    createUser: async (_, _params, ctx) => {
+    createUser: async (_, { username }, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else if (!(await utils.isAdmin(ctx.session.user))) return noPerms;
-      else return await createNewUser(_params.username);
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms;
+      return await createNewUser(username);
     },
-
-    generateSchedule: async (_, _params, ctx) => {
+    generateSchedule: async (_, { input }, ctx) => {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
-      const { response, body } = await ctx.algorithm1.schedulePost();
-      console.log('response(alg1)', JSON.stringify(response));
-      console.log('body(alg1)', JSON.stringify(body));
-      if (!response) return EncounteredError;
+      try {
+        // TODO: fill out empty arrays
+        const response = await ctx.algorithm1.schedulePost({
+          hardScheduled: [],
+          coursesToSchedule: [],
+          professors: [],
+        });
 
-      return generateSchedule(_params.input);
+        console.log(JSON.stringify(response.data));
+        // TODO: store response in database
+        await prisma.schedule.create({
+          data: {
+            year: input.year,
+
+            courseSection: {
+              createMany: {
+                data: [],
+                skipDuplicates: true,
+              },
+            },
+          },
+        });
+      } catch (e) {
+        return EncounteredError;
+      }
+
+      return generateSchedule(input);
     },
   },
 };

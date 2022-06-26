@@ -1,8 +1,9 @@
 .gitignore
+.npmignore
 .openapi-generator-ignore
 api.ts
-api/apis.ts
-api/defaultApi.ts
+base.ts
+common.ts
+configuration.ts
 git_push.sh
-model/courseObject.ts
-model/models.ts
+index.ts

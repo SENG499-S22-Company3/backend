@@ -1,12 +1,9 @@
 .gitignore
+.npmignore
 .openapi-generator-ignore
 api.ts
-api/apis.ts
-api/defaultApi.ts
+base.ts
+common.ts
+configuration.ts
 git_push.sh
-model/assignment.ts
-model/course.ts
-model/models.ts
-model/preference.ts
-model/professor.ts
-model/schedule.ts
+index.ts

@@ -15,19 +15,17 @@
       "post": {
         "summary": "Generate schedule(s)",
         "description": "Takes 3 inputs and returns 1 to 3 semesters for Fall, Spring, and Summer terms accordingly. Would return semester schedules for filled fields. Therefore, if fall is the only field then the other will be empty.",
-        "parameters": [
-          {
-            "name": "schedule",
-            "in": "header",
-            "description": "This is the request body format.",
-            "required": false,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "$ref": "#/components/schemas/schedule"
+        "requestBody": {
+          "description": "This is the request body format.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/schedule_body"
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Schedule(s) generated successfully and returned.",
@@ -246,15 +244,10 @@
           }
         }
       },
-      "schedule": {
-        "required": [
-          "coursesToSchedule",
-          "historicData",
-          "professors"
-        ],
+      "schedule_body": {
         "type": "object",
         "properties": {
-          "historicData": {
+          "hardScheduled": {
             "type": "array",
             "example": {
               "fallCourses": [],
