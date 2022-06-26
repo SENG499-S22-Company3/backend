@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MUTATION MOCK TESTS Mock changePassword 1`] = `
+Object {
+  "changeUserPassword": Object {
+    "message": "Small Münsterländer",
+    "success": true,
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock createTeachingPreferences 1`] = `
+Object {
+  "createTeachingPreference": Object {
+    "message": "Chinese Crested Dog",
+    "success": true,
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock createUser 1`] = `undefined`;
+
+exports[`MUTATION MOCK TESTS Mock createUser 2`] = `
+Object {
+  "createUser": Object {
+    "message": "If we synthesize the array, we can get to the TCP capacitor through the digital OCR transmitter!",
+    "password": "Donskoy",
+    "success": true,
+    "username": "Catalina",
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock generateSchedule 1`] = `
+Object {
+  "generateSchedule": Object {
+    "message": "Kerry Blue Terrier",
+    "success": true,
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock login 1`] = `
+Object {
+  "login": Object {
+    "message": "secondary",
+    "success": true,
+    "token": "32.55.35.176",
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock logout 1`] = `
+Object {
+  "logout": Object {
+    "message": "content-based",
+    "success": true,
+    "token": "174.219.205.26",
+  },
+}
+`;
+
+exports[`MUTATION MOCK TESTS Mock resetPassword 1`] = `
+Object {
+  "resetPassword": Object {
+    "message": "Jry_^R+QDR",
+    "password": "Gary",
+    "success": true,
+  },
+}
+`;

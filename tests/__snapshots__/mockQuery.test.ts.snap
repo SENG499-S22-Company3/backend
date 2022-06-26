@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QUERY MOCK TESTS Mocking Courses 1`] = `
+Object {
+  "courses": Array [
+    Object {
+      "CourseID": Object {
+        "code": "47.23.28.33",
+        "subject": "Zboncak, Prohaska and King",
+        "term": "FALL",
+      },
+      "capacity": 73245,
+      "endDate": "W_!8@R)I>&",
+      "hoursPerWeek": 48615,
+      "meetingTimes": Array [
+        Object {
+          "day": "FRIDAY",
+          "endTime": "=JUWbIqCA]",
+          "startTime": ")U:\`z8Kzw]",
+        },
+      ],
+      "professors": Array [
+        Object {
+          "active": true,
+          "id": 15364,
+          "password": "Investment Account",
+          "preferences": Array [
+            Object {
+              "id": Object {
+                "code": "217.0.188.173",
+                "subject": "Kunze, Crona and Muller",
+                "term": "FALL",
+              },
+              "preference": 76025,
+            },
+          ],
+          "role": "USER",
+          "username": "Raleigh",
+        },
+      ],
+      "startDate": "e+g#EWZa@6",
+    },
+    Object {
+      "CourseID": Object {
+        "code": "252.178.184.3",
+        "subject": "Johnson Inc",
+        "term": "FALL",
+      },
+      "capacity": 5184,
+      "endDate": "o9wv^}f\\\\CG",
+      "hoursPerWeek": 85776,
+      "meetingTimes": Array [
+        Object {
+          "day": "FRIDAY",
+          "endTime": "f<N&o)e!l_",
+          "startTime": "u0VsmAZAbk",
+        },
+      ],
+      "professors": Array [
+        Object {
+          "active": true,
+          "id": 59955,
+          "password": "Money Market Account",
+          "preferences": Array [
+            Object {
+              "id": Object {
+                "code": "217.0.188.173",
+                "subject": "Kunze, Crona and Muller",
+                "term": "FALL",
+              },
+              "preference": 76025,
+            },
+          ],
+          "role": "USER",
+          "username": "Kimberly",
+        },
+      ],
+      "startDate": ">'e;ppc=p.",
+    },
+  ],
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking Schedule 1`] = `
+Object {
+  "schedule": Object {
+    "courses": Array [
+      Object {
+        "CourseID": Object {
+          "code": "40.225.77.77",
+          "subject": "Goodwin - Langworth",
+          "term": "FALL",
+        },
+        "capacity": 14488,
+        "endDate": "rS|I&-+rbk",
+        "hoursPerWeek": 34646,
+        "meetingTimes": Array [
+          Object {
+            "day": "FRIDAY",
+            "endTime": "q*(qqO%P'5",
+            "startTime": "]*}d9)AJ0\\"",
+          },
+        ],
+        "professors": Array [
+          Object {
+            "active": true,
+            "id": 1668,
+            "password": "Home Loan Account",
+            "preferences": Array [
+              Object {
+                "id": Object {
+                  "code": "217.0.188.173",
+                  "subject": "Kunze, Crona and Muller",
+                  "term": "FALL",
+                },
+                "preference": 76025,
+              },
+            ],
+            "role": "USER",
+            "username": "Ora",
+          },
+        ],
+        "startDate": "{6H#R|9B(l",
+      },
+    ],
+    "createdAt": ".&nh.Z\\"505",
+    "id": "Maldives",
+    "year": 5,
+  },
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking findUserByID 1`] = `
+Object {
+  "findUserById": Object {
+    "active": true,
+    "id": 91421,
+    "password": "Money Market Account",
+    "preferences": Array [
+      Object {
+        "id": Object {
+          "code": "217.0.188.173",
+          "subject": "Kunze, Crona and Muller",
+          "term": "FALL",
+        },
+        "preference": 76025,
+      },
+    ],
+    "role": "USER",
+    "username": "Monica",
+  },
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking me 1`] = `
+Object {
+  "me": Object {
+    "active": true,
+    "id": 49193,
+    "password": "Credit Card Account",
+    "preferences": Array [
+      Object {
+        "id": Object {
+          "code": "217.0.188.173",
+          "subject": "Kunze, Crona and Muller",
+          "term": "FALL",
+        },
+        "preference": 76025,
+      },
+    ],
+    "role": "USER",
+    "username": "Emory",
+  },
+}
+`;
+
+exports[`QUERY MOCK TESTS Mocking survey 1`] = `
+Object {
+  "survey": Object {
+    "courses": Array [
+      Object {
+        "code": "254.16.158.197",
+        "subject": "Wolf - Hilll",
+        "term": "FALL",
+      },
+    ],
+  },
+}
+`;
