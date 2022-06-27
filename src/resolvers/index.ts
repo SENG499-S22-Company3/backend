@@ -13,6 +13,7 @@ import axios from 'axios';
 import minInput from '../input.json';
 import { Schedule } from './types';
 import { prisma } from '../prisma';
+import { getTime } from '../utils/time';
 
 const noLogin = {
   success: false,
@@ -109,6 +110,11 @@ export const resolvers: Resolvers<Context> = {
           days = appendDay(course.meetingTime.saturday, 'SATURDAY', days);
           days = appendDay(course.meetingTime.sunday, 'SUNDAY', days);
 
+          const startDate = getTime(course.meetingTime.beginTime);
+          startDate.setFullYear(input.year, 4, 1);
+          const endDate = getTime(course.meetingTime.endtime);
+          endDate.setFullYear(input.year, 7, 1);
+
           await prisma.course.upsert({
             create: {
               courseCode: course.courseNumber,
@@ -119,15 +125,15 @@ export const resolvers: Resolvers<Context> = {
                 create: {
                   sectionNumber: course.sequenceNumber,
                   capacity: 0,
-                  startDate: new Date(),
-                  endDate: new Date(),
+                  startDate,
+                  endDate,
                   hoursPerWeek: course.meetingTime.hoursWeek,
                   schedule: { connect: { id: schedule.id } },
                   meetingTime: {
                     create: {
-                      startTime: new Date(),
-                      endTime: new Date(),
-                      days: days as any,
+                      startTime: startDate,
+                      endTime: endDate,
+                      days: days as any[],
                     },
                   },
                 },
@@ -138,15 +144,15 @@ export const resolvers: Resolvers<Context> = {
                 create: {
                   sectionNumber: course.sequenceNumber,
                   capacity: 0,
-                  startDate: new Date(),
-                  endDate: new Date(),
+                  startDate,
+                  endDate,
                   hoursPerWeek: course.meetingTime.hoursWeek,
                   schedule: { connect: { id: schedule.id } },
                   meetingTime: {
                     create: {
-                      startTime: new Date(),
-                      endTime: new Date(),
-                      days: days as any,
+                      startTime: startDate,
+                      endTime: endDate,
+                      days: days as any[],
                     },
                   },
                 },
