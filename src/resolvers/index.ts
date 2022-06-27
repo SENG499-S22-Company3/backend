@@ -12,6 +12,7 @@ import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
 import { Schedule } from './types';
+import { prisma } from '../prisma';
 
 const noLogin = {
   success: false,
@@ -32,6 +33,13 @@ const noPerms = {
 const EncounteredError = {
   message: `API call error: Error getting response from algorithm`,
   success: false,
+};
+
+const appendDay = (isDay: boolean, day: string, days: string[]): string[] => {
+  if (isDay) {
+    days.push(day);
+  }
+  return days;
 };
 
 export const resolvers: Resolvers<Context> = {
@@ -86,6 +94,74 @@ export const resolvers: Resolvers<Context> = {
           `${baseUrl}/generate`,
           minInput
         );
+        const schedule = await prisma.schedule.create({
+          data: {
+            year: input.year,
+          },
+        });
+
+        response.data.summerTermCourses?.forEach(async (course) => {
+          let days = appendDay(course.meetingTime.monday, 'MONDAY', []);
+          days = appendDay(course.meetingTime.tuesday, 'TUESDAY', days);
+          days = appendDay(course.meetingTime.wednesday, 'WEDNESDAY', days);
+          days = appendDay(course.meetingTime.thursday, 'THURSDAY', days);
+          days = appendDay(course.meetingTime.friday, 'FRIDAY', days);
+          days = appendDay(course.meetingTime.saturday, 'SATURDAY', days);
+          days = appendDay(course.meetingTime.sunday, 'SUNDAY', days);
+
+          await prisma.course.upsert({
+            create: {
+              courseCode: course.courseNumber,
+              title: course.courseTitle,
+              subject: course.subject,
+              term: 'SUMMER',
+              courseSection: {
+                create: {
+                  sectionNumber: course.sequenceNumber,
+                  capacity: 0,
+                  startDate: new Date(),
+                  endDate: new Date(),
+                  hoursPerWeek: course.meetingTime.hoursWeek,
+                  schedule: { connect: { id: schedule.id } },
+                  meetingTime: {
+                    create: {
+                      startTime: new Date(),
+                      endTime: new Date(),
+                      days: days as any,
+                    },
+                  },
+                },
+              },
+            },
+            update: {
+              courseSection: {
+                create: {
+                  sectionNumber: course.sequenceNumber,
+                  capacity: 0,
+                  startDate: new Date(),
+                  endDate: new Date(),
+                  hoursPerWeek: course.meetingTime.hoursWeek,
+                  schedule: { connect: { id: schedule.id } },
+                  meetingTime: {
+                    create: {
+                      startTime: new Date(),
+                      endTime: new Date(),
+                      days: days as any,
+                    },
+                  },
+                },
+              },
+            },
+            where: {
+              subject_courseCode_term: {
+                courseCode: course.courseNumber,
+                subject: course.subject,
+                term: 'SUMMER',
+              },
+            },
+          });
+        });
+
         console.info(JSON.stringify(response.data, null, 2));
       } catch (e) {
         console.error(e);
