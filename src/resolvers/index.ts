@@ -9,7 +9,9 @@ import {
 } from '../auth';
 import * as utils from '../utils';
 import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
-import { prisma } from '../prisma';
+import axios from 'axios';
+import minInput from '../input.json';
+import { Schedule } from './types';
 
 const noLogin = {
   success: false,
@@ -79,28 +81,14 @@ export const resolvers: Resolvers<Context> = {
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
       try {
-        // TODO: fill out empty arrays
-        const response = await ctx.algorithm1.schedulePost({
-          hardScheduled: [],
-          coursesToSchedule: [],
-          professors: [],
-        });
-
-        console.log(JSON.stringify(response.data));
-        // TODO: store response in database
-        await prisma.schedule.create({
-          data: {
-            year: input.year,
-
-            courseSection: {
-              createMany: {
-                data: [],
-                skipDuplicates: true,
-              },
-            },
-          },
-        });
+        const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
+        const response = await axios.post<Schedule>(
+          `${baseUrl}/generate`,
+          minInput
+        );
+        console.info(JSON.stringify(response.data, null, 2));
       } catch (e) {
+        console.error(e);
         return EncounteredError;
       }
 
