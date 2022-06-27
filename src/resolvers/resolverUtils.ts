@@ -1,7 +1,15 @@
 import { findUserById } from '../prisma/user';
 import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
-import { User, CourseSection, Schedule, Term, Role, Day } from '../schema';
+import {
+  User,
+  CourseSection,
+  Schedule,
+  Term,
+  Role,
+  Day,
+  MeetingTime,
+} from '../schema';
 import { Context } from '../context';
 export { getMe, getUserByID, getCourses, getSchedule };
 
@@ -60,13 +68,31 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
 
 async function getSchedule(year: number): Promise<Schedule | null> {
   const schedule = await findSchedule(year);
-
   if (!schedule) return null;
-  const course = await getCourses(Term.Fall); // Have to add term in schedule? As of now it is hardcoded
+
   return {
     id: `${schedule.id}`,
     year: schedule.year,
     createdAt: schedule.createdOn,
-    courses: course,
+    courses: schedule.courseSection.map<CourseSection>((course) => {
+      return {
+        CourseID: {
+          code: course.course.courseCode,
+          subject: course.course.subject,
+          term: course.course.term as any,
+        },
+        capacity: course.capacity,
+        hoursPerWeek: course.hoursPerWeek,
+        startDate: course.startDate,
+        endDate: course.endDate,
+        meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
+          return meetingTime.days.map((day) => ({
+            day: day as Day,
+            endTime: meetingTime.endTime,
+            startTime: meetingTime.startTime,
+          }));
+        }),
+      };
+    }),
   };
 }
