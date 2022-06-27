@@ -1,5 +1,8 @@
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { Day } from '@prisma/client';
+import { parse } from 'date-fns';
+
+const DATE_FORMAT = 'MMM d, yyyy HHmm';
 
 /**
  * Takes a string value of a time in 24 hour format ('HHMM')
@@ -21,6 +24,14 @@ export const getISOTime = (time: string): string => {
   ).toISOString();
 
   return timeISO;
+};
+
+export const getDateTime = (time: string, date: string): Date => {
+  return parse(`${date} ${time}`, DATE_FORMAT, new Date());
+};
+
+export const getTime = (time: string): Date => {
+  return parse(time, 'HHmm', new Date());
 };
 
 /**
