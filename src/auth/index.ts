@@ -7,9 +7,10 @@ import type {
   ChangeUserPasswordInput,
   Response,
   CreateUserMutationResult,
+  GenerateScheduleInput,
 } from '../schema/graphql';
 import type { Context } from '../context';
-export { login, changePassword, createNewUser };
+export { login, changePassword, createNewUser, generateSchedule };
 
 // User with username testuser and password testpassword
 // username: 'testuser',
@@ -19,6 +20,15 @@ const failedAuth = {
   message: 'Incorrect username or password',
   success: false,
   token: '', // Won't be needed anymore
+};
+
+const failScheduleGenerate = {
+  message: `No schedule available for the input year`,
+  success: false,
+};
+const invalidYearInput = {
+  message: `Invalid year input. Year format: YYYY`,
+  success: false,
 };
 
 async function login(
@@ -111,5 +121,21 @@ async function createNewUser(
     success: true,
     username: username,
     password: 'testpassword',
+  };
+}
+
+function checkDigits(year: number) {
+  const numOfDigits = year.toString().length;
+  return numOfDigits;
+}
+async function generateSchedule(
+  year: GenerateScheduleInput
+): Promise<Response> {
+  const numOfDigits = checkDigits(year.year);
+  if (numOfDigits !== 4) return invalidYearInput;
+  else if (!year.year || year.year < 1990) return failScheduleGenerate;
+  return {
+    message: `Generating Schedule for Year: ${year.year}`,
+    success: true,
   };
 }

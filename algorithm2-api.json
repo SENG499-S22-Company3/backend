@@ -1,0 +1,97 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Algorithm 2 API",
+    "description": "This is an API for SENG499 Capstone Company 3 & 4. The request input body and response output body are identical, the only thing that changes is the \"capacity\" attribute. If it is 0, it will be updated to the Alg's predicted value. If it is non-zero, it will not be updated (assumed that it has been manually edited or current prediction should not be updated).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/SENG499-Algorithm2/Algorithm2API/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "paths": {
+    "/predict_class_size": {
+      "post": {
+        "summary": "predicts the class size for input courses",
+        "description": "Given an input list of courses and there class sizes, predict class sizes on classes with no predicted class size yet",
+        "operationId": "predictClassSizes",
+        "requestBody": {
+          "description": "list of classes to predict class sizes for",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CourseObject"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "classes predicted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CourseObject"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CourseObject": {
+        "required": [
+          "capacity",
+          "code",
+          "semester",
+          "seng_ratio",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "example": "SENG"
+          },
+          "code": {
+            "type": "string",
+            "example": "499"
+          },
+          "seng_ratio": {
+            "type": "number",
+            "description": "Ratio for number of SENG students to have allocated to the total course size: default 0.75 otherwise input ratio [0-1]",
+            "example": 0.75
+          },
+          "semester": {
+            "type": "string",
+            "description": "Which semester this course is to be offered for",
+            "enum": [
+              "FALL",
+              "SPRING",
+              "SUMMER"
+            ]
+          },
+          "capacity": {
+            "type": "integer",
+            "description": "Predicted Capacity for a course: default 0 --> Alg2 will predict and replace number, otherwise no prediction and number stays the same in output",
+            "example": 45
+          }
+        }
+      }
+    }
+  }
+}
