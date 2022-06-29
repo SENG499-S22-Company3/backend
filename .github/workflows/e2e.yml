@@ -76,6 +76,8 @@ jobs:
         run: npm start &
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+          ALGO1_URL: http://localhost:4040
+          ALGO2_URL: http://localhost:4041
       - name: Test
         working-directory: shared
         env:
