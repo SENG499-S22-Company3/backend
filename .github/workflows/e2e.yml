@@ -19,9 +19,9 @@ jobs:
       algorithm2:
         image: ghcr.io/seng499-s22-company3/algorithm-2:latest
         env:
-          PORT: 4041
+          PORT: 5000
         ports:
-          - 4041:4041
+          - 5000:5000
       # backend:
       #   image: ghcr.io/seng499-s22-company3/backend:latest
       #   env:
@@ -77,11 +77,11 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
           ALGO1_URL: http://localhost:4040
-          ALGO2_URL: http://localhost:4041
+          ALGO2_URL: http://localhost:5000
       - name: Test
         working-directory: shared
         env:
           BACKEND_URL: http://localhost:4000
           ALGORITHM1_URL: http://localhost:4040
-          ALGORITHM2_URL: http://localhost:4041
+          ALGORITHM2_URL: http://localhost:5000
         run: npm test
