@@ -80,4 +80,6 @@ jobs:
         working-directory: shared
         env:
           BACKEND_URL: http://localhost:4000
+          ALGORITHM1_URL: http://localhost:4040
+          ALGORITHM2_URL: http://localhost:4041
         run: npm test
