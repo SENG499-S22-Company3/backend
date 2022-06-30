@@ -62,6 +62,10 @@ const app = express();
 app.use(session(sessionConfig));
 isProduction && app.set('trust proxy', 1);
 
+app.get('/healthcheck', (_req, res) => {
+  res.send('OK');
+});
+
 async function main() {
   // read schema
   const schema = await readSchema(schemaPath);

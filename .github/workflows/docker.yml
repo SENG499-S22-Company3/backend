@@ -4,12 +4,17 @@ on:
   push:
     branches:
       - 'main'
-  pull_request:
+
+env:
+  IMAGE_NAME: backend
+
 jobs:
   docker:
     name: Docker
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
       # Only build and push docker image if this action is triggered from the main branch.
       - name: Build Docker image
         if: ${{ github.ref == 'refs/heads/main' }}

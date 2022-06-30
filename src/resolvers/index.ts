@@ -1,11 +1,21 @@
 /* eslint-disable prettier/prettier */
 import { Context } from '../context';
-import { CourseId, Resolvers, Role } from '../schema';
-import { prisma, lookupUser } from '../prisma';
-import { login, createNewUser, changePassword, /* generateSchedule  , */ createTeachingPreference} from '../auth';
+import { Resolvers } from '../schema';
+
+import {
+  login,
+  createNewUser,
+  changePassword,
+  generateSchedule,
+  createTeachingPreference,
+} from '../auth';
 import * as utils from '../utils';
-import { __InputValue } from 'graphql';
-import { util } from 'prettier';
+import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
+import axios from 'axios';
+import minInput from '../input.json';
+import { Schedule } from './types';
+import { prisma } from '../prisma';
+import { getTime } from '../utils/time';
 
 const noLogin = {
   success: false,
@@ -23,131 +33,150 @@ const noPerms = {
   message: 'Insufficient permisions',
   success: false,
 };
-/*
-const teachingPrefInput = {
-  peng: true,
-  userId: '5',
-  courses: [
-    {
-      subject: 'SENG',
-      code: '499',
-      term: 'FALL',
-      preference: 0
-    },
-  ],
+const EncounteredError = {
+  message: `API call error: Error getting response from algorithm`,
+  success: false,
 };
-*/
+
+const appendDay = (isDay: boolean, day: string, days: string[]): string[] => {
+  if (isDay) {
+    days.push(day);
+  }
+  return days;
+};
 
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: async (_, _params, ctx) => {
-      const user = await prisma.user.findUnique({
-        where: { username: ctx.session.user?.username }, //replace testuser with session.username?
-      });
-      if (!user) return null;
-
-      return {
-        id: user.id,
-        username: user.username,
-        password: user.password,
-        role: user.role as Role,
-        preferences: [],
-        active: user.active
-      };
+      if (!ctx.session.user || !ctx.session.user.username) return null;
+      return await getMe(ctx);
     },
-    findUserById: async (_, _params, ctx) => {
-
-      const finduser = await prisma.user.findUnique({
-        where: { id: +_params.id},
-      });
-
-      if (!finduser) return null;
-
-      return {
-        id: finduser.id,
-        username: finduser.username,
-        password: finduser.password,
-        role: finduser.role as Role,
-        preferences: [],
-        active: finduser.active
-      };
-
+    findUserById: async (_, params, ctx) => {
+      if (!ctx.session.user || !params.id) return null;
+      return await getUserByID(+params.id);
     },
-    
-    /* survey: async (_, _params, ctx) =>{
-      /*const surveyResults = await prisma.user.findUnique({
-        where: { id: _params. }
-      })
-      return {
-        courses: [{ subject: teachingPrefInput.courses[0].subject,
-          code: teachingPrefInput.courses[0].code,
-          term: teachingPrefInput.courses[0].term }],
-        // subject: teachingPrefInput.courses[0].subject
-      }
-    },*/
-    
-    courses: async (_, _params, ctx) => {
-
-      const courses = await prisma.course.findMany({
-        where: { term: _params.term || undefined },
-        include: { courseSection: true, coursePreference: true}
-      });
-
-      
-      return [{
-        CourseID: courses[0].courseSection[0].courseId as unknown as CourseId,
-        hoursPerWeek: courses[0].courseSection[0].hoursPerWeek,
-        capacity: courses[0].courseSection[0].capacity,
-        professors: [], 
-        startDate: courses[0].courseSection[0].startDate,
-        endDate: courses[0].courseSection[0].endDate,
-        meetingTimes: []
-      }]
-    
-      
+    courses: async (_, params, ctx) => {
+      if (!ctx.session.user || !params.term) return null;
+      return await getCourses(params.term);
     },
-    schedule: async (_, _params, ctx) => {
-     
-      const schedule = await prisma.schedule.findUnique({
-          where: {},
-          include: {courseSection: true}
-      });
-
-      if (!schedule) return null;
-
-      return{
-        id: "test", // schedule.id.toString not working
-        year: schedule.year,
-        createdAt: schedule.createdOn,
-        courses: []
-
-      }
+    schedule: async (_, params, ctx) => {
+      if (!ctx.session.user) return null;
+      return getSchedule(params.year || new Date().getFullYear());
     },
   },
   Mutation: {
     login: async (_, params, ctx) => {
       if (ctx.session.user) return alreadyLoggedIn;
-      else return await login(ctx, params.username, params.password);
+      return await login(ctx, params.username, params.password);
     },
     logout: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else {
-        await ctx.logout();
-        return {
-          token: '',
-          success: true,
-          message: 'Logged out',
-        };
-      }
+      await ctx.logout();
+      return {
+        token: '',
+        success: true,
+        message: 'Logged out',
+      };
     },
     changeUserPassword: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else return changePassword(ctx.session.user, _params.input);
+      return changePassword(ctx.session.user, _params.input);
     },
-    createUser: async (_, _params, ctx) => {
+    createUser: async (_, { username }, ctx) => {
       if (!ctx.session.user) return noLogin;
-      else if (!(await utils.isAdmin(ctx.session.user))) return noPerms;
-      else return await createNewUser(_params.username);
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms;
+      return await createNewUser(username);
+    },
+    generateSchedule: async (_, { input }, ctx) => {
+      if (!ctx.session.user) return noLogin;
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
+
+      try {
+        const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
+        const response = await axios.post<Schedule>(
+          `${baseUrl}/generate`,
+          minInput
+        );
+        const schedule = await prisma.schedule.create({
+          data: {
+            year: input.year,
+          },
+        });
+
+        response.data.summerTermCourses?.forEach(async (course) => {
+          let days = appendDay(course.meetingTime.monday, 'MONDAY', []);
+          days = appendDay(course.meetingTime.tuesday, 'TUESDAY', days);
+          days = appendDay(course.meetingTime.wednesday, 'WEDNESDAY', days);
+          days = appendDay(course.meetingTime.thursday, 'THURSDAY', days);
+          days = appendDay(course.meetingTime.friday, 'FRIDAY', days);
+          days = appendDay(course.meetingTime.saturday, 'SATURDAY', days);
+          days = appendDay(course.meetingTime.sunday, 'SUNDAY', days);
+
+          const startDate = getTime(course.meetingTime.beginTime);
+          startDate.setFullYear(input.year, 4, 1);
+          const endDate = getTime(course.meetingTime.endtime);
+          endDate.setFullYear(input.year, 7, 1);
+
+          await prisma.course.upsert({
+            create: {
+              courseCode: course.courseNumber,
+              title: course.courseTitle,
+              subject: course.subject,
+              term: 'SUMMER',
+              courseSection: {
+                create: {
+                  sectionNumber: course.sequenceNumber,
+                  capacity: 0,
+                  startDate,
+                  endDate,
+                  hoursPerWeek: course.meetingTime.hoursWeek,
+                  schedule: { connect: { id: schedule.id } },
+                  meetingTime: {
+                    create: {
+                      startTime: startDate,
+                      endTime: endDate,
+                      days: days as any[],
+                    },
+                  },
+                },
+              },
+            },
+            update: {
+              courseSection: {
+                create: {
+                  sectionNumber: course.sequenceNumber,
+                  capacity: 0,
+                  startDate,
+                  endDate,
+                  hoursPerWeek: course.meetingTime.hoursWeek,
+                  schedule: { connect: { id: schedule.id } },
+                  meetingTime: {
+                    create: {
+                      startTime: startDate,
+                      endTime: endDate,
+                      days: days as any[],
+                    },
+                  },
+                },
+              },
+            },
+            where: {
+              subject_courseCode_term: {
+                courseCode: course.courseNumber,
+                subject: course.subject,
+                term: 'SUMMER',
+              },
+            },
+          });
+        });
+
+        console.info(JSON.stringify(response.data, null, 2));
+      } catch (e) {
+        console.error(e);
+        return EncounteredError;
+      }
+
+      return generateSchedule(input);
     },
     /*
     generateSchedule: async (_, _params, ctx) => {
