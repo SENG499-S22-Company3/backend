@@ -10,7 +10,7 @@ import {
   createTeachingPreference,
 } from '../auth';
 import * as utils from '../utils';
-import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
+import { getSchedule, getCourses, getMe, getUserByID, getTeachingPreferenceSurvey } from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
 import { Schedule } from './types';
@@ -62,6 +62,10 @@ export const resolvers: Resolvers<Context> = {
     schedule: async (_, params, ctx) => {
       if (!ctx.session.user) return null;
       return getSchedule(params.year || new Date().getFullYear());
+    },
+
+    survey: async (_, params, ctx) => {
+      return getTeachingPreferenceSurvey();
     },
   },
   Mutation: {
@@ -178,13 +182,6 @@ export const resolvers: Resolvers<Context> = {
 
       return generateSchedule(input);
     },
-    /*
-    generateSchedule: async (_, _params, ctx) => {
-      if (!ctx.session.user) return noLogin;
-      else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
-      return generateSchedule(_params.input);
-    },
-    */
     
     createTeachingPreference: async (_, _params, ctx) =>{
       if (!ctx.session.user) return noLogin;

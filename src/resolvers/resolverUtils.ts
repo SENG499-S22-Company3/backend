@@ -1,6 +1,7 @@
 import { findUserById } from '../prisma/user';
 import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
+import { findSurvey } from '../prisma/survey';
 import {
   User,
   CourseSection,
@@ -9,9 +10,17 @@ import {
   Role,
   Day,
   MeetingTime,
+  TeachingPreferenceSurvey,
+  CourseId,
 } from '../schema';
 import { Context } from '../context';
-export { getMe, getUserByID, getCourses, getSchedule };
+export {
+  getMe,
+  getUserByID,
+  getCourses,
+  getSchedule,
+  getTeachingPreferenceSurvey,
+};
 
 async function getMe(ctx: Context): Promise<User | null> {
   if (!ctx.session.user) return null;
@@ -92,6 +101,21 @@ async function getSchedule(year: number): Promise<Schedule | null> {
             startTime: meetingTime.startTime,
           }));
         }),
+      };
+    }),
+  };
+}
+
+async function getTeachingPreferenceSurvey(): Promise<TeachingPreferenceSurvey | null> {
+  const getSurvey = await findSurvey();
+  console.log(getSurvey);
+  if (!getSurvey) return null;
+  return {
+    courses: getSurvey.coursePreference.map<CourseId>((course: any) => {
+      return {
+        code: course.course.courseCode,
+        subject: course.course.subject,
+        term: course.course.term,
       };
     }),
   };
