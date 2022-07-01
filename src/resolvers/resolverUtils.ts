@@ -12,6 +12,7 @@ import {
   MeetingTime,
   TeachingPreferenceSurvey,
   CourseId,
+  // CoursePreference,
 } from '../schema';
 import { Context } from '../context';
 export {
@@ -106,17 +107,18 @@ async function getSchedule(year: number): Promise<Schedule | null> {
   };
 }
 
-async function getTeachingPreferenceSurvey(): Promise<TeachingPreferenceSurvey | null> {
+async function getTeachingPreferenceSurvey(): Promise<TeachingPreferenceSurvey> {
   const getSurvey = await findSurvey();
-  console.log(getSurvey);
-  if (!getSurvey) return null;
+  if (!getSurvey) console.log('No survey found');
   return {
-    courses: getSurvey.coursePreference.map<CourseId>((course: any) => {
-      return {
-        code: course.course.courseCode,
-        subject: course.course.subject,
-        term: course.course.term,
-      };
+    courses: getSurvey.flatMap<CourseId>((pref: any) => {
+      return pref.coursePreference.map((course: any) => {
+        return {
+          code: course.course.courseCode,
+          subject: course.course.subject,
+          term: course.course.term,
+        };
+      });
     }),
   };
 }
