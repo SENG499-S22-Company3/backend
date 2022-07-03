@@ -312,3 +312,347 @@ enum Term {
   SPRING
   SUMMER
 }
+scalar Date
+
+type Query {
+  """
+  Get the current user
+  """
+  me: User
+  """
+  Find a user by their id
+  """
+  findUserById(id: ID!): User
+  """
+  Get Teaching Preference Survey
+  """
+  survey: TeachingPreferenceSurvey!
+  """
+  Get a list of courses for a given term
+  """
+  courses(term: Term): [CourseSection!]
+  """
+  Schedule for a given term. If year is given, returns the most recent schedule generated for that year.
+  """
+  schedule(year: Int): Schedule
+  """
+  Get all courses preferences 
+  """
+  coursePreferences: [CoursePreference!]
+}
+
+"""
+Generated schedule for a year
+"""
+type Schedule {
+  """
+  ID of the schedule
+  """
+  id: ID!
+  """
+  Year for the schedule
+  """
+  year: Int!
+  """
+  When the schedule was generated
+  """
+  createdAt: Date!
+  """
+  Scheduled courses
+  """
+  courses(term: Term!): [CourseSection!]
+}
+
+type Mutation {
+  """
+  Login into a user account using email and password
+  """
+  login(username: String!, password: String!): AuthPayload!
+  """
+  Logout the currently logged in user
+  """
+  logout: AuthPayload!
+  """
+  Register a new user account
+  """
+  createUser(username: String!): CreateUserMutationResult!
+  """
+  Updates a user given the user id.
+  """
+  updateUser(input: UpdateUserInput!): UpdateUserMutationResult
+  """
+  Change the password of the currently logged in user
+  """
+  changeUserPassword(input: ChangeUserPasswordInput!): Response!
+  """
+  Reset a users password.
+  """
+  resetPassword(id: ID!): ResetPasswordMutationResult!
+  """
+  Teaching preferences
+  """
+  createTeachingPreference(input: CreateTeachingPreferenceInput!): Response!
+  """
+  Generate schedule
+  """
+  generateSchedule(input: GenerateScheduleInput!): Response!
+}
+
+type Response {
+  success: Boolean!
+  message: String
+}
+
+type Error {
+  message: String!
+  errors: [Error!] 
+  #might need to change this
+}
+
+input ChangeUserPasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
+input CreateTeachingPreferenceInput {
+  peng: Boolean!
+  userId: ID!
+  courses: [CoursePreferenceInput!]!
+  nonTeachingTerm: Term
+  hasRelief: Boolean!
+  reliefReason: String
+  hasTopic: Boolean!
+  topicDescription: String
+}
+
+type TeachingPreferenceSurvey {
+  courses: [CourseID!]! 
+  #It might make more sense to to put CoursePreference instead of CourseID?
+}
+
+type CoursePreference {
+  id: CourseID!
+  preference: Int!
+}
+
+input CoursePreferenceInput {
+  """
+  Course subject, e.g. SENG, CSC
+  """
+  subject: String!
+  """
+  Course code, e.g. 499, 310
+  """
+  code: String!
+  """
+  Term course is offered in
+  """
+  term: Term!
+  preference: Int!
+}
+
+input GenerateScheduleInput {
+  year: Int!
+  term: Term!
+  courses: String
+  #not sure what type the course will be? CoursSection?
+  
+}
+
+type CourseID {
+  """
+  Course subject, e.g. SENG, CSC
+  """
+  subject: String!
+  """
+  Course title. e.g. Introduction to Artificial Intelligence
+  """
+  title: String!
+  """
+  Course code, e.g. 499, 310
+  """
+  code: String!
+  """
+  Term course is offered in
+  """
+  term: Term!
+}
+
+type ResetPasswordMutationResult {
+  """
+  Whether the password was successfully reset
+  """
+  success: Boolean!
+  """
+  Optional error message
+  """
+  message: String
+  """
+  New user password
+  """
+  password: String
+}
+
+"""
+A set of CourseSections with matching CourseID represent a course offering
+"""
+type CourseSection {
+  """
+  The course identifier
+  """
+  CourseID: CourseID!
+  """
+  How many hours per week a course takes
+  """
+  hoursPerWeek: Float!
+  """
+  Maximum capacity of the section
+  """
+  capacity: Int!
+  """
+  Section number for courses, eg: A01, A02
+  """
+  sectionNumber: String
+  """
+  Professor's info, if any professors are assigned
+  """
+  professors: [User!]
+  """
+  The start date of the course
+  """
+  startDate: Date!
+  """
+  The end date of the course
+  """
+  endDate: Date!
+  """
+  Days of the week the class is offered in - see Day
+  """
+  meetingTimes: [MeetingTime!]!
+}
+
+"""
+Weekday and time of a course section offering
+"""
+type MeetingTime {
+  """
+  Weekday - see DayEnum
+  """
+  day: Day!
+  """
+  Start time
+  """
+  startTime: Date!
+  """
+  End time
+  """
+  endTime: Date!
+}
+
+input UpdateUserInput {
+  """
+  ID of user to update
+  """
+  id: ID!
+}
+
+type UpdateUserMutationResult {
+  user: User
+  errors: [Error!]
+}
+
+type CreateUserMutationResult {
+  success: Boolean!
+  message: String
+  username: String
+  password: String
+}
+
+"""
+Returned when a user logs in our logs out.
+"""
+type AuthPayload {
+  """
+  Whether auth operation was successful or not
+  """
+  success: Boolean!
+  """
+  Auth token used for future requests
+  """
+  token: String!
+  """
+  Optional error message if success is false
+  """
+  message: String
+}
+
+type User {
+  """
+  Unique User  ID
+  """
+  id: Int!
+  """
+  Username
+  """
+  username: String!
+  """
+  Display name for professors
+  """
+  displayName: String!
+  """
+  Password
+  """
+  password: String!
+  """
+  role - see enum Role
+  """
+  role: Role!
+  """
+  Teaching preferences
+  """
+  preferences: [CoursePreference!]
+  """
+  Determine if the user is marked active
+  """
+  active: Boolean!
+  """
+  Determine if user has Peng
+  """
+  hasPeng: Boolean! #to match prisma schema
+}
+
+"""
+Days of the Week
+"""
+enum Day {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+"""
+User role
+"""
+enum Role {
+  """
+  Administrator role (department staff etc.)
+  """
+  ADMIN
+  """
+  User role (professor, student etc.)
+  """
+  USER
+}
+
+"""
+UVic Terms
+"""
+enum Term {
+  FALL
+  SPRING
+  SUMMER
+}
