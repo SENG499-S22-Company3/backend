@@ -21,6 +21,10 @@ type Query {
   Schedule for a given term. If year is given, returns the most recent schedule generated for that year.
   """
   schedule(year: Int): Schedule
+  """
+  Get all courses preferences
+  """
+  coursePreferences: [CoursePreference!]
 }
 
 """
@@ -88,6 +92,7 @@ type Response {
 type Error {
   message: String!
   errors: [Error!]
+  #might need to change this
 }
 
 input ChangeUserPasswordInput {
@@ -99,6 +104,11 @@ input CreateTeachingPreferenceInput {
   peng: Boolean!
   userId: ID!
   courses: [CoursePreferenceInput!]!
+  nonTeachingTerm: Term
+  hasRelief: Boolean!
+  reliefReason: String
+  hasTopic: Boolean!
+  topicDescription: String
 }
 
 type TeachingPreferenceSurvey {
@@ -128,7 +138,9 @@ input CoursePreferenceInput {
 
 input GenerateScheduleInput {
   year: Int!
-  # TODO: need to fill in the rest of the inputs
+  term: Term!
+  courses: String
+  #not sure what type the course will be? CoursSection?
 }
 
 type CourseID {
@@ -136,6 +148,10 @@ type CourseID {
   Course subject, e.g. SENG, CSC
   """
   subject: String!
+  """
+  Course title. e.g. Introduction to Artificial Intelligence
+  """
+  title: String!
   """
   Course code, e.g. 499, 310
   """
@@ -177,6 +193,10 @@ type CourseSection {
   Maximum capacity of the section
   """
   capacity: Int!
+  """
+  Section number for courses, eg: A01, A02
+  """
+  sectionNumber: String
   """
   Professor's info, if any professors are assigned
   """
@@ -275,6 +295,10 @@ type User {
   Determine if the user is marked active
   """
   active: Boolean!
+  """
+  Determine if user has Peng
+  """
+  hasPeng: Boolean! #to match prisma schema
 }
 
 """
