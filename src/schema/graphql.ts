@@ -135,6 +135,8 @@ export type MeetingTime = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Edit schedule */
+  EditSchedule: Response;
   /** Change the password of the currently logged in user */
   changeUserPassword: Response;
   /** Teaching preferences */
@@ -151,6 +153,11 @@ export type Mutation = {
   resetPassword: ResetPasswordMutationResult;
   /** Updates a user given the user id. */
   updateUser?: Maybe<UpdateUserMutationResult>;
+};
+
+
+export type MutationEditScheduleArgs = {
+  year: Scalars['Int'];
 };
 
 
@@ -191,6 +198,8 @@ export type MutationUpdateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  /** Get the all users */
+  allUsers?: Maybe<Array<User>>;
   /** Get all courses preferences */
   coursePreferences?: Maybe<Array<CoursePreference>>;
   /** Get a list of courses for a given term */
@@ -290,6 +299,8 @@ export type User = {
   __typename?: 'User';
   /** Determine if the user is marked active */
   active: Scalars['Boolean'];
+  /** display name for the user */
+  displayName?: Maybe<Scalars['String']>;
   /** Determine if user has Peng */
   hasPeng: Scalars['Boolean'];
   /** Unique User  ID */
@@ -493,6 +504,7 @@ export type MeetingTimeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  EditSchedule?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationEditScheduleArgs, 'year'>>;
   changeUserPassword?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationChangeUserPasswordArgs, 'input'>>;
   createTeachingPreference?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationCreateTeachingPreferenceArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['CreateUserMutationResult'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'username'>>;
@@ -504,6 +516,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  allUsers?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
   coursePreferences?: Resolver<Maybe<Array<ResolversTypes['CoursePreference']>>, ParentType, ContextType>;
   courses?: Resolver<Maybe<Array<ResolversTypes['CourseSection']>>, ParentType, ContextType, Partial<QueryCoursesArgs>>;
   findUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryFindUserByIdArgs, 'id'>>;
@@ -546,6 +559,7 @@ export type UpdateUserMutationResultResolvers<ContextType = any, ParentType exte
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasPeng?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

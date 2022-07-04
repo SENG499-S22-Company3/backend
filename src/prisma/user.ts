@@ -1,5 +1,5 @@
 import { prisma } from './index';
-export { findUserByUsername, findUserById };
+export { findUserByUsername, findUserById, findAllUsers };
 
 async function findUserByUsername(username: string) {
   const user = await prisma.user.findUnique({
@@ -15,4 +15,9 @@ async function findUserById(userid: number) {
     where: { id: userid },
   });
   return finduser;
+}
+
+async function findAllUsers() {
+  const allusers = await prisma.user.findMany();
+  return allusers;
 }
