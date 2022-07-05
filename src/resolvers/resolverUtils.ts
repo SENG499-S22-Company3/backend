@@ -1,7 +1,6 @@
 import { findUserById } from '../prisma/user';
 import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
-import { findSurvey } from '../prisma/survey';
 import {
   User,
   CourseSection,
@@ -10,18 +9,9 @@ import {
   Role,
   Day,
   MeetingTime,
-  TeachingPreferenceSurvey,
-  CourseId,
-  // CoursePreference,
 } from '../schema';
 import { Context } from '../context';
-export {
-  getMe,
-  getUserByID,
-  getCourses,
-  getSchedule,
-  getTeachingPreferenceSurvey,
-};
+export { getMe, getUserByID, getCourses, getSchedule };
 
 async function getMe(ctx: Context): Promise<User | null> {
   if (!ctx.session.user) return null;
@@ -56,7 +46,7 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
 
   if (!courses) return null;
 
-  return courses.map<CourseSection>((course: any) => {
+  return courses.map<CourseSection>((course) => {
     return {
       CourseID: {
         code: course.course.courseCode,
@@ -67,11 +57,15 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
       hoursPerWeek: course.hoursPerWeek,
       startDate: course.startDate,
       endDate: course.endDate,
-      meetingTimes: course.meetingTime.days.map((day: Day) => ({
-        day: day as Day,
-        endTime: course.meetingTime.endTime,
-        startTime: course.meetingTime.startTime,
-      })),
+      meetingTimes: course.meetingTime.flatMap<MeetingTime>(
+        (meetingTime: any) => {
+          return meetingTime.days.map((day: Day) => ({
+            day: day as Day,
+            endTime: meetingTime.endTime,
+            startTime: meetingTime.startTime,
+          }));
+        }
+      ),
     };
   });
 }
@@ -103,22 +97,6 @@ async function getSchedule(year: number): Promise<Schedule | null> {
           }));
         }),
       };
-    }),
-  };
-}
-
-async function getTeachingPreferenceSurvey(): Promise<TeachingPreferenceSurvey> {
-  const getSurvey = await findSurvey();
-  if (!getSurvey) console.log('No survey found');
-  return {
-    courses: getSurvey.flatMap<CourseId>((pref: any) => {
-      return pref.coursePreference.map((course: any) => {
-        return {
-          code: course.course.courseCode,
-          subject: course.course.subject,
-          term: course.course.term,
-        };
-      });
     }),
   };
 }
