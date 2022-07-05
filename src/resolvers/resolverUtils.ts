@@ -1,6 +1,7 @@
 import { findUserById } from '../prisma/user';
 import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
+import { findSurvey } from '../prisma/survey';
 import {
   User,
   CourseSection,
@@ -9,9 +10,17 @@ import {
   Role,
   Day,
   MeetingTime,
+  TeachingPreferenceSurvey,
+  CourseId,
 } from '../schema';
 import { Context } from '../context';
-export { getMe, getUserByID, getCourses, getSchedule };
+export {
+  getMe,
+  getUserByID,
+  getCourses,
+  getSchedule,
+  getTeachingPreferenceSurvey,
+};
 
 async function getMe(ctx: Context): Promise<User | null> {
   if (!ctx.session.user) return null;
@@ -97,6 +106,22 @@ async function getSchedule(year: number): Promise<Schedule | null> {
           }));
         }),
       };
+    }),
+  };
+}
+
+async function getTeachingPreferenceSurvey(): Promise<TeachingPreferenceSurvey | null> {
+  const getSurvey = await findSurvey();
+  if (!getSurvey || getSurvey.length === 0) return null; // console.log('No survey found');
+  return {
+    courses: getSurvey.flatMap<CourseId>((pref: any) => {
+      return pref.coursePreference.map((course: any) => {
+        return {
+          code: course.course.courseCode,
+          subject: course.course.subject,
+          term: course.course.term,
+        };
+      });
     }),
   };
 }

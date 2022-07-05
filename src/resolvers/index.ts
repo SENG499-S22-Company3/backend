@@ -64,8 +64,9 @@ export const resolvers: Resolvers<Context> = {
       return getSchedule(params.year || new Date().getFullYear());
     },
 
-    survey: async (_, params, ctx) => {
-      return getTeachingPreferenceSurvey();
+    survey: async (_, _params, ctx) => {
+      if (!ctx.session.user) return null;
+      return await getTeachingPreferenceSurvey();
     },
   },
   Mutation: {
