@@ -69,7 +69,7 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
 
   if (!courses) return null;
 
-  return courses.map<CourseSection>((course: any) => {
+  return courses.map<CourseSection>((course) => {
     return {
       CourseID: {
         code: course.course.courseCode,
@@ -81,11 +81,13 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
       hoursPerWeek: course.hoursPerWeek,
       startDate: course.startDate,
       endDate: course.endDate,
-      meetingTimes: course.meetingTime.days.map((day: Day) => ({
-        day: day as Day,
-        endTime: course.meetingTime.endTime,
-        startTime: course.meetingTime.startTime,
-      })),
+      meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
+        return meetingTime.days.map((day) => ({
+          day: day as Day,
+          endTime: meetingTime.endTime,
+          startTime: meetingTime.startTime,
+        }));
+      }),
     };
   });
 }
