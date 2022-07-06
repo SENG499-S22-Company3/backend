@@ -131,6 +131,10 @@ export const resolvers: Resolvers<Context> = {
               title: course.courseTitle,
               subject: course.subject,
               term: 'SUMMER',
+              streamSequence: utils.getSeqNumber(
+                course.subject,
+                course.courseNumber
+              ),
               courseSection: {
                 create: {
                   sectionNumber: course.sequenceNumber,
