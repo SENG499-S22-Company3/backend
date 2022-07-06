@@ -87,9 +87,9 @@ type Mutation {
   """
   generateSchedule(input: GenerateScheduleInput!): Response!
   """
-  Edit schedule
+  Edit schedule and Plug and Play Compnay 3's and 4's Algorithms
   """
-  EditSchedule(year: Int!): Response!
+  editCourse(input: EditCourseInput): Response!
 }
 
 type Response {
@@ -100,7 +100,6 @@ type Response {
 type Error {
   message: String!
   errors: [Error!]
-  #might need to change this
 }
 
 input ChangeUserPasswordInput {
@@ -147,8 +146,40 @@ input CoursePreferenceInput {
 input GenerateScheduleInput {
   year: Int!
   term: Term!
-  courses: String
-  #not sure what type the course will be? CoursSection?
+  courses: [CourseInput!]
+  algorithm1: Company!
+  algorithm2: Company!
+}
+
+input EditCourseInput {
+  course: CourseInput!
+  hoursPerWeek: Float
+  capacity: Int
+  sectionNumber: String
+  startDate: Date
+  endDate: Date
+  meetingTimes: [MeetingTimeInput!]
+}
+
+input MeetingTimeInput {
+  day: Day!
+  startTime: Date!
+  endTime: Date!
+}
+
+input CourseInput {
+  """
+  Course subject, e.g. SENG, CSC
+  """
+  subject: String!
+  """
+  Course code, e.g. 499, 310
+  """
+  code: String!
+  """
+  Number of Sections for a course
+  """
+  section: Int!
 }
 
 type CourseID {
@@ -271,7 +302,7 @@ type AuthPayload {
   """
   Auth token used for future requests
   """
-  token: String!
+  token: String! @deprecated
   """
   Optional error message if success is false
   """
@@ -310,7 +341,7 @@ type User {
   """
   Determine if user has Peng
   """
-  hasPeng: Boolean! #to match prisma schema
+  hasPeng: Boolean!
 }
 
 """
@@ -347,4 +378,12 @@ enum Term {
   FALL
   SPRING
   SUMMER
+}
+
+"""
+Company 3 and 4
+"""
+enum Company {
+  COMPANY3
+  COMPANY4
 }

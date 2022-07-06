@@ -22,7 +22,10 @@ export type AuthPayload = {
   message?: Maybe<Scalars['String']>;
   /** Whether auth operation was successful or not */
   success: Scalars['Boolean'];
-  /** Auth token used for future requests */
+  /**
+   * Auth token used for future requests
+   * @deprecated Field no longer supported
+   */
   token: Scalars['String'];
 };
 
@@ -30,6 +33,12 @@ export type ChangeUserPasswordInput = {
   currentPassword: Scalars['String'];
   newPassword: Scalars['String'];
 };
+
+/** Company 3 and 4 */
+export enum Company {
+  Company3 = 'COMPANY3',
+  Company4 = 'COMPANY4'
+}
 
 export type CourseId = {
   __typename?: 'CourseID';
@@ -41,6 +50,15 @@ export type CourseId = {
   term: Term;
   /** Course title. e.g. Introduction to Artificial Intelligence */
   title: Scalars['String'];
+};
+
+export type CourseInput = {
+  /** Course code, e.g. 499, 310 */
+  code: Scalars['String'];
+  /** Number of Sections for a course */
+  section: Scalars['Int'];
+  /** Course subject, e.g. SENG, CSC */
+  subject: Scalars['String'];
 };
 
 export type CoursePreference = {
@@ -110,6 +128,16 @@ export enum Day {
   Wednesday = 'WEDNESDAY'
 }
 
+export type EditCourseInput = {
+  capacity?: InputMaybe<Scalars['Int']>;
+  course: CourseInput;
+  endDate?: InputMaybe<Scalars['Date']>;
+  hoursPerWeek?: InputMaybe<Scalars['Float']>;
+  meetingTimes?: InputMaybe<Array<MeetingTimeInput>>;
+  sectionNumber?: InputMaybe<Scalars['String']>;
+  startDate?: InputMaybe<Scalars['Date']>;
+};
+
 export type Error = {
   __typename?: 'Error';
   errors?: Maybe<Array<Error>>;
@@ -117,7 +145,9 @@ export type Error = {
 };
 
 export type GenerateScheduleInput = {
-  courses?: InputMaybe<Scalars['String']>;
+  algorithm1: Company;
+  algorithm2: Company;
+  courses?: InputMaybe<Array<CourseInput>>;
   term: Term;
   year: Scalars['Int'];
 };
@@ -133,16 +163,22 @@ export type MeetingTime = {
   startTime: Scalars['Date'];
 };
 
+export type MeetingTimeInput = {
+  day: Day;
+  endTime: Scalars['Date'];
+  startTime: Scalars['Date'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  /** Edit schedule */
-  EditSchedule: Response;
   /** Change the password of the currently logged in user */
   changeUserPassword: Response;
   /** Teaching preferences */
   createTeachingPreference: Response;
   /** Register a new user account */
   createUser: CreateUserMutationResult;
+  /** Edit schedule and Plug and Play Compnay 3's and 4's Algorithms */
+  editCourse: Response;
   /** Generate schedule */
   generateSchedule: Response;
   /** Login into a user account using email and password */
@@ -153,11 +189,6 @@ export type Mutation = {
   resetPassword: ResetPasswordMutationResult;
   /** Updates a user given the user id. */
   updateUser?: Maybe<UpdateUserMutationResult>;
-};
-
-
-export type MutationEditScheduleArgs = {
-  year: Scalars['Int'];
 };
 
 
@@ -173,6 +204,11 @@ export type MutationCreateTeachingPreferenceArgs = {
 
 export type MutationCreateUserArgs = {
   username: Scalars['String'];
+};
+
+
+export type MutationEditCourseArgs = {
+  input?: InputMaybe<EditCourseInput>;
 };
 
 
@@ -387,7 +423,9 @@ export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ChangeUserPasswordInput: ChangeUserPasswordInput;
+  Company: Company;
   CourseID: ResolverTypeWrapper<CourseId>;
+  CourseInput: CourseInput;
   CoursePreference: ResolverTypeWrapper<CoursePreference>;
   CoursePreferenceInput: CoursePreferenceInput;
   CourseSection: ResolverTypeWrapper<CourseSection>;
@@ -395,12 +433,14 @@ export type ResolversTypes = {
   CreateUserMutationResult: ResolverTypeWrapper<CreateUserMutationResult>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Day: Day;
+  EditCourseInput: EditCourseInput;
   Error: ResolverTypeWrapper<Error>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   GenerateScheduleInput: GenerateScheduleInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   MeetingTime: ResolverTypeWrapper<MeetingTime>;
+  MeetingTimeInput: MeetingTimeInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   ResetPasswordMutationResult: ResolverTypeWrapper<ResetPasswordMutationResult>;
@@ -421,18 +461,21 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   ChangeUserPasswordInput: ChangeUserPasswordInput;
   CourseID: CourseId;
+  CourseInput: CourseInput;
   CoursePreference: CoursePreference;
   CoursePreferenceInput: CoursePreferenceInput;
   CourseSection: CourseSection;
   CreateTeachingPreferenceInput: CreateTeachingPreferenceInput;
   CreateUserMutationResult: CreateUserMutationResult;
   Date: Scalars['Date'];
+  EditCourseInput: EditCourseInput;
   Error: Error;
   Float: Scalars['Float'];
   GenerateScheduleInput: GenerateScheduleInput;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   MeetingTime: MeetingTime;
+  MeetingTimeInput: MeetingTimeInput;
   Mutation: {};
   Query: {};
   ResetPasswordMutationResult: ResetPasswordMutationResult;
@@ -504,10 +547,10 @@ export type MeetingTimeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  EditSchedule?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationEditScheduleArgs, 'year'>>;
   changeUserPassword?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationChangeUserPasswordArgs, 'input'>>;
   createTeachingPreference?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationCreateTeachingPreferenceArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['CreateUserMutationResult'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'username'>>;
+  editCourse?: Resolver<ResolversTypes['Response'], ParentType, ContextType, Partial<MutationEditCourseArgs>>;
   generateSchedule?: Resolver<ResolversTypes['Response'], ParentType, ContextType, RequireFields<MutationGenerateScheduleArgs, 'input'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   logout?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType>;
