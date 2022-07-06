@@ -1,0 +1,91 @@
+{
+    "sequences": [
+        {
+            "subject": "CSC",
+            "courses": [
+                {"course": "111", "sequence": "1A"},
+                {"course": "115", "sequence": "1B"},
+                {"course": "230", "sequence": "2A"},
+                {"course": "225", "sequence": "2B"},
+                {"course": "361", "sequence": "3A"},
+                {"course": "226", "sequence": "3A"},
+                {"course": "355", "sequence": "3B"},
+                {"course": "320", "sequence": "3B"},
+                {"course": "360", "sequence": "3B"},
+                {"course": "370", "sequence": "3B"},
+                {"course": "460", "sequence": "4B"}
+            ]
+        },
+        {
+            "subject": "ENGR",
+            "courses": [
+                {"course": "110", "sequence": "1A"},
+                {"course": "130", "sequence": "1A"},
+                {"course": "120", "sequence": "1B"},
+                {"course": "141", "sequence": "1B"}
+            ]
+        },
+        {
+            "subject": "MATH",
+            "courses": [
+                {"course": "100", "sequence": "1A"},
+                {"course": "109", "sequence": "1A"},
+                {"course": "110", "sequence": "1A"},
+                {"course": "101", "sequence": "1B"},
+                {"course": "122", "sequence": "2A"}
+            ]
+        },
+        {
+            "subject": "PHYS",
+            "courses": [
+                {"course": "110", "sequence": "1A"},
+                {"course": "111", "sequence": "1B"}
+            ]
+        },
+        {
+            "subject": "ECE",
+            "courses": [
+                {"course": "255", "sequence": "2A"},
+                {"course": "260", "sequence": "3A"},
+                {"course": "310", "sequence": "2B"},
+                {"course": "458", "sequence": "3A"},
+                {"course": "355", "sequence": "3B"},
+                {"course": "455", "sequence": "4B"}
+            ]
+        },
+        {
+            "subject": "CHEM",
+            "courses": [
+                {"course": "101", "sequence": "2A"}
+            ]
+        },
+        {
+            "subject": "STAT",
+            "courses": [
+                {"course": "260", "sequence": "2A"}
+            ]
+        },
+        {
+            "subject": "ECON",
+            "courses": [
+                {"course": "180", "sequence": "2B"}
+            ]
+        },
+        {
+            "subject": "SENG",
+            "courses": [
+                {"course": "265", "sequence": "2A"},
+                {"course": "275", "sequence": "2B"},
+                {"course": "310", "sequence": "2B"},
+                {"course": "321", "sequence": "3A"},
+                {"course": "371", "sequence": "3A"},
+                {"course": "350", "sequence": "3B"},
+                {"course": "360", "sequence": "3B"},
+                {"course": "426", "sequence": "4A"},
+                {"course": "440", "sequence": "4A"},
+                {"course": "499", "sequence": "4A"},
+                {"course": "401", "sequence": "4B"}
+            ]
+        }
+    ]
+}
