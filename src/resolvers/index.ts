@@ -68,7 +68,7 @@ export const resolvers: Resolvers<Context> = {
       return getSchedule(params.year || new Date().getFullYear());
     },
     allUsers: async (_, _params, ctx) => {
-      if (!ctx.session.user || !ctx.session.user.username) return null;
+      if (!ctx.session.user || !utils.isAdmin(ctx.session.user)) return null;
       return await getAll();
     },
   },

@@ -33,7 +33,7 @@ async function getAll(): Promise<User[] | null> {
 
   if (!allusers) return null;
 
-  return allusers.map<User>((alluser: any) => {
+  return allusers.map<User>((alluser) => {
     return {
       id: alluser.id,
       username: alluser.username,
