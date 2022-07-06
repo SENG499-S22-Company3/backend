@@ -17,5 +17,5 @@
     "max-len": "off",
     "prettier/prettier": ["error"]
   },
-  "ignorePatterns": ["*.d.ts", "node_modules", "build", "src/schema/graphql.ts", "src/client"]
+  "ignorePatterns": ["*.d.ts", "node_modules", "build", "src/schema/graphql.ts", "src/client", "db-data"]
 }
