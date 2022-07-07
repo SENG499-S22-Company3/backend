@@ -149,6 +149,12 @@ export interface Course {
    * @type {string}
    * @memberof Course
    */
+  streamSequence: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Course
+   */
   courseTitle: string;
   /**
    *
@@ -279,17 +285,17 @@ export interface Schedule {
  */
 export interface SchedulePostRequest {
   /**
-   * Courses that need to be scheduled at a specific time. Courses like ENGR, CHEM, or a course Rich wants at a specific time.
-   * @type {Array<Schedule>}
+   *
+   * @type {Schedule}
    * @memberof SchedulePostRequest
    */
-  hardScheduled?: Array<Schedule>;
+  hardScheduled?: Schedule;
   /**
-   * Courses that need to be scheduled by the algorithm.
-   * @type {Array<Schedule>}
+   *
+   * @type {Schedule}
    * @memberof SchedulePostRequest
    */
-  coursesToSchedule?: Array<Schedule>;
+  coursesToSchedule?: Schedule;
   /**
    * List of professors and their preferences.
    * @type {Array<Professor>}

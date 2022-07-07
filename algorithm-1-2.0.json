@@ -42,10 +42,7 @@
                 "type" : "object",
                 "properties" : {
                   "hardScheduled" : {
-                    "type" : "object",
-                    "items" : {
-                      "$ref" : "#/components/schemas/Schedule"
-                    },
+                    "$ref" : "#/components/schemas/Schedule",
                     "description": "Courses that need to be scheduled at a specific time. Courses like ENGR, CHEM, or a course Rich wants at a specific time.",
                     "example" : {
                       "fallCourses" : [ ],
@@ -54,10 +51,7 @@
                     }
                   },
                   "coursesToSchedule" : {
-                    "type" : "object",
-                    "items" : {
-                      "$ref" : "#/components/schemas/Schedule"
-                    },
+                    "$ref" : "#/components/schemas/Schedule",
                     "description": "Courses that need to be scheduled by the algorithm.",
                     "example" : {
                       "fallCourses" : [ ],
@@ -108,7 +102,7 @@
       },
       "Course" : {
         "type" : "object",
-        "required" : [ "courseNumber", "subject", "sequenceNumber", "courseTitle", "courseCapacity", "numSections" ],
+        "required" : [ "courseNumber", "subject", "sequenceNumber", "streamSequence", "courseTitle", "courseCapacity", "numSections" ],
         "properties" : {
           "courseNumber" : {
             "type" : "string",
@@ -121,6 +115,10 @@
           "sequenceNumber" : {
             "type" : "string",
             "example" : "A01"
+          },
+          "streamSequence": {
+            "type" : "string",
+            "example" : "1A"
           },
           "courseTitle" : {
             "type" : "string",
