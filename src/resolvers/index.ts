@@ -10,7 +10,14 @@ import {
   createTeachingPreference,
 } from '../auth';
 import * as utils from '../utils';
-import { getSchedule, getCourses, getMe, getUserByID, getTeachingPreferenceSurvey } from './resolverUtils';
+import {
+  getSchedule,
+  getCourses,
+  getMe,
+  getAll,
+  getUserByID,
+  getTeachingPreferenceSurvey,
+} from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
 import { Schedule } from './types';
@@ -67,6 +74,11 @@ export const resolvers: Resolvers<Context> = {
     survey: async (_, _params, ctx) => {
       if (!ctx.session.user) return null;
       return await getTeachingPreferenceSurvey();
+    },
+
+    allUsers: async (_, _params, ctx) => {
+      if (!ctx.session.user || !utils.isAdmin(ctx.session.user)) return null;
+      return await getAll();
     },
   },
   Mutation: {
@@ -128,6 +140,11 @@ export const resolvers: Resolvers<Context> = {
               title: course.courseTitle,
               subject: course.subject,
               term: 'SUMMER',
+              /*
+              streamSequence: utils.getSeqNumber(
+                course.subject,
+                course.courseNumber
+              ),*/
               courseSection: {
                 create: {
                   sectionNumber: course.sequenceNumber,

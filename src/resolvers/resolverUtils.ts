@@ -1,4 +1,4 @@
-import { findUserById } from '../prisma/user';
+import { findUserById, findAllUsers } from '../prisma/user';
 import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
 import { findSurvey } from '../prisma/survey';
@@ -16,6 +16,7 @@ import {
 import { Context } from '../context';
 export {
   getMe,
+  getAll,
   getUserByID,
   getCourses,
   getSchedule,
@@ -28,11 +29,32 @@ async function getMe(ctx: Context): Promise<User | null> {
   return {
     id: ctx.session.user.id,
     username: ctx.session.user.username,
+    displayName: ctx.session.user.displayName,
     password: ctx.session.user.password,
     role: ctx.session.user.role as Role,
     preferences: [],
     active: ctx.session.user.active,
+    hasPeng: ctx.session.user.hasPeng,
   };
+}
+
+async function getAll(): Promise<User[] | null> {
+  const allusers = await findAllUsers();
+
+  if (!allusers) return null;
+
+  return allusers.map<User>((alluser) => {
+    return {
+      id: alluser.id,
+      username: alluser.username,
+      displayName: alluser.displayName,
+      password: alluser.password,
+      role: alluser.role as Role,
+      preferences: [],
+      active: alluser.active,
+      hasPeng: alluser.hasPeng,
+    };
+  });
 }
 
 async function getUserByID(id: number): Promise<User | null> {
@@ -44,9 +66,11 @@ async function getUserByID(id: number): Promise<User | null> {
     id: user.id,
     username: user.username,
     password: user.password,
+    displayName: user.displayName,
     role: user.role as Role,
     preferences: [],
     active: user.active,
+    hasPeng: user.hasPeng,
   };
 }
 
@@ -60,21 +84,20 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
       CourseID: {
         code: course.course.courseCode,
         subject: course.course.subject,
+        title: course.course.title,
         term: course.course.term as any,
       },
       capacity: course.capacity,
       hoursPerWeek: course.hoursPerWeek,
       startDate: course.startDate,
       endDate: course.endDate,
-      meetingTimes: course.meetingTime.flatMap<MeetingTime>(
-        (meetingTime: any) => {
-          return meetingTime.days.map((day: Day) => ({
-            day: day as Day,
-            endTime: meetingTime.endTime,
-            startTime: meetingTime.startTime,
-          }));
-        }
-      ),
+      meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
+        return meetingTime.days.map((day) => ({
+          day: day as Day,
+          endTime: meetingTime.endTime,
+          startTime: meetingTime.startTime,
+        }));
+      }),
     };
   });
 }
@@ -92,6 +115,7 @@ async function getSchedule(year: number): Promise<Schedule | null> {
         CourseID: {
           code: course.course.courseCode,
           subject: course.course.subject,
+          title: course.course.title,
           term: course.course.term as any,
         },
         capacity: course.capacity,

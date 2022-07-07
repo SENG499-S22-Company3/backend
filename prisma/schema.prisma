@@ -51,6 +51,9 @@ model Course {
   subject          String
   courseCode       String
   title            String
+  streamSequence   String
+  sengRatio        Float              @default(0.75)
+  capacity         Int                @default(0)
   term             Term
   courseSection    CourseSection[]
   coursePreference CoursePreference[]
