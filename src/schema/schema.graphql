@@ -21,6 +21,14 @@ type Query {
   Schedule for a given term. If year is given, returns the most recent schedule generated for that year.
   """
   schedule(year: Int): Schedule
+  """
+  Get all courses preferences
+  """
+  coursePreferences: [CoursePreference!]
+  """
+  Get the all users
+  """
+  allUsers: [User!]
 }
 
 """
@@ -78,6 +86,10 @@ type Mutation {
   Generate schedule
   """
   generateSchedule(input: GenerateScheduleInput!): Response!
+  """
+  Edit schedule and Plug and Play Compnay 3's and 4's Algorithms
+  """
+  editCourse(input: EditCourseInput): Response!
 }
 
 type Response {
@@ -99,6 +111,11 @@ input CreateTeachingPreferenceInput {
   peng: Boolean!
   userId: ID!
   courses: [CoursePreferenceInput!]!
+  nonTeachingTerm: Term
+  hasRelief: Boolean!
+  reliefReason: String
+  hasTopic: Boolean!
+  topicDescription: String
 }
 
 type TeachingPreferenceSurvey {
@@ -128,7 +145,41 @@ input CoursePreferenceInput {
 
 input GenerateScheduleInput {
   year: Int!
-  # TODO: need to fill in the rest of the inputs
+  term: Term!
+  courses: [CourseInput!]
+  algorithm1: Company!
+  algorithm2: Company!
+}
+
+input EditCourseInput {
+  course: CourseInput!
+  hoursPerWeek: Float
+  capacity: Int
+  sectionNumber: String
+  startDate: Date
+  endDate: Date
+  meetingTimes: [MeetingTimeInput!]
+}
+
+input MeetingTimeInput {
+  day: Day!
+  startTime: Date!
+  endTime: Date!
+}
+
+input CourseInput {
+  """
+  Course subject, e.g. SENG, CSC
+  """
+  subject: String!
+  """
+  Course code, e.g. 499, 310
+  """
+  code: String!
+  """
+  Number of Sections for a course
+  """
+  section: Int!
 }
 
 type CourseID {
@@ -136,6 +187,10 @@ type CourseID {
   Course subject, e.g. SENG, CSC
   """
   subject: String!
+  """
+  Course title. e.g. Introduction to Artificial Intelligence
+  """
+  title: String!
   """
   Course code, e.g. 499, 310
   """
@@ -177,6 +232,10 @@ type CourseSection {
   Maximum capacity of the section
   """
   capacity: Int!
+  """
+  Section number for courses, eg: A01, A02
+  """
+  sectionNumber: String
   """
   Professor's info, if any professors are assigned
   """
@@ -243,7 +302,7 @@ type AuthPayload {
   """
   Auth token used for future requests
   """
-  token: String!
+  token: String! @deprecated
   """
   Optional error message if success is false
   """
@@ -260,6 +319,10 @@ type User {
   """
   username: String!
   """
+  display name for the user
+  """
+  displayName: String
+  """
   Password
   """
   password: String!
@@ -275,6 +338,10 @@ type User {
   Determine if the user is marked active
   """
   active: Boolean!
+  """
+  Determine if user has Peng
+  """
+  hasPeng: Boolean!
 }
 
 """
@@ -311,4 +378,12 @@ enum Term {
   FALL
   SPRING
   SUMMER
+}
+
+"""
+Company 3 and 4
+"""
+enum Company {
+  COMPANY3
+  COMPANY4
 }

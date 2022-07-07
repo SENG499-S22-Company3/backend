@@ -8,12 +8,19 @@ import {
   generateSchedule,
 } from '../auth';
 import * as utils from '../utils';
-import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
+import {
+  getSchedule,
+  getCourses,
+  getMe,
+  getAll,
+  getUserByID,
+} from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
 import { Schedule } from './types';
 import { prisma } from '../prisma';
 import { getTime } from '../utils/time';
+import { SchedulePostRequest } from '../client/algorithm1/api';
 
 const noLogin = {
   success: false,
@@ -61,6 +68,10 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return null;
       return getSchedule(params.year || new Date().getFullYear());
     },
+    allUsers: async (_, _params, ctx) => {
+      if (!ctx.session.user || !utils.isAdmin(ctx.session.user)) return null;
+      return await getAll();
+    },
   },
   Mutation: {
     login: async (_, params, ctx) => {
@@ -89,10 +100,18 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
+      const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
+      const res = await axios.post<any, Schedule[], SchedulePostRequest>(
+        baseUrl,
+        {
+          // TODO: add input data here.
+        }
+      );
+      console.log(res);
+
       try {
-        const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
         const response = await axios.post<Schedule>(
-          `${baseUrl}/generate`,
+          `${baseUrl}/schedule`,
           minInput
         );
         const schedule = await prisma.schedule.create({
