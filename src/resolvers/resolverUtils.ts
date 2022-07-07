@@ -1,4 +1,4 @@
-import { findUserById } from '../prisma/user';
+import { findUserById, findAllUsers, updateUserSurvey } from '../prisma/user';
 import { findCourseSection } from '../prisma/course';
 import { findSchedule } from '../prisma/schedule';
 import {
@@ -11,7 +11,34 @@ import {
   MeetingTime,
 } from '../schema';
 import { Context } from '../context';
-export { getMe, getUserByID, getCourses, getSchedule };
+import {
+  User as PrismaUser,
+  Course,
+  CoursePreference,
+  TeachingPreference,
+} from '@prisma/client';
+export {
+  getMe,
+  getAll,
+  getUserByID,
+  getCourses,
+  getSchedule,
+  updateUserSurvey,
+};
+
+/**
+ * Prisma-based type representing the User model
+ * with the preferences joined in
+ */
+export type FullUser = PrismaUser & {
+  preference: PrismaTeachPref;
+};
+
+export type PrismaTeachPref = (TeachingPreference & {
+  coursePreference: (CoursePreference & {
+    course: Course;
+  })[];
+})[];
 
 async function getMe(ctx: Context): Promise<User | null> {
   if (!ctx.session.user) return null;
@@ -19,11 +46,52 @@ async function getMe(ctx: Context): Promise<User | null> {
   return {
     id: ctx.session.user.id,
     username: ctx.session.user.username,
+    displayName: ctx.session.user.displayName,
     password: ctx.session.user.password,
     role: ctx.session.user.role as Role,
-    preferences: [],
+    preferences: prismaPrefsToGraphQLPrefs(ctx.session.user.preference),
     active: ctx.session.user.active,
+    hasPeng: ctx.session.user.hasPeng,
   };
+}
+
+const prismaPrefsToGraphQLPrefs = (input: PrismaTeachPref) => {
+  return input.flatMap((p) => {
+    return p.coursePreference.map((c) => ({
+      ...c,
+      id: {
+        ...c.course,
+        // code and term mappings are required because these fields don't match up
+        // between graphql and prisma...
+        code: c.course.courseCode,
+        term:
+          c.course.term === 'FALL'
+            ? Term.Fall
+            : c.course.term === 'SPRING'
+            ? Term.Spring
+            : Term.Summer,
+      },
+    }));
+  });
+};
+
+async function getAll(): Promise<User[] | null> {
+  const allusers = await findAllUsers();
+
+  if (!allusers) return null;
+
+  return allusers.map<User>((alluser) => {
+    return {
+      id: alluser.id,
+      username: alluser.username,
+      displayName: alluser.displayName,
+      password: alluser.password,
+      role: alluser.role as Role,
+      preferences: prismaPrefsToGraphQLPrefs(alluser.preference),
+      active: alluser.active,
+      hasPeng: alluser.hasPeng,
+    };
+  });
 }
 
 async function getUserByID(id: number): Promise<User | null> {
@@ -35,9 +103,11 @@ async function getUserByID(id: number): Promise<User | null> {
     id: user.id,
     username: user.username,
     password: user.password,
+    displayName: user.displayName,
     role: user.role as Role,
-    preferences: [],
+    preferences: prismaPrefsToGraphQLPrefs(user.preference),
     active: user.active,
+    hasPeng: user.hasPeng,
   };
 }
 
@@ -51,6 +121,7 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
       CourseID: {
         code: course.course.courseCode,
         subject: course.course.subject,
+        title: course.course.title,
         term: course.course.term as any,
       },
       capacity: course.capacity,
@@ -81,6 +152,7 @@ async function getSchedule(year: number): Promise<Schedule | null> {
         CourseID: {
           code: course.course.courseCode,
           subject: course.course.subject,
+          title: course.course.title,
           term: course.course.term as any,
         },
         capacity: course.capacity,

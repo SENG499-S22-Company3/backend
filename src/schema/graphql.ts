@@ -34,7 +34,10 @@ export type AuthPayload = {
   message?: Maybe<Scalars['String']>;
   /** Whether auth operation was successful or not */
   success: Scalars['Boolean'];
-  /** Auth token used for future requests */
+  /**
+   * Auth token used for future requests
+   * @deprecated Field no longer supported
+   */
   token: Scalars['String'];
 };
 
@@ -42,6 +45,12 @@ export type ChangeUserPasswordInput = {
   currentPassword: Scalars['String'];
   newPassword: Scalars['String'];
 };
+
+/** Company 3 and 4 */
+export enum Company {
+  Company3 = 'COMPANY3',
+  Company4 = 'COMPANY4',
+}
 
 export type CourseId = {
   __typename?: 'CourseID';
@@ -51,6 +60,17 @@ export type CourseId = {
   subject: Scalars['String'];
   /** Term course is offered in */
   term: Term;
+  /** Course title. e.g. Introduction to Artificial Intelligence */
+  title: Scalars['String'];
+};
+
+export type CourseInput = {
+  /** Course code, e.g. 499, 310 */
+  code: Scalars['String'];
+  /** Number of Sections for a course */
+  section: Scalars['Int'];
+  /** Course subject, e.g. SENG, CSC */
+  subject: Scalars['String'];
 };
 
 export type CoursePreference = {
@@ -84,13 +104,20 @@ export type CourseSection = {
   meetingTimes: Array<MeetingTime>;
   /** Professor's info, if any professors are assigned */
   professors?: Maybe<Array<User>>;
+  /** Section number for courses, eg: A01, A02 */
+  sectionNumber?: Maybe<Scalars['String']>;
   /** The start date of the course */
   startDate: Scalars['Date'];
 };
 
 export type CreateTeachingPreferenceInput = {
   courses: Array<CoursePreferenceInput>;
+  hasRelief: Scalars['Boolean'];
+  hasTopic: Scalars['Boolean'];
+  nonTeachingTerm?: InputMaybe<Term>;
   peng: Scalars['Boolean'];
+  reliefReason?: InputMaybe<Scalars['String']>;
+  topicDescription?: InputMaybe<Scalars['String']>;
   userId: Scalars['ID'];
 };
 
@@ -113,6 +140,16 @@ export enum Day {
   Wednesday = 'WEDNESDAY',
 }
 
+export type EditCourseInput = {
+  capacity?: InputMaybe<Scalars['Int']>;
+  course: CourseInput;
+  endDate?: InputMaybe<Scalars['Date']>;
+  hoursPerWeek?: InputMaybe<Scalars['Float']>;
+  meetingTimes?: InputMaybe<Array<MeetingTimeInput>>;
+  sectionNumber?: InputMaybe<Scalars['String']>;
+  startDate?: InputMaybe<Scalars['Date']>;
+};
+
 export type Error = {
   __typename?: 'Error';
   errors?: Maybe<Array<Error>>;
@@ -120,6 +157,10 @@ export type Error = {
 };
 
 export type GenerateScheduleInput = {
+  algorithm1: Company;
+  algorithm2: Company;
+  courses?: InputMaybe<Array<CourseInput>>;
+  term: Term;
   year: Scalars['Int'];
 };
 
@@ -134,6 +175,12 @@ export type MeetingTime = {
   startTime: Scalars['Date'];
 };
 
+export type MeetingTimeInput = {
+  day: Day;
+  endTime: Scalars['Date'];
+  startTime: Scalars['Date'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Change the password of the currently logged in user */
@@ -142,6 +189,8 @@ export type Mutation = {
   createTeachingPreference: Response;
   /** Register a new user account */
   createUser: CreateUserMutationResult;
+  /** Edit schedule and Plug and Play Compnay 3's and 4's Algorithms */
+  editCourse: Response;
   /** Generate schedule */
   generateSchedule: Response;
   /** Login into a user account using email and password */
@@ -166,6 +215,10 @@ export type MutationCreateUserArgs = {
   username: Scalars['String'];
 };
 
+export type MutationEditCourseArgs = {
+  input?: InputMaybe<EditCourseInput>;
+};
+
 export type MutationGenerateScheduleArgs = {
   input: GenerateScheduleInput;
 };
@@ -185,6 +238,10 @@ export type MutationUpdateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  /** Get the all users */
+  allUsers?: Maybe<Array<User>>;
+  /** Get all courses preferences */
+  coursePreferences?: Maybe<Array<CoursePreference>>;
   /** Get a list of courses for a given term */
   courses?: Maybe<Array<CourseSection>>;
   /** Find a user by their id */
@@ -278,6 +335,10 @@ export type User = {
   __typename?: 'User';
   /** Determine if the user is marked active */
   active: Scalars['Boolean'];
+  /** display name for the user */
+  displayName?: Maybe<Scalars['String']>;
+  /** Determine if user has Peng */
+  hasPeng: Scalars['Boolean'];
   /** Unique User  ID */
   id: Scalars['Int'];
   /** Password */
@@ -400,7 +461,9 @@ export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ChangeUserPasswordInput: ChangeUserPasswordInput;
+  Company: Company;
   CourseID: ResolverTypeWrapper<CourseId>;
+  CourseInput: CourseInput;
   CoursePreference: ResolverTypeWrapper<CoursePreference>;
   CoursePreferenceInput: CoursePreferenceInput;
   CourseSection: ResolverTypeWrapper<CourseSection>;
@@ -408,12 +471,14 @@ export type ResolversTypes = {
   CreateUserMutationResult: ResolverTypeWrapper<CreateUserMutationResult>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Day: Day;
+  EditCourseInput: EditCourseInput;
   Error: ResolverTypeWrapper<Error>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   GenerateScheduleInput: GenerateScheduleInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   MeetingTime: ResolverTypeWrapper<MeetingTime>;
+  MeetingTimeInput: MeetingTimeInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   ResetPasswordMutationResult: ResolverTypeWrapper<ResetPasswordMutationResult>;
@@ -434,18 +499,21 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   ChangeUserPasswordInput: ChangeUserPasswordInput;
   CourseID: CourseId;
+  CourseInput: CourseInput;
   CoursePreference: CoursePreference;
   CoursePreferenceInput: CoursePreferenceInput;
   CourseSection: CourseSection;
   CreateTeachingPreferenceInput: CreateTeachingPreferenceInput;
   CreateUserMutationResult: CreateUserMutationResult;
   Date: Scalars['Date'];
+  EditCourseInput: EditCourseInput;
   Error: Error;
   Float: Scalars['Float'];
   GenerateScheduleInput: GenerateScheduleInput;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   MeetingTime: MeetingTime;
+  MeetingTimeInput: MeetingTimeInput;
   Mutation: {};
   Query: {};
   ResetPasswordMutationResult: ResetPasswordMutationResult;
@@ -475,6 +543,7 @@ export type CourseIdResolvers<
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   term?: Resolver<ResolversTypes['Term'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -502,6 +571,11 @@ export type CourseSectionResolvers<
   >;
   professors?: Resolver<
     Maybe<Array<ResolversTypes['User']>>,
+    ParentType,
+    ContextType
+  >;
+  sectionNumber?: Resolver<
+    Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >;
@@ -570,6 +644,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateUserArgs, 'username'>
   >;
+  editCourse?: Resolver<
+    ResolversTypes['Response'],
+    ParentType,
+    ContextType,
+    Partial<MutationEditCourseArgs>
+  >;
   generateSchedule?: Resolver<
     ResolversTypes['Response'],
     ParentType,
@@ -601,6 +681,16 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
+  allUsers?: Resolver<
+    Maybe<Array<ResolversTypes['User']>>,
+    ParentType,
+    ContextType
+  >;
+  coursePreferences?: Resolver<
+    Maybe<Array<ResolversTypes['CoursePreference']>>,
+    ParentType,
+    ContextType
+  >;
   courses?: Resolver<
     Maybe<Array<ResolversTypes['CourseSection']>>,
     ParentType,
@@ -692,6 +782,12 @@ export type UserResolvers<
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  displayName?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  hasPeng?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   preferences?: Resolver<

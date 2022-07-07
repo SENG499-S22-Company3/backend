@@ -1,8 +1,8 @@
 import session from 'express-session';
-import { User } from '@prisma/client';
+import { FullUser } from './src/resolvers/resolverUtils';
 
 declare module 'express-session' {
   interface SessionData {
-    user: User;
+    user: FullUser;
   }
 }

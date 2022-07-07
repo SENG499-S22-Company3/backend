@@ -1,5 +1,5 @@
 import { Context } from '../context';
-import { Resolvers } from '../schema';
+import { Resolvers, Term } from '../schema';
 
 import {
   login,
@@ -9,12 +9,21 @@ import {
   resetPassword,
 } from '../auth';
 import * as utils from '../utils';
-import { getSchedule, getCourses, getMe, getUserByID } from './resolverUtils';
+import {
+  getSchedule,
+  getCourses,
+  getMe,
+  getAll,
+  getUserByID,
+  updateUserSurvey,
+} from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
 import { Schedule } from './types';
 import { prisma } from '../prisma';
 import { getTime } from '../utils/time';
+import { SchedulePostRequest } from '../client/algorithm1/api';
+import { findUserById } from '../prisma/user';
 
 const noLogin = {
   success: false,
@@ -54,6 +63,23 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user || !params.id) return null;
       return await getUserByID(+params.id);
     },
+    survey: async (_, __, ctx) => {
+      if (!ctx.session.user) return { courses: [] };
+
+      const courses = (
+        await Promise.all([
+          getCourses(Term.Fall),
+          getCourses(Term.Spring),
+          getCourses(Term.Summer),
+        ])
+      )
+        .flatMap((p) => p ?? [])
+        .map((c) => c.CourseID);
+
+      return {
+        courses,
+      };
+    },
     courses: async (_, params, ctx) => {
       if (!ctx.session.user || !params.term) return null;
       return await getCourses(params.term);
@@ -61,6 +87,10 @@ export const resolvers: Resolvers<Context> = {
     schedule: async (_, params, ctx) => {
       if (!ctx.session.user) return null;
       return getSchedule(params.year || new Date().getFullYear());
+    },
+    allUsers: async (_, _params, ctx) => {
+      if (!ctx.session.user || !utils.isAdmin(ctx.session.user)) return null;
+      return await getAll();
     },
   },
   Mutation: {
@@ -91,14 +121,49 @@ export const resolvers: Resolvers<Context> = {
       else if (!utils.isAdmin(ctx.session.user)) return noPerms;
       return await createNewUser(username);
     },
+    createTeachingPreference: async (_, { input }, ctx) => {
+      if (!ctx.session.user) return noLogin;
+
+      if (ctx.session.user.preference.length !== 0) {
+        return {
+          token: '',
+          success: false,
+          message:
+            'Teaching preferences survey has already been submitted for this user',
+        };
+      }
+
+      await updateUserSurvey(ctx.session.user.id, input);
+
+      // refresh the context user when they update their preferences
+      const refreshedUser = await findUserById(ctx.session.user.id);
+      // should never be null but just in case
+      if (refreshedUser !== null) {
+        ctx.session.user = refreshedUser;
+      }
+
+      return {
+        token: '',
+        success: true,
+        message: 'Teaching preferences updated.',
+      };
+    },
     generateSchedule: async (_, { input }, ctx) => {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
+      const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
+      const res = await axios.post<any, Schedule[], SchedulePostRequest>(
+        baseUrl,
+        {
+          // TODO: add input data here.
+        }
+      );
+      console.log(res);
+
       try {
-        const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
         const response = await axios.post<Schedule>(
-          `${baseUrl}/generate`,
+          `${baseUrl}/schedule`,
           minInput
         );
         const schedule = await prisma.schedule.create({
@@ -127,6 +192,10 @@ export const resolvers: Resolvers<Context> = {
               title: course.courseTitle,
               subject: course.subject,
               term: 'SUMMER',
+              streamSequence: utils.getSeqNumber(
+                course.subject,
+                course.courseNumber
+              ),
               courseSection: {
                 create: {
                   sectionNumber: course.sequenceNumber,
