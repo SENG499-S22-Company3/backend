@@ -6,6 +6,7 @@ import {
   createNewUser,
   changePassword,
   generateSchedule,
+  resetPassword,
 } from '../auth';
 import * as utils from '../utils';
 import {
@@ -109,6 +110,11 @@ export const resolvers: Resolvers<Context> = {
     changeUserPassword: async (_, _params, ctx) => {
       if (!ctx.session.user) return noLogin;
       return changePassword(ctx.session.user, _params.input);
+    },
+    resetPassword: async (_, _params, ctx) => {
+      if (!ctx.session.user) return noLogin;
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms;
+      return await resetPassword(_params.id);
     },
     createUser: async (_, { username }, ctx) => {
       if (!ctx.session.user) return noLogin;
