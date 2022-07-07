@@ -2,7 +2,7 @@ import { Prisma, User } from '@prisma/client';
 import { findUserByUsername } from '../prisma/user';
 import { prisma } from '../prisma';
 import bcrypt from 'bcrypt';
-import type {
+import {
   AuthPayload,
   ChangeUserPasswordInput,
   Response,
@@ -147,9 +147,19 @@ async function createNewUser(
 
 async function createTeachingPreference(
   user: User,
-  { peng, userId, courses }: CreateTeachingPreferenceInput
+  {
+    peng,
+    userId,
+    courses,
+    nonTeachingTerm,
+    hasRelief,
+    reliefReason,
+    hasTopic,
+    topicDescription,
+  }: CreateTeachingPreferenceInput
 ): Promise<Response> {
   try {
+    // const course = Object.assign(...courses);
     if (Number(userId) !== user.id) {
       console.log('userId: ', Number(userId), 'id: ', user.id);
       return invalidUserId;
@@ -158,43 +168,109 @@ async function createTeachingPreference(
     const teachingPrefernce = await prisma.teachingPreference.upsert({
       create: {
         userId: Number(userId),
-        hasRelief: false,
+        nonTeachingTerm1: nonTeachingTerm,
+        nonTeachingTerm2: nonTeachingTerm,
+        hasRelief: hasRelief,
+        reliefReason: reliefReason,
+        topicsOrGradCourse: hasTopic,
+        // Hardcoded value: Mandatory property for teachingPrefernece Table. Needs to be added in graphQL schema
         studyLeave: false,
-        topicsOrGradCourse: false,
       },
       update: {
         userId: Number(userId),
-        hasRelief: true,
-        studyLeave: false,
-        topicsOrGradCourse: false,
+        nonTeachingTerm1: nonTeachingTerm,
+        nonTeachingTerm2: nonTeachingTerm,
+        hasRelief: hasRelief,
+        reliefReason: reliefReason,
+        topicsOrGradCourse: hasTopic,
+        studyLeave: false, // Hardcoded
       },
       where: {
         userId: Number(userId),
       },
     });
+    courses.forEach(async (course) => {
+      const courseT = await prisma.course.upsert({
+        create: {
+          courseCode: course.code,
+          subject: course.subject,
+          term: course.term,
+          title: 'Advanced Mathematics+',
+          streamSequence: 'A01',
+        },
+        update: {
+          courseCode: course.code,
+          subject: course.subject,
+          term: course.term,
+          // Hardcoded
+          title: 'Advanced Mathematics+',
+          streamSequence: 'A01',
+        },
+        where: {
+          subject_courseCode_term: {
+            courseCode: course.code,
+            subject: course.subject,
+            term: course.term,
+          },
+        },
+      });
 
+      await prisma.coursePreference.upsert({
+        create: {
+          preference: course.preference,
+          course: {
+            connect: { id: courseT.id },
+          },
+          teachPreference: {
+            connect: { id: teachingPrefernce.id },
+          },
+        },
+        update: {
+          preference: course.preference,
+          course: {
+            connect: { id: courseT.id },
+          },
+          teachPreference: {
+            connect: { id: teachingPrefernce.id },
+          },
+        },
+        where: {
+          teachPreferenceId_preference_courseId: {
+            teachPreferenceId: teachingPrefernce.id,
+            preference: course.preference,
+            courseId: courseT.id,
+          },
+        },
+      });
+    });
+
+    /*
     const course = await prisma.course.upsert({
-      create: {
-        title: 'Advanced Mathematics+', // Hardcoded for now. Needs schema update
+       create: {
         courseCode: courses[0].code,
         subject: courses[0].subject,
         term: courses[0].term,
+        // Mandatory field, Hardcoded for now. Needs GraphQL schema update in CoursePreferenceInput
+        title: 'Advanced Mathematics+',
+        streamSequence: 'A01',
       },
       update: {
+        courseCode: course.code,
+        subject: course.subject,
+        term: course.term,
+        // Hardcoded
         title: 'Advanced Mathematics+',
-        courseCode: courses[0].code,
-        subject: courses[0].subject,
-        term: courses[0].term,
+        streamSequence: 'A01',
       },
       where: {
         subject_courseCode_term: {
-          courseCode: courses[0].code,
-          subject: courses[0].subject,
-          term: courses[0].term,
+          courseCode: course.code,
+          subject: course.subject,
+          term: course.term,
         },
       },
     });
-
+*/
     // Update hasPeng property (which is by default false) based on survey input
     await prisma.user.update({
       where: {
@@ -204,10 +280,10 @@ async function createTeachingPreference(
         hasPeng: peng,
       },
     });
-
+    /*
     await prisma.coursePreference.upsert({
       create: {
-        preference: courses[0].preference,
+        preference: course.preference,
         course: {
           connect: { id: course.id },
         },
@@ -227,11 +303,11 @@ async function createTeachingPreference(
       where: {
         teachPreferenceId_preference_courseId: {
           teachPreferenceId: teachingPrefernce.id,
-          preference: courses[0].preference,
+          preference: course.preference,
           courseId: course.id,
         },
       },
-    });
+    });*/
   } catch (error: any) {
     if (error.code === 'P2003') {
       return {

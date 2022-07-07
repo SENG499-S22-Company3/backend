@@ -1,7 +1,7 @@
 import { getISOTime, getMeetingDays } from './time';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { PrismaClient, Term } from '@prisma/client';
-// import { getSeqNumber } from './courseSequenceNumber';
+import { getSeqNumber } from './courseSequenceNumber';
 
 const prisma = new PrismaClient();
 
@@ -54,11 +54,10 @@ export const addCourseSections = async (
           courseCode: courseSection.courseNumber,
           term: term,
           title: courseSection.courseTitle,
-          /*
           streamSequence: getSeqNumber(
             courseSection.subject,
             courseSection.courseNumber
-          ),*/
+          ),
         },
       });
     } else {
@@ -72,11 +71,10 @@ export const addCourseSections = async (
           courseCode: courseSection.courseNumber,
           term: term,
           title: courseSection.courseTitle,
-          /*
           streamSequence: getSeqNumber(
             courseSection.subject,
             courseSection.courseNumber
-          ),*/
+          ),
         },
       });
     }
