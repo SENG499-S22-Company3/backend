@@ -16,7 +16,9 @@ import {
   connectAlgorithm2,
   connectAlgorithm1,
   createSchedule,
+  updateUserSurvey,
 } from './resolverUtils';
+import { findUserById } from '../prisma/user';
 
 const noLogin = {
   success: false,
@@ -48,6 +50,23 @@ export const resolvers: Resolvers<Context> = {
     findUserById: async (_, params, ctx) => {
       if (!ctx.session.user || !params.id) return null;
       return await getUserByID(+params.id);
+    },
+    survey: async (_, __, ctx) => {
+      if (!ctx.session.user) return { courses: [] };
+
+      const courses = (
+        await Promise.all([
+          getCourses(Term.Fall),
+          getCourses(Term.Spring),
+          getCourses(Term.Summer),
+        ])
+      )
+        .flatMap((p) => p ?? [])
+        .map((c) => c.CourseID);
+
+      return {
+        courses,
+      };
     },
     courses: async (_, params, ctx) => {
       if (!ctx.session.user || !params.term) return null;
@@ -84,6 +103,33 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms;
       return await createNewUser(username);
+    },
+    createTeachingPreference: async (_, { input }, ctx) => {
+      if (!ctx.session.user) return noLogin;
+
+      if (ctx.session.user.preference.length !== 0) {
+        return {
+          token: '',
+          success: false,
+          message:
+            'Teaching preferences survey has already been submitted for this user',
+        };
+      }
+
+      await updateUserSurvey(ctx.session.user.id, input);
+
+      // refresh the context user when they update their preferences
+      const refreshedUser = await findUserById(ctx.session.user.id);
+      // should never be null but just in case
+      if (refreshedUser !== null) {
+        ctx.session.user = refreshedUser;
+      }
+
+      return {
+        token: '',
+        success: true,
+        message: 'Teaching preferences updated.',
+      };
     },
     generateSchedule: async (_, { input }, ctx) => {
       if (!ctx.session.user || !input.courses) return noLogin;
