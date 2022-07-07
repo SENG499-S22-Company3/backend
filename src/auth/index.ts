@@ -155,24 +155,46 @@ async function createTeachingPreference(
       return invalidUserId;
     }
     // userId in teachingPreference model === id in user model
-    await prisma.teachingPreference.create({
-      data: {
+    const teachingPrefernce = await prisma.teachingPreference.upsert({
+      create: {
         userId: Number(userId),
-        // Hardcoded values populated for now
         hasRelief: false,
         studyLeave: false,
         topicsOrGradCourse: false,
       },
+      update: {
+        userId: Number(userId),
+        hasRelief: true,
+        studyLeave: false,
+        topicsOrGradCourse: false,
+      },
+      where: {
+        userId: Number(userId),
+      },
     });
 
-    await prisma.course.create({
-      data: {
-        title: 'aj',
+    const course = await prisma.course.upsert({
+      create: {
+        title: 'Advanced Mathematics+', // Hardcoded for now. Needs schema update
         courseCode: courses[0].code,
         subject: courses[0].subject,
         term: courses[0].term,
       },
+      update: {
+        title: 'Advanced Mathematics+',
+        courseCode: courses[0].code,
+        subject: courses[0].subject,
+        term: courses[0].term,
+      },
+      where: {
+        subject_courseCode_term: {
+          courseCode: courses[0].code,
+          subject: courses[0].subject,
+          term: courses[0].term,
+        },
+      },
     });
+
     // Update hasPeng property (which is by default false) based on survey input
     await prisma.user.update({
       where: {
@@ -183,11 +205,31 @@ async function createTeachingPreference(
       },
     });
 
-    await prisma.coursePreference.create({
-      data: {
+    await prisma.coursePreference.upsert({
+      create: {
         preference: courses[0].preference,
-        // Hardcoded for now. Doesnt work without it
-        courseId: 14,
+        course: {
+          connect: { id: course.id },
+        },
+        teachPreference: {
+          connect: { id: teachingPrefernce.id },
+        },
+      },
+      update: {
+        preference: courses[0].preference,
+        course: {
+          connect: { id: course.id },
+        },
+        teachPreference: {
+          connect: { id: teachingPrefernce.id },
+        },
+      },
+      where: {
+        teachPreferenceId_preference_courseId: {
+          teachPreferenceId: teachingPrefernce.id,
+          preference: courses[0].preference,
+          courseId: course.id,
+        },
       },
     });
   } catch (error: any) {
