@@ -173,6 +173,7 @@ async function createTeachingPreference(
         hasRelief: hasRelief,
         reliefReason: reliefReason,
         topicsOrGradCourse: hasTopic,
+        topicDescription: topicDescription,
         // Hardcoded value: Mandatory property for teachingPrefernece Table. Needs to be added in graphQL schema
         studyLeave: false,
       },
@@ -183,6 +184,7 @@ async function createTeachingPreference(
         hasRelief: hasRelief,
         reliefReason: reliefReason,
         topicsOrGradCourse: hasTopic,
+        topicDescription: topicDescription,
         studyLeave: false, // Hardcoded
       },
       where: {
