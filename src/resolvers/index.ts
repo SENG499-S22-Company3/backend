@@ -119,7 +119,7 @@ export const resolvers: Resolvers<Context> = {
       return {
         token: '',
         success: true,
-        message: 'update prefs',
+        message: 'Teaching preferences updated.',
       };
     },
     generateSchedule: async (_, { input }, ctx) => {
