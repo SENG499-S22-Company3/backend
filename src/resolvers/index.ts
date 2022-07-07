@@ -1,5 +1,5 @@
 import { Context } from '../context';
-import { Resolvers } from '../schema';
+import { Resolvers, Term } from '../schema';
 
 import {
   login,
@@ -14,6 +14,7 @@ import {
   getMe,
   getAll,
   getUserByID,
+  updateUserSurvey,
 } from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
@@ -60,6 +61,18 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user || !params.id) return null;
       return await getUserByID(+params.id);
     },
+    survey: async (_, __, ctx) => {
+      if (!ctx.session.user) return { courses: [] };
+      const fallCourses = (await getCourses(Term.Fall)) ?? [];
+      const springCourses = (await getCourses(Term.Spring)) ?? [];
+      const summerCourses = (await getCourses(Term.Summer)) ?? [];
+
+      return {
+        courses: [...fallCourses, ...springCourses, ...summerCourses].map(
+          (c) => c.CourseID
+        ),
+      };
+    },
     courses: async (_, params, ctx) => {
       if (!ctx.session.user || !params.term) return null;
       return await getCourses(params.term);
@@ -95,6 +108,15 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms;
       return await createNewUser(username);
+    },
+    createTeachingPreference: async (_, { input }, ctx) => {
+      if (!ctx.session.user) return noLogin;
+      await updateUserSurvey(ctx.session.user.id, input);
+      return {
+        token: '',
+        success: true,
+        message: 'update prefs',
+      };
     },
     generateSchedule: async (_, { input }, ctx) => {
       if (!ctx.session.user) return noLogin;
