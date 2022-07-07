@@ -23,6 +23,7 @@ import minInput from '../input.json';
 import { Schedule } from './types';
 import { prisma } from '../prisma';
 import { getTime } from '../utils/time';
+import { SchedulePostRequest } from '../client/algorithm1/api';
 
 const noLogin = {
   success: false,
@@ -108,10 +109,18 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
+      const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
+      const res = await axios.post<any, Schedule[], SchedulePostRequest>(
+        baseUrl,
+        {
+          // TODO: add input data here.
+        }
+      );
+      console.log(res);
+
       try {
-        const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
         const response = await axios.post<Schedule>(
-          `${baseUrl}/generate`,
+          `${baseUrl}/schedule`,
           minInput
         );
         const schedule = await prisma.schedule.create({

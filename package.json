@@ -17,8 +17,8 @@
     "setup": "docker-compose up -d && husky install && npm run db:generate && npx -y prisma migrate deploy && npm run db:seed",
     "client:generate": "npm run client:clean && npm run client:build",
     "client:build": "npm run client:build:algo1 && npm run client:build:algo2",
-    "client:build:algo1": "openapi-generator generate -i ./GAGNE16-algorithm-1-1.1.1-resolved.yaml -o src/client/algorithm1 -g typescript-axios --additional-properties=supportsES6=true",
-    "client:build:algo2": "openapi-generator generate -i ./algorithm2-api.json -o src/client/algorithm2 -g typescript-axios --additional-properties=supportsES6=true",
+    "client:build:algo1": "openapi-generator generate -i ./algorithm-1-2.0.json -o src/client/algorithm1 -g typescript-axios --additional-properties=supportsES6=true",
+    "client:build:algo2": "openapi-generator generate -i ./algorithm-2-1.0.json -o src/client/algorithm2 -g typescript-axios --additional-properties=supportsES6=true",
     "client:clean": "rm -rf ./src/client"
   },
   "engines": {
@@ -36,9 +36,10 @@
   },
   "homepage": "https://github.com/SENG499-S22-Company3/backend#readme",
   "devDependencies": {
-    "@graphql-codegen/cli": "2.6.2",
-    "@graphql-codegen/typescript": "2.4.11",
-    "@graphql-codegen/typescript-resolvers": "2.6.4",
+    "@graphql-codegen/cli": "^2.7.0",
+    "@graphql-codegen/typescript": "^2.6.0",
+    "@graphql-codegen/typescript-resolvers": "^2.6.7",
+    "@openapitools/openapi-generator-cli": "^2.5.1",
     "@types/bcrypt": "^5.0.0",
     "@types/express-session": "^1.17.4",
     "@types/jest": "^27.5.2",
@@ -59,7 +60,6 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
-    "@openapitools/openapi-generator-cli": "^2.5.1",
     "@faker-js/faker": "^7.3.0",
     "@prisma/client": "^3.15.2",
     "apollo-server-core": "^3.8.1",

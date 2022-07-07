@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { Session, SessionData } from 'express-session';
-import { algorithm1, algorithm2 } from '../algorithm';
+import { algorithm } from '../algorithm';
 
 export interface Context {
   // TODO: keep here until we have login implemented. a partial given it could be undefined
@@ -8,8 +8,7 @@ export interface Context {
   // TODO: add context (aka. prisma, auth, etc.)
   logout: () => Promise<void>;
   // dependencies
-  algorithm1: typeof algorithm1;
-  algorithm2: typeof algorithm2;
+  algorithm: typeof algorithm;
 }
 
 export async function createContext({
@@ -23,7 +22,6 @@ export async function createContext({
   return {
     session,
     logout: async () => new Promise((resolve) => session.destroy(resolve)),
-    algorithm1,
-    algorithm2,
+    algorithm,
   };
 }
