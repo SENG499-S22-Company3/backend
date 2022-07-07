@@ -22,6 +22,7 @@ import { Schedule } from './types';
 import { prisma } from '../prisma';
 import { getTime } from '../utils/time';
 import { SchedulePostRequest } from '../client/algorithm1/api';
+import { findUserById } from '../prisma/user';
 
 const noLogin = {
   success: false,
@@ -63,6 +64,7 @@ export const resolvers: Resolvers<Context> = {
     },
     survey: async (_, __, ctx) => {
       if (!ctx.session.user) return { courses: [] };
+
       const courses = (
         await Promise.all([
           getCourses(Term.Fall),
@@ -115,7 +117,25 @@ export const resolvers: Resolvers<Context> = {
     },
     createTeachingPreference: async (_, { input }, ctx) => {
       if (!ctx.session.user) return noLogin;
+
+      if (ctx.session.user.preference.length !== 0) {
+        return {
+          token: '',
+          success: false,
+          message:
+            'Teaching preferences survey has already been submitted for this user',
+        };
+      }
+
       await updateUserSurvey(ctx.session.user.id, input);
+
+      // refresh the context user when they update their preferences
+      const refreshedUser = await findUserById(ctx.session.user.id);
+      // should never be null but just in case
+      if (refreshedUser !== null) {
+        ctx.session.user = refreshedUser;
+      }
+
       return {
         token: '',
         success: true,
