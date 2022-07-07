@@ -63,14 +63,18 @@ export const resolvers: Resolvers<Context> = {
     },
     survey: async (_, __, ctx) => {
       if (!ctx.session.user) return { courses: [] };
-      const fallCourses = (await getCourses(Term.Fall)) ?? [];
-      const springCourses = (await getCourses(Term.Spring)) ?? [];
-      const summerCourses = (await getCourses(Term.Summer)) ?? [];
+      const courses = (
+        await Promise.all([
+          getCourses(Term.Fall),
+          getCourses(Term.Spring),
+          getCourses(Term.Summer),
+        ])
+      )
+        .flatMap((p) => p ?? [])
+        .map((c) => c.CourseID);
 
       return {
-        courses: [...fallCourses, ...springCourses, ...summerCourses].map(
-          (c) => c.CourseID
-        ),
+        courses,
       };
     },
     courses: async (_, params, ctx) => {
