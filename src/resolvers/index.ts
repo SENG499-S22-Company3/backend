@@ -24,6 +24,7 @@ import { prisma } from '../prisma';
 import { getTime } from '../utils/time';
 import { SchedulePostRequest } from '../client/algorithm1/api';
 import { findUserById } from '../prisma/user';
+import { getAllCourses } from '../prisma/course';
 
 const noLogin = {
   success: false,
@@ -66,15 +67,16 @@ export const resolvers: Resolvers<Context> = {
     survey: async (_, __, ctx) => {
       if (!ctx.session.user) return { courses: [] };
 
-      const courses = (
-        await Promise.all([
-          getCourses(Term.Fall),
-          getCourses(Term.Spring),
-          getCourses(Term.Summer),
-        ])
-      )
-        .flatMap((p) => p ?? [])
-        .map((c) => c.CourseID);
+      const courses = (await getAllCourses()).map((c) => ({
+        ...c,
+        code: c.courseCode,
+        term:
+          c.term === 'FALL'
+            ? Term.Fall
+            : c.term === 'SPRING'
+            ? Term.Spring
+            : Term.Summer,
+      }));
 
       return {
         courses,
