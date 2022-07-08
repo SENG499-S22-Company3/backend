@@ -16,6 +16,7 @@ import {
   expectResetPassword,
   expectResponse,
 } from './mockExpect';
+import { Company, Term } from '../src/schema';
 
 const typeDefs = fs.readFileSync('./src/schema/schema.graphql', 'utf8');
 let testServer: ApolloServer<ExpressContext>;
@@ -110,6 +111,11 @@ describe('MUTATION MOCK TESTS', () => {
           peng: true,
           userId: 1,
           courses: [],
+          nonTeachingTerm: Term.Fall,
+          hasRelief: true,
+          reliefReason: 'Need Break',
+          hasTopic: true,
+          topicDescription: 'Hello World',
         },
       },
     });
@@ -128,6 +134,10 @@ describe('MUTATION MOCK TESTS', () => {
       variables: {
         input: {
           year: 2021,
+          term: Term.Fall,
+          courses: [],
+          algorithm1: Company.Company3,
+          algorithm2: Company.Company4,
         },
       },
     });
