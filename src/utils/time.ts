@@ -34,6 +34,10 @@ export const getTime = (time: string): Date => {
   return parse(time, 'HHmm', new Date());
 };
 
+export const getDate = (date: string): Date => {
+  return parse(`${date}`, 'MMM d, yyyy', new Date());
+};
+
 /**
  *
  * Generates an array of the corresponding meeting days from the inputed

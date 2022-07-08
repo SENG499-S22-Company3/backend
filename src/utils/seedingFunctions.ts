@@ -1,9 +1,119 @@
 import { getISOTime, getMeetingDays } from './time';
 import { zonedTimeToUtc } from 'date-fns-tz';
-import { PrismaClient, Term } from '@prisma/client';
+import { PrismaClient, Term, Role } from '@prisma/client';
 import { getSeqNumber } from './courseSequenceNumber';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
+
+/**
+ * Adds the specified teaching and course preferences of a given prof
+ * @param professor a professor object
+ */
+
+export async function addTeachingAndCoursePreferences(professor: any) {
+  const firstName = professor.displayName.split(', ')[1];
+  const lastName = professor.displayName.split(', ')[0];
+
+  const generatedUsername = `${firstName}${lastName}`;
+
+  const pwsalt = bcrypt.genSaltSync(10);
+  const pwhash = bcrypt.hashSync('testpassword', pwsalt);
+
+  // Create professor user if not created
+  let currentProf = await prisma.user.findFirst({
+    where: {
+      username: generatedUsername,
+    },
+  });
+
+  if (!currentProf) {
+    currentProf = await prisma.user.create({
+      data: {
+        active: true,
+        hasPeng: true,
+        password: pwhash,
+        username: generatedUsername,
+        displayName: `${firstName} ${lastName}`,
+        role: Role.USER,
+      },
+    });
+  }
+
+  // Create teaching pref if not created
+  let currentTeachingPref = await prisma.teachingPreference.findFirst({
+    where: {
+      userId: currentProf.id,
+    },
+  });
+
+  if (!currentTeachingPref) {
+    currentTeachingPref = await prisma.teachingPreference.create({
+      data: {
+        hasRelief: true,
+        studyLeave: true,
+        topicsOrGradCourse: true,
+        User: {
+          connect: {
+            id: currentProf.id,
+          },
+        },
+      },
+    });
+  }
+
+  for await (const pref of professor.prefs) {
+    // Create course if not created
+    const splitCourse = pref.courseNum.match(/[a-zA-Z]+|[0-9]+/g);
+
+    if (splitCourse) {
+      let currentCourse = await prisma.course.findFirst({
+        where: {
+          subject: splitCourse[0],
+          courseCode: splitCourse[1],
+        },
+      });
+
+      if (!currentCourse) {
+        currentCourse = await prisma.course.create({
+          data: {
+            subject: splitCourse[0],
+            courseCode: splitCourse[1],
+            streamSequence: 'test',
+            term: Term.FALL,
+            title: pref.courseNum,
+          },
+        });
+      }
+
+      // Create course pref if not created
+      let currentCoursePref = await prisma.coursePreference.findFirst({
+        where: {
+          courseId: currentCourse.id,
+          teachPreferenceId: currentTeachingPref.id,
+        },
+      });
+
+      if (!currentCoursePref) {
+        currentCoursePref = await prisma.coursePreference.create({
+          data: {
+            course: {
+              connect: {
+                id: currentCourse.id,
+              },
+            },
+            teachPreference: {
+              connect: {
+                id: currentTeachingPref.id,
+              },
+            },
+            preference: pref.preferenceNum,
+          },
+        });
+      }
+    }
+  }
+}
 
 /**
  * Takes a list of course sections in the format of the historical dataset
