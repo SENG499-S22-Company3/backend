@@ -1,4 +1,4 @@
-import { User, Role } from '@prisma/client';
+import { User, Role, Day } from '@prisma/client';
 import { getISOTime, getMeetingDays } from './time';
 import {
   addCourseSections,
@@ -13,5 +13,13 @@ export {
   getMeetingDays,
   addCourseSections,
   getSeqNumber,
+  appendDay,
   addTeachingAndCoursePreferences,
+};
+
+const appendDay = (isDay: boolean, day: Day, days: Day[]): Day[] => {
+  if (isDay) {
+    days.push(day);
+  }
+  return days;
 };

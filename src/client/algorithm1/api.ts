@@ -158,10 +158,10 @@ export interface Course {
   courseTitle: string;
   /**
    *
-   * @type {Array<Assignment>}
+   * @type {Assignment}
    * @memberof Course
    */
-  assignment?: Array<Assignment>;
+  assignment?: Assignment;
   /**
    *
    * @type {Array<Professor>}
