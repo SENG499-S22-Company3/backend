@@ -1,11 +1,12 @@
 import { Context } from '../context';
-import { Resolvers } from '../schema';
+import { Resolvers, Term } from '../schema';
 
 import {
   login,
   createNewUser,
   changePassword,
   generateSchedule,
+  resetPassword,
 } from '../auth';
 import * as utils from '../utils';
 import {
@@ -14,6 +15,7 @@ import {
   getMe,
   getAll,
   getUserByID,
+  updateUserSurvey,
 } from './resolverUtils';
 import axios from 'axios';
 import minInput from '../input.json';
@@ -21,6 +23,7 @@ import { Schedule } from './types';
 import { prisma } from '../prisma';
 import { getTime } from '../utils/time';
 import { SchedulePostRequest } from '../client/algorithm1/api';
+import { findUserById } from '../prisma/user';
 
 const noLogin = {
   success: false,
@@ -60,6 +63,23 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user || !params.id) return null;
       return await getUserByID(+params.id);
     },
+    survey: async (_, __, ctx) => {
+      if (!ctx.session.user) return { courses: [] };
+
+      const courses = (
+        await Promise.all([
+          getCourses(Term.Fall),
+          getCourses(Term.Spring),
+          getCourses(Term.Summer),
+        ])
+      )
+        .flatMap((p) => p ?? [])
+        .map((c) => c.CourseID);
+
+      return {
+        courses,
+      };
+    },
     courses: async (_, params, ctx) => {
       if (!ctx.session.user || !params.term) return null;
       return await getCourses(params.term);
@@ -91,10 +111,42 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.session.user) return noLogin;
       return changePassword(ctx.session.user, _params.input);
     },
+    resetPassword: async (_, _params, ctx) => {
+      if (!ctx.session.user) return noLogin;
+      else if (!utils.isAdmin(ctx.session.user)) return noPerms;
+      return await resetPassword(_params.id);
+    },
     createUser: async (_, { username }, ctx) => {
       if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms;
       return await createNewUser(username);
+    },
+    createTeachingPreference: async (_, { input }, ctx) => {
+      if (!ctx.session.user) return noLogin;
+
+      if (ctx.session.user.preference.length !== 0) {
+        return {
+          token: '',
+          success: false,
+          message:
+            'Teaching preferences survey has already been submitted for this user',
+        };
+      }
+
+      await updateUserSurvey(ctx.session.user.id, input);
+
+      // refresh the context user when they update their preferences
+      const refreshedUser = await findUserById(ctx.session.user.id);
+      // should never be null but just in case
+      if (refreshedUser !== null) {
+        ctx.session.user = refreshedUser;
+      }
+
+      return {
+        token: '',
+        success: true,
+        message: 'Teaching preferences updated.',
+      };
     },
     generateSchedule: async (_, { input }, ctx) => {
       if (!ctx.session.user) return noLogin;

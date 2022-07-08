@@ -2,6 +2,7 @@ import { Prisma, User } from '@prisma/client';
 import { findUserByUsername } from '../prisma/user';
 import { prisma } from '../prisma';
 import bcrypt from 'bcrypt';
+import generator from 'generate-password';
 import type {
   AuthPayload,
   ChangeUserPasswordInput,
@@ -10,7 +11,13 @@ import type {
   GenerateScheduleInput,
 } from '../schema/graphql';
 import type { Context } from '../context';
-export { login, changePassword, createNewUser, generateSchedule };
+export {
+  login,
+  changePassword,
+  createNewUser,
+  generateSchedule,
+  resetPassword,
+};
 
 // User with username testuser and password testpassword
 // username: 'testuser',
@@ -122,6 +129,43 @@ async function createNewUser(
     username: username,
     password: 'testpassword',
   };
+}
+
+async function resetPassword(userId: number | string) {
+  const newPassword = generator.generate({
+    length: 16,
+    numbers: true,
+  });
+
+  const pwsalt = bcrypt.genSaltSync(10);
+  const pwhash = bcrypt.hashSync(newPassword, pwsalt);
+
+  if (typeof userId === 'string') {
+    userId = parseInt(userId);
+  }
+
+  try {
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+
+      data: {
+        password: pwhash,
+      },
+    });
+    return {
+      success: true,
+      message: `Reset password of user ${userId} successfully`,
+      password: newPassword,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: `Failed to reset password of user ${userId}`,
+    };
+  }
 }
 
 function checkDigits(year: number) {
