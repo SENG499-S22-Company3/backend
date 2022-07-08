@@ -13,8 +13,8 @@ import {
   getMe,
   getAll,
   getUserByID,
-  connectAlgorithm2,
-  connectAlgorithm1,
+  getCourseCapacities,
+  generateScheduleWithCapacities,
   createSchedule,
   updateUserSurvey,
 } from './resolverUtils';
@@ -144,18 +144,21 @@ export const resolvers: Resolvers<Context> = {
       const users = await getAll();
 
       try {
-        const algorithm2Data = await connectAlgorithm2(input);
-        console.log(algorithm2Data.data);
-        const algorithm1Data = await connectAlgorithm1(
+        const capacityDataResponse = await getCourseCapacities(input);
+
+        if (!capacityDataResponse) return EncounteredError;
+
+        console.log(capacityDataResponse.data);
+        const scheduleResponse = await generateScheduleWithCapacities(
           falltermCourses,
           summertermCourses,
           springtermCourses,
-          users
-          // TODO: need to pass in algorithm2Data here
+          users,
+          capacityDataResponse.data
         );
-        console.log(algorithm1Data.data);
+        console.log(scheduleResponse.data);
 
-        await createSchedule(input.year, input.term, algorithm1Data);
+        await createSchedule(input.year, input.term, scheduleResponse.data);
         // console.info(JSON.stringify(algorithm1Data.data, null, 2));
       } catch (e) {
         console.error(e);
