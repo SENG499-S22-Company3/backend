@@ -31,8 +31,8 @@ const getDays = (assignment: Assignment) => {
 
 const assignmentToMeetingTime = (assignment: Assignment) => {
   return {
-    startTime: assignment.beginTime,
-    endTime: assignment.endTime,
+    startTime: getTime(assignment.beginTime),
+    endTime: getTime(assignment.endTime),
     days: getDays(assignment),
   };
 };
