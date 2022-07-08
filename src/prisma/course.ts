@@ -18,11 +18,6 @@ async function findCourseSection(courseterm: Term) {
   return courses;
 }
 
-const getMaxHoursPerWeek = (assignments: Assignment[] | undefined): number => {
-  if (!assignments) return 0;
-  return Math.max(...assignments.map((h) => h.hoursWeek));
-};
-
 const getDays = (assignment: Assignment) => {
   let days = utils.appendDay(assignment.monday, 'MONDAY', []);
   days = utils.appendDay(assignment.tuesday, 'TUESDAY', days);
@@ -34,73 +29,56 @@ const getDays = (assignment: Assignment) => {
   return days;
 };
 
-const assignmentsToMeetingTime = (assignments?: Assignment[] | undefined) => {
-  if (!assignments) return [];
-  return assignments.map((assignment) => {
-    return {
-      startTime: assignment.beginTime,
-      endTime: assignment.endTime,
-      days: getDays(assignment),
-    };
-  });
+const assignmentToMeetingTime = (assignment: Assignment) => {
+  return {
+    startTime: assignment.beginTime,
+    endTime: assignment.endTime,
+    days: getDays(assignment),
+  };
 };
 
 const getMinMaxDateTime = (
   term: Term,
   year: number,
-  assignments: Assignment[] | undefined
+  assignment: Assignment
 ) => {
   // example: Apr 05, 2019
-  if (!assignments) return null;
+  if (!assignment) return null;
   // assuming we get proper date objects
 
-  const dates = assignments.map((assignment) => {
-    // start
-    if (assignment.startDate !== '' && assignment.endDate !== '') {
-      return {
-        start: getDateTime(assignment.beginTime, assignment.startDate),
-        end: getDateTime(assignment.endTime, assignment.endDate),
-      };
-    }
-
-    const startTime = getTime(assignment.beginTime);
-    const endTime = getTime(assignment.endTime);
-
-    // month in setFullYear indexes from 0
-    if (term === Term.FALL) {
-      // Sept (8)
-      startTime.setFullYear(year, 8, 1);
-      // Dec (11)
-      endTime.setFullYear(year, 11, 1);
-    } else if (term === Term.SPRING) {
-      // Jan (0)
-      startTime.setFullYear(year, 0, 1);
-      // Apr (3)
-      endTime.setFullYear(year, 3, 1);
-    } else if (term === Term.SUMMER) {
-      // May (4)
-      startTime.setFullYear(year, 4, 1);
-      // Aug (7)
-      endTime.setFullYear(year, 8, 1);
-    }
-
+  if (assignment.startDate !== '' && assignment.endDate !== '') {
     return {
-      start: startTime,
-      end: endTime,
+      start: getDateTime(assignment.beginTime, assignment.startDate),
+      end: getDateTime(assignment.endTime, assignment.endDate),
     };
-  });
+  }
+
+  const startTime = getTime(assignment.beginTime);
+  const endTime = getTime(assignment.endTime);
+
+  // month in setFullYear indexes from 0
+  if (term === Term.FALL) {
+    // Sept (8)
+    startTime.setFullYear(year, 8, 1);
+    // Dec (11)
+    endTime.setFullYear(year, 11, 1);
+  } else if (term === Term.SPRING) {
+    // Jan (0)
+    startTime.setFullYear(year, 0, 1);
+    // Apr (3)
+    endTime.setFullYear(year, 3, 1);
+  } else if (term === Term.SUMMER) {
+    // May (4)
+    startTime.setFullYear(year, 4, 1);
+    // Aug (7)
+    endTime.setFullYear(year, 8, 1);
+  }
 
   return {
-    min: getMinDate(dates.map((d) => d.start)),
-    max: getMaxDate(dates.map((d) => d.end)),
+    min: startTime,
+    max: endTime,
   };
 };
-
-const getMinDate = (dates: Date[]): Date =>
-  new Date(Math.min(...dates.map((d) => d.getTime())));
-
-const getMaxDate = (dates: Date[]): Date =>
-  new Date(Math.max(...dates.map((d) => d.getTime())));
 
 async function upsertCourses(
   course: Course,
@@ -108,10 +86,13 @@ async function upsertCourses(
   scheduleyear: number,
   schedule: Schedule
 ) {
+  if (!course.assignment) return;
   const startEnd = getMinMaxDateTime(term, scheduleyear, course.assignment);
   if (!startEnd) return;
+
   const startDate = startEnd.min;
   const endDate = startEnd.max;
+  if (!startDate || !endDate) return;
 
   await prisma.course.upsert({
     create: {
@@ -126,12 +107,10 @@ async function upsertCourses(
           capacity: course.courseCapacity,
           startDate,
           endDate,
-          hoursPerWeek: getMaxHoursPerWeek(course.assignment),
+          hoursPerWeek: 0,
           schedule: { connect: { id: schedule.id } },
           meetingTime: {
-            createMany: {
-              data: assignmentsToMeetingTime(course.assignment),
-            },
+            create: assignmentToMeetingTime(course.assignment),
           },
         },
       },
@@ -143,12 +122,10 @@ async function upsertCourses(
           capacity: course.courseCapacity,
           startDate,
           endDate,
-          hoursPerWeek: getMaxHoursPerWeek(course.assignment),
+          hoursPerWeek: course.assignment?.hoursWeek ?? 0,
           schedule: { connect: { id: schedule.id } },
           meetingTime: {
-            createMany: {
-              data: assignmentsToMeetingTime(course.assignment),
-            },
+            create: assignmentToMeetingTime(course.assignment),
           },
         },
       },

@@ -191,9 +191,19 @@ async function createSchedule(
 ) {
   const schedule = await initiateSchedule(year);
 
-  scheduleData.summerCourses?.forEach(async (course) => {
-    await upsertCourses(course, term, year, schedule);
-  });
+  if (term === Term.Fall) {
+    scheduleData.fallCourses?.forEach(async (course) => {
+      await upsertCourses(course, term, year, schedule);
+    });
+  } else if (term === Term.Spring) {
+    scheduleData.springCourses?.forEach(async (course) => {
+      await upsertCourses(course, term, year, schedule);
+    });
+  } else if (term === Term.Summer) {
+    scheduleData.summerCourses?.forEach(async (course) => {
+      await upsertCourses(course, term, year, schedule);
+    });
+  }
 }
 
 async function getCourseCapacities(input: GenerateScheduleInput) {
@@ -259,25 +269,27 @@ async function generateScheduleWithCapacities(
       springCourses: [],
       summerCourses: [],
     },
-    professors: users?.map((user) => {
-      return {
-        displayName: user.displayName ?? '',
-        preferences:
-          user.preferences?.map((preference) => {
-            return {
-              subject: preference.id.subject,
-              courseNum: preference.id.code,
-              term: preference.id.term,
-              preferenceNum: preference.preference,
-            };
-          }) ?? [],
-      };
-    }),
+    professors: (
+      users?.map((user) => {
+        return {
+          displayName: user.displayName ?? '',
+          preferences:
+            user.preferences?.map((preference) => {
+              return {
+                courseNum: preference.id.subject + preference.id.code,
+                term: preference.id.term,
+                preferenceNum: preference.preference,
+              };
+            }) ?? [],
+        };
+      }) ?? []
+    ).filter((p) => p.preferences.length > 0) as any,
   };
 
   const response = await axios.post<ScheduleAlgorithm>(
     `${baseUrl}/schedule`,
     payload
   );
+
   return response;
 }
