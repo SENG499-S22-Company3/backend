@@ -1,7 +1,11 @@
 import { PrismaClient, Term, Role } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import historicalData from '../data/historical-data-2019.json';
-import { addCourseSections } from '../src/utils';
+import teachingPref from '../data/teacher-pref-data.json';
+import {
+  addCourseSections,
+  addTeachingAndCoursePreferences,
+} from '../src/utils';
 
 const prisma = new PrismaClient();
 
@@ -59,6 +63,12 @@ async function seedUsers(): Promise<void> {
   });
 }
 
+async function seedPref() {
+  for (const professor of teachingPref.professors) {
+    await addTeachingAndCoursePreferences(professor);
+  }
+}
+
 async function seedSections(): Promise<void> {
   const fallSections = historicalData?.fallTermCourses;
   const springSections = historicalData?.springTermCourses;
@@ -90,6 +100,8 @@ async function seedSections(): Promise<void> {
 // A `main` function so that you can use async/await
 async function main() {
   await Promise.all([seedUsers(), seedSections()]);
+
+  await seedPref();
 }
 
 main()
