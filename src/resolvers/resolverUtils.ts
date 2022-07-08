@@ -13,24 +13,28 @@ import {
   CourseInput,
 } from '../schema';
 import { Context } from '../context';
-import { Schedule as ScheduleAlgorithm } from './types';
-import { SchedulePostRequest } from '../client/algorithm1/api';
-import axios, { AxiosResponse } from 'axios';
-import { appendDay } from '../utils';
+
+import {
+  SchedulePostRequest,
+  Schedule as ScheduleAlgorithm,
+} from '../client/algorithm1/api';
+import axios from 'axios';
+import { getSeqNumber } from '../utils';
 import {
   User as PrismaUser,
   Course,
   CoursePreference,
   TeachingPreference,
 } from '@prisma/client';
+import { CourseObject } from '../client/algorithm2';
 export {
   getMe,
   getAll,
   getUserByID,
   getCourses,
   getSchedule,
-  connectAlgorithm2,
-  connectAlgorithm1,
+  getCourseCapacities,
+  generateScheduleWithCapacities,
   createSchedule,
   updateUserSurvey,
 };
@@ -183,128 +187,97 @@ async function getSchedule(year: number): Promise<Schedule | null> {
 async function createSchedule(
   year: number,
   term: Term,
-  algorithm1Data: AxiosResponse<ScheduleAlgorithm, any>
+  scheduleData: ScheduleAlgorithm
 ) {
   const schedule = await initiateSchedule(year);
 
-  algorithm1Data.data.summerTermCourses?.forEach(
-    async (course: {
-      meetingTime: {
-        monday: boolean;
-        tuesday: boolean;
-        wednesday: boolean;
-        thursday: boolean;
-        friday: boolean;
-        saturday: boolean;
-        sunday: boolean;
-        beginTime: string;
-        endtime: string;
-        hoursWeek: any;
-      };
-      courseNumber: string;
-      courseTitle: any;
-      subject: string;
-      sequenceNumber: any;
-    }) => {
-      let days = appendDay(course.meetingTime.monday, 'MONDAY', []);
-      days = appendDay(course.meetingTime.tuesday, 'TUESDAY', days);
-      days = appendDay(course.meetingTime.wednesday, 'WEDNESDAY', days);
-      days = appendDay(course.meetingTime.thursday, 'THURSDAY', days);
-      days = appendDay(course.meetingTime.friday, 'FRIDAY', days);
-      days = appendDay(course.meetingTime.saturday, 'SATURDAY', days);
-      days = appendDay(course.meetingTime.sunday, 'SUNDAY', days);
-
-      await upsertCourses(course, term, year, schedule, days);
-    }
-  );
+  scheduleData.summerCourses?.forEach(async (course) => {
+    await upsertCourses(course, term, year, schedule);
+  });
 }
 
-async function connectAlgorithm2(
-  input: GenerateScheduleInput
-): Promise<any | null> {
+async function getCourseCapacities(input: GenerateScheduleInput) {
+  // TODO: can't be hardcoded for plug and play
   const algorithm2Url = 'https://algorithm-2.herokuapp.com/predict_class_size';
   if (!input.courses) return null;
 
-  const algorithm2Response = await axios.post<ScheduleAlgorithm>(
+  const request: CourseObject[] = input.courses.map((course) => {
+    return {
+      subject: course.subject,
+      code: course.code,
+      seng_ratio: 0.75,
+      semester: input.term,
+      capacity: 0,
+    };
+  });
+
+  const algorithm2Response = await axios.post<CourseObject[]>(
     `${algorithm2Url}`,
-    input.courses.map((course) => {
-      return {
-        subject: course.subject,
-        code: course.code,
-        seng_ratio: 0.75,
-        semester: input.term,
-        capacity: 0,
-      };
-    })
+    request
   );
   return algorithm2Response;
 }
 
-async function connectAlgorithm1(
+async function generateScheduleWithCapacities(
   falltermCourses: CourseInput[],
   summertermCourses: CourseInput[],
   springtermCourses: CourseInput[],
-  users: User[] | null
-  // TODO: Grab Algorithm2data as algorithm2response
-): Promise<any | null> {
+  users: User[] | null,
+  capacities: CourseObject[]
+) {
+  // TODO: can't be hardcoded for plug and play
   const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
-  const algorithm1Response = await axios.post<ScheduleAlgorithm>(
-    `${baseUrl}/schedule`,
-    {
-      coursesToSchedule: {
-        fallCourses: falltermCourses.map((course) => {
-          return {
-            subject: course.subject,
-            courseNumber: course.code,
-            numSections: course.section,
-            courseCapacity: 0, // TODO: set capacity from algorithm2Response? but how??
-            courseTitle: 'testing',
-            sequenceNumber: 'test',
-            streamSequence: 'test',
-          };
-        }),
-        springCourses: springtermCourses.map((course) => {
-          return {
-            subject: course.subject,
-            courseNumber: course.code,
-            numSections: course.section,
-            courseCapacity: 0, // TODO: set capacity from algorithm2Response? but how??
-            courseTitle: 'testing',
-            sequenceNumber: 'test',
-            streamSequence: 'test',
-          };
-        }),
-        summerCourses: summertermCourses.map((course) => {
-          return {
-            subject: course.subject,
-            courseNumber: course.code,
-            numSections: course.section,
-            courseCapacity: 0, // TODO: set capacity from algorithm2Response? but how??
-            courseTitle: 'testing',
-            sequenceNumber: 'test',
-            streamSequence: 'test',
-          };
-        }),
-      },
-      hardScheduled: {
-        fallCourses: [],
-        springCourses: [],
-        summerCourses: [],
-      },
-      professors: users?.map((user) => {
-        return {
-          displayName: user.displayName,
-          preferences: user.preferences?.map((preference) => {
+
+  const courseToCourseInput = (term: Term) => (input: CourseInput) => ({
+    subject: input.subject,
+    courseNumber: input.code,
+    numSections: input.section,
+    courseCapacity:
+      capacities.find((course) => {
+        return (
+          course.subject === input.subject &&
+          course.code === input.code &&
+          course.semester === term
+        );
+      })?.capacity ?? 0,
+    // default capacity to 0 if not found
+    courseTitle: 'testing',
+    sequenceNumber: getSeqNumber(input.subject, input.code),
+    // TODO: figure out best value here
+    streamSequence: 'test',
+  });
+
+  const payload: SchedulePostRequest = {
+    // in theory only one of the term arrays will be populated with values
+    coursesToSchedule: {
+      fallCourses: falltermCourses.map(courseToCourseInput(Term.Fall)),
+      springCourses: springtermCourses.map(courseToCourseInput(Term.Spring)),
+      summerCourses: summertermCourses.map(courseToCourseInput(Term.Summer)),
+    },
+    hardScheduled: {
+      fallCourses: [],
+      springCourses: [],
+      summerCourses: [],
+    },
+    professors: users?.map((user) => {
+      return {
+        displayName: user.displayName ?? '',
+        preferences:
+          user.preferences?.map((preference) => {
             return {
               subject: preference.id.subject,
               courseNum: preference.id.code,
               term: preference.id.term,
               preferenceNum: preference.preference,
             };
-          }),
-        };
-      }),
-    } as SchedulePostRequest
+          }) ?? [],
+      };
+    }),
+  };
+
+  const response = await axios.post<ScheduleAlgorithm>(
+    `${baseUrl}/schedule`,
+    payload
   );
-  return algorithm1Response;
+  return response;
 }

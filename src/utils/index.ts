@@ -1,4 +1,4 @@
-import { User, Role } from '@prisma/client';
+import { User, Role, Day } from '@prisma/client';
 import { getISOTime, getMeetingDays } from './time';
 import { addCourseSections } from './seedingFunctions';
 import { getSeqNumber } from './courseSequenceNumber';
@@ -13,7 +13,7 @@ export {
   appendDay,
 };
 
-const appendDay = (isDay: boolean, day: string, days: string[]): string[] => {
+const appendDay = (isDay: boolean, day: Day, days: Day[]): Day[] => {
   if (isDay) {
     days.push(day);
   }
