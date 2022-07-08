@@ -22,3 +22,4 @@ const appendDay = (isDay: boolean, day: Day, days: Day[]): Day[] => {
     days.push(day);
   }
   return days;
+};
