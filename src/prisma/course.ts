@@ -66,15 +66,22 @@ const getMinMaxDateTime = (
     const startTime = getTime(assignment.beginTime);
     const endTime = getTime(assignment.endTime);
 
+    // month in setFullYear indexes from 0
     if (term === Term.FALL) {
-      startTime.setFullYear(year, 10, 1);
+      // Sept (8)
+      startTime.setFullYear(year, 8, 1);
+      // Dec (11)
       endTime.setFullYear(year, 11, 1);
     } else if (term === Term.SPRING) {
+      // Jan (0)
       startTime.setFullYear(year, 0, 1);
+      // Apr (3)
       endTime.setFullYear(year, 3, 1);
     } else if (term === Term.SUMMER) {
+      // May (4)
       startTime.setFullYear(year, 4, 1);
-      endTime.setFullYear(year, 9, 1);
+      // Aug (7)
+      endTime.setFullYear(year, 8, 1);
     }
 
     return {
