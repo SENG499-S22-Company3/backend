@@ -242,9 +242,9 @@ async function generateScheduleWithCapacities(
       })?.capacity ?? 0,
     // default capacity to 0 if not found
     courseTitle: 'testing',
-    sequenceNumber: getSeqNumber(input.subject, input.code),
     // TODO: figure out best value here
-    streamSequence: 'test',
+    sequenceNumber: 'test',
+    streamSequence: getSeqNumber(input.subject, input.code),
   });
 
   const payload: SchedulePostRequest = {
