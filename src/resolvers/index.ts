@@ -39,7 +39,7 @@ const noPerms = {
   success: false,
 };
 
-const apiErrorHandler = (alg: string, e: Error) => {
+const apiErrorHandler = (alg: string, e: unknown) => {
   console.error(e);
   if (e instanceof AxiosError) {
     return {
