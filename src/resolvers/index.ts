@@ -150,12 +150,14 @@ export const resolvers: Resolvers<Context> = {
       const users = await getAll();
 
       try {
-        const capacityDataResponse = await getCourseCapacities(input);
+        const capacityDataResponse = await getCourseCapacities(ctx, input);
 
         if (!capacityDataResponse) return EncounteredError;
 
         console.log(capacityDataResponse.data);
         const scheduleResponse = await generateScheduleWithCapacities(
+          ctx,
+          input,
           falltermCourses,
           summertermCourses,
           springtermCourses,
