@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { SchedulePostRequest } from '../client/algorithm1';
+import { SchedulePostRequest, Schedule } from '../client/algorithm1';
 import { CourseObject } from '../client/algorithm2';
-import { Company, Schedule } from '../schema';
+import { Company } from '../schema';
 
 // these are the default ports for each algo and company
 export const algoUrl = {
