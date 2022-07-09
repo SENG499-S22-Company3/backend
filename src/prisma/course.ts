@@ -1,9 +1,10 @@
 import { Schedule, Term } from '@prisma/client';
 import { prisma } from './index';
-export { findCourseSection, upsertCourses };
 import * as utils from '../utils';
 import { getTime, getDateTime } from '../utils/time';
 import { Assignment, Course } from '../client/algorithm1';
+
+export { findCourseSection, upsertCourses, getAllCourses };
 
 async function findCourseSection(courseterm: Term) {
   const courses = await prisma.courseSection.findMany({
@@ -16,6 +17,14 @@ async function findCourseSection(courseterm: Term) {
   });
 
   return courses;
+}
+
+/**
+ * Retrieve all the courses in the database. Used to retrieve a list
+ * of courses that the professor can submit a preference for
+ */
+async function getAllCourses() {
+  return await prisma.course.findMany();
 }
 
 const getDays = (assignment: Assignment) => {
