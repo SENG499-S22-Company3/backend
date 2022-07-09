@@ -1,5 +1,6 @@
 import { Context } from '../context';
 import { CourseInput, Resolvers, Term } from '../schema';
+import { AxiosError } from 'axios';
 import {
   login,
   createNewUser,
@@ -37,9 +38,19 @@ const noPerms = {
   message: 'Insufficient permisions',
   success: false,
 };
-const EncounteredError = {
-  message: `API call error: Error getting response from algorithm`,
-  success: false,
+
+const apiErrorHandler = (alg: string, e: Error) => {
+  console.error(e);
+  if (e instanceof AxiosError) {
+    return {
+      message: `API call error: Bad response from algorithm ${alg}:\n${e.message}`,
+      success: false,
+    };
+  } else
+    return {
+      message: `Backend ran into an internal server error:\n${e}`,
+      success: false,
+    };
 };
 
 export const resolvers: Resolvers<Context> = {
@@ -149,12 +160,23 @@ export const resolvers: Resolvers<Context> = {
         input.term == Term.Summer ? input.courses : [];
       const users = await getAll();
 
+      let capacityDataResponse;
       try {
-        const capacityDataResponse = await getCourseCapacities(ctx, input);
+        capacityDataResponse = await getCourseCapacities(ctx, input);
 
-        if (!capacityDataResponse) return EncounteredError;
+        if (!capacityDataResponse) {
+          return {
+            message: 'Algorithm 2 error: No data returned',
+            success: false,
+          };
+        }
 
         console.log(capacityDataResponse.data);
+      } catch (e) {
+        return apiErrorHandler('2', e);
+      }
+
+      try {
         const scheduleResponse = await generateScheduleWithCapacities(
           ctx,
           input,
@@ -169,8 +191,7 @@ export const resolvers: Resolvers<Context> = {
         await createSchedule(input.year, input.term, scheduleResponse.data);
         // console.info(JSON.stringify(algorithm1Data.data, null, 2));
       } catch (e) {
-        console.error(e);
-        return EncounteredError;
+        return apiErrorHandler('1', e);
       }
 
       return generateSchedule(input);
