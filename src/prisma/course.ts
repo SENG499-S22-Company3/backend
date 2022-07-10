@@ -103,6 +103,12 @@ async function upsertCourses(
   const endDate = startEnd.max;
   if (!startDate || !endDate) return;
 
+  const prof = await prisma.user.findFirst({
+    where: {
+      displayName: course.prof?.displayName,
+    },
+  });
+
   await prisma.course.upsert({
     create: {
       courseCode: course.courseNumber,
@@ -121,6 +127,11 @@ async function upsertCourses(
           meetingTime: {
             create: assignmentToMeetingTime(course.assignment),
           },
+          user: {
+            connect: {
+              id: prof?.id,
+            },
+          },
         },
       },
     },
@@ -135,6 +146,11 @@ async function upsertCourses(
           schedule: { connect: { id: schedule.id } },
           meetingTime: {
             create: assignmentToMeetingTime(course.assignment),
+          },
+          user: {
+            connect: {
+              id: prof?.id,
+            },
           },
         },
       },
