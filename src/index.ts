@@ -8,6 +8,7 @@ import path from 'path';
 import { Resolvers } from './schema';
 import { createContext } from './context';
 import { resolvers } from './resolvers';
+import { algoUrl } from './algorithm';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 4000;
@@ -64,6 +65,10 @@ isProduction && app.set('trust proxy', 1);
 
 app.get('/healthcheck', (_req, res) => {
   res.send('OK');
+});
+
+app.get('/runtime', (_req, res) => {
+  res.json(algoUrl);
 });
 
 async function main() {
