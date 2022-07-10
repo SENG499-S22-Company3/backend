@@ -181,15 +181,15 @@ async function getSchedule(year: number): Promise<Schedule | null> {
         }),
         professors: [
           {
-            id: course.user.id,
-            username: course.user.username,
-            password: course.user.password,
-            displayName: course.user.displayName,
-            role: course.user.role as Role,
+            id: course.user!.id,
+            username: course.user!.username,
+            password: course.user!.password,
+            displayName: course.user!.displayName,
+            role: course.user!.role as Role,
             preferences: [], // Hardcoded now as mapping is not working on coursePreferences array
             // prismaPrefsToGraphQLPrefs(course.course.coursePreference),
-            active: course.user.active,
-            hasPeng: course.user.hasPeng,
+            active: course.user!.active,
+            hasPeng: course.user!.hasPeng,
           },
         ],
       };
