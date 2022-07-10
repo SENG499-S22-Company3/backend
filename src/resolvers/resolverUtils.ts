@@ -169,6 +169,7 @@ async function getSchedule(year: number): Promise<Schedule | null> {
         },
         capacity: course.capacity,
         hoursPerWeek: course.hoursPerWeek,
+        sectionNumber: course.sectionNumber,
         startDate: course.startDate,
         endDate: course.endDate,
         meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
