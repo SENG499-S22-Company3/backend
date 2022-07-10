@@ -18,7 +18,6 @@ import {
   SchedulePostRequest,
   Schedule as ScheduleAlgorithm,
 } from '../client/algorithm1/api';
-import axios from 'axios';
 import { getSeqNumber } from '../utils';
 import {
   User as PrismaUser,
@@ -171,6 +170,7 @@ async function getSchedule(year: number): Promise<Schedule | null> {
         capacity: course.capacity,
         sectionNumber: course.sectionNumber,
         hoursPerWeek: course.hoursPerWeek,
+        sectionNumber: course.sectionNumber,
         startDate: course.startDate,
         endDate: course.endDate,
         meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
@@ -220,9 +220,7 @@ async function createSchedule(
   }
 }
 
-async function getCourseCapacities(input: GenerateScheduleInput) {
-  // TODO: can't be hardcoded for plug and play
-  const algorithm2Url = 'https://algorithm-2.herokuapp.com/predict_class_size';
+async function getCourseCapacities(ctx: Context, input: GenerateScheduleInput) {
   if (!input.courses) return null;
 
   const request: CourseObject[] = input.courses.map((course) => {
@@ -235,23 +233,22 @@ async function getCourseCapacities(input: GenerateScheduleInput) {
     };
   });
 
-  const algorithm2Response = await axios.post<CourseObject[]>(
-    `${algorithm2Url}`,
-    request
-  );
+  const alg2 = ctx.algorithm(input.algorithm2).algo2;
+
+  const algorithm2Response = await alg2(request);
+
   return algorithm2Response;
 }
 
 async function generateScheduleWithCapacities(
+  ctx: Context,
+  input: GenerateScheduleInput,
   falltermCourses: CourseInput[],
   summertermCourses: CourseInput[],
   springtermCourses: CourseInput[],
   users: User[] | null,
   capacities: CourseObject[]
 ) {
-  // TODO: can't be hardcoded for plug and play
-  const baseUrl = 'https://schedulater-algorithm1.herokuapp.com';
-
   const courseToCourseInput = (term: Term) => (input: CourseInput) => ({
     subject: input.subject,
     courseNumber: input.code,
@@ -300,10 +297,8 @@ async function generateScheduleWithCapacities(
     ).filter((p) => p.preferences.length > 0) as any,
   };
 
-  const response = await axios.post<ScheduleAlgorithm>(
-    `${baseUrl}/schedule`,
-    payload
-  );
+  const alg1 = ctx.algorithm(input.algorithm1).algo1;
+  const response = await alg1(payload);
 
   return response;
 }
