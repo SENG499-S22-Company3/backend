@@ -7,13 +7,19 @@ async function findSchedule(scheduleyear: number) {
     include: {
       courseSection: {
         include: {
-          course: {
+          course: true,
+          meetingTime: true,
+          user: {
             include: {
-              coursePreference: true,
+              preference: {
+                include: {
+                  coursePreference: {
+                    include: { course: true },
+                  },
+                },
+              },
             },
           },
-          meetingTime: true,
-          user: true,
         },
       },
     },
