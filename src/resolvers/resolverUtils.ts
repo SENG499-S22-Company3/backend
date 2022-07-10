@@ -168,7 +168,6 @@ async function getSchedule(year: number): Promise<Schedule | null> {
           term: course.course.term as any,
         },
         capacity: course.capacity,
-        sectionNumber: course.sectionNumber,
         hoursPerWeek: course.hoursPerWeek,
         sectionNumber: course.sectionNumber,
         startDate: course.startDate,
