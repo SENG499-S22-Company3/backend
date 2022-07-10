@@ -155,12 +155,12 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
 async function getSchedule(year: number): Promise<Schedule | null> {
   const schedule = await findSchedule(year);
   if (!schedule) return null;
-
   return {
     id: `${schedule.id}`,
     year: schedule.year,
     createdAt: schedule.createdOn,
     courses: schedule.courseSection.map<CourseSection>((course) => {
+      // console.log('CoursePreference: ', course.course.coursePreference);
       return {
         CourseID: {
           code: course.course.courseCode,
@@ -169,6 +169,7 @@ async function getSchedule(year: number): Promise<Schedule | null> {
           term: course.course.term as any,
         },
         capacity: course.capacity,
+        sectionNumber: course.sectionNumber,
         hoursPerWeek: course.hoursPerWeek,
         startDate: course.startDate,
         endDate: course.endDate,
@@ -179,6 +180,19 @@ async function getSchedule(year: number): Promise<Schedule | null> {
             startTime: meetingTime.startTime,
           }));
         }),
+        professors: [
+          {
+            id: course.user.id,
+            username: course.user.username,
+            password: course.user.password,
+            displayName: course.user.displayName,
+            role: course.user.role as Role,
+            preferences: [], // Hardcoded now as mapping is not working on coursePreferences array
+            // prismaPrefsToGraphQLPrefs(course.course.coursePreference),
+            active: course.user.active,
+            hasPeng: course.user.hasPeng,
+          },
+        ],
       };
     }),
   };
