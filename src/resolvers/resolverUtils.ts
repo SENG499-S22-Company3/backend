@@ -160,6 +160,41 @@ async function getSchedule(year: number): Promise<Schedule | null> {
     createdAt: schedule.createdOn,
     courses: schedule.courseSection.map<CourseSection>((course) => {
       // console.log('CoursePreference: ', course.course.coursePreference);
+      if (!course.user)
+        return {
+          CourseID: {
+            code: course.course.courseCode,
+            subject: course.course.subject,
+            title: course.course.title,
+            term: course.course.term as any,
+          },
+          capacity: course.capacity,
+          hoursPerWeek: course.hoursPerWeek,
+          sectionNumber: course.sectionNumber,
+          startDate: course.startDate,
+          endDate: course.endDate,
+          meetingTimes: course.meetingTime.flatMap<MeetingTime>(
+            (meetingTime) => {
+              return meetingTime.days.map((day) => ({
+                day: day as Day,
+                endTime: meetingTime.endTime,
+                startTime: meetingTime.startTime,
+              }));
+            }
+          ),
+          professors: [
+            {
+              id: 0,
+              username: 'not found',
+              password: 'not found',
+              displayName: 'not found',
+              role: Role.User,
+              preferences: [],
+              active: false,
+              hasPeng: false,
+            },
+          ],
+        };
       return {
         CourseID: {
           code: course.course.courseCode,
@@ -181,14 +216,14 @@ async function getSchedule(year: number): Promise<Schedule | null> {
         }),
         professors: [
           {
-            id: course.user!.id,
-            username: course.user!.username,
-            password: course.user!.password,
-            displayName: course.user!.displayName,
-            role: course.user!.role as Role,
-            preferences: prismaPrefsToGraphQLPrefs(course.user!.preference),
-            active: course.user!.active,
-            hasPeng: course.user!.hasPeng,
+            id: course.user.id,
+            username: course.user.username,
+            password: course.user.password,
+            displayName: course.user.displayName,
+            role: course.user.role as Role,
+            preferences: prismaPrefsToGraphQLPrefs(course.user.preference),
+            active: course.user.active,
+            hasPeng: course.user.hasPeng,
           },
         ],
       };
