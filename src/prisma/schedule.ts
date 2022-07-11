@@ -9,6 +9,17 @@ async function findSchedule(scheduleyear: number) {
         include: {
           course: true,
           meetingTime: true,
+          user: {
+            include: {
+              preference: {
+                include: {
+                  coursePreference: {
+                    include: { course: true },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
