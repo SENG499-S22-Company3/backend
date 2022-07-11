@@ -250,7 +250,7 @@ async function generateScheduleWithCapacities(
     // default capacity to 0 if not found
     courseTitle: 'testing',
     // TODO: figure out best value here
-    sequenceNumber: 'testing',
+    sequenceNumber: 'A01',
     streamSequence: getSeqNumber(input.subject, input.code),
   });
 
