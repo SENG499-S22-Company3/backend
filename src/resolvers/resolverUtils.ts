@@ -317,6 +317,9 @@ async function generateScheduleWithCapacities(
       users?.map((user) => {
         return {
           displayName: user.displayName ?? '',
+          fallTermCourses: 1,
+          springTermCourses: 1,
+          summerTermCourses: 1,
           preferences:
             user.preferences?.map((preference) => {
               return {
@@ -327,7 +330,7 @@ async function generateScheduleWithCapacities(
             }) ?? [],
         };
       }) ?? []
-    ).filter((p) => p.preferences.length > 0) as any,
+    ).filter((p) => p.preferences.length > 0),
   };
 
   const alg1 = ctx.algorithm(input.algorithm1).algo1;
