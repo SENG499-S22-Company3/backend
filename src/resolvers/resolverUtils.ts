@@ -317,9 +317,9 @@ async function generateScheduleWithCapacities(
       users?.map((user) => {
         return {
           displayName: user.displayName ?? '',
-          falltermCourses: 1,
-          springtermCourses: 1,
-          summertermCourses: 1,
+          fallTermCourses: 1,
+          springTermCourses: 1,
+          summerTermCourses: 1,
           preferences:
             user.preferences?.map((preference) => {
               return {
