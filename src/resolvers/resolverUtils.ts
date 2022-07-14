@@ -53,17 +53,17 @@ export type PrismaTeachPref = (TeachingPreference & {
 })[];
 
 async function getMe(ctx: Context): Promise<User | null> {
-  if (!ctx.session.user) return null;
+  if (!ctx.req.user) return null;
 
   return {
-    id: ctx.session.user.id,
-    username: ctx.session.user.username,
-    displayName: ctx.session.user.displayName,
-    password: ctx.session.user.password,
-    role: ctx.session.user.role as Role,
-    preferences: prismaPrefsToGraphQLPrefs(ctx.session.user.preference),
-    active: ctx.session.user.active,
-    hasPeng: ctx.session.user.hasPeng,
+    id: ctx.req.user.id,
+    username: ctx.req.user.username,
+    displayName: ctx.req.user.displayName,
+    password: ctx.req.user.password,
+    role: ctx.req.user.role as Role,
+    preferences: prismaPrefsToGraphQLPrefs(ctx.req.user.preference),
+    active: ctx.req.user.active,
+    hasPeng: ctx.req.user.hasPeng,
   };
 }
 

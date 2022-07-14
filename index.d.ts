@@ -6,3 +6,4 @@ declare module 'express-session' {
     user: FullUser;
   }
 }
+// Do we need this anymore?

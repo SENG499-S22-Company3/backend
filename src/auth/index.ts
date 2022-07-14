@@ -1,22 +1,26 @@
 import { Prisma, User } from '@prisma/client';
-import { findUserByUsername } from '../prisma/user';
-import { prisma } from '../prisma';
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
+import { sign } from 'jsonwebtoken';
+import type { Context } from '../context';
+import { prisma } from '../prisma';
+import { findUserByUsername } from '../prisma/user';
 import type {
   AuthPayload,
   ChangeUserPasswordInput,
-  Response,
   CreateUserMutationResult,
   GenerateScheduleInput,
+  Response,
 } from '../schema/graphql';
-import type { Context } from '../context';
+import { SECRET_ACCESSTOKEN, SECRET_REFRESHTOKEN } from './keys';
 export {
   login,
+  logout,
   changePassword,
   createNewUser,
   generateSchedule,
   resetPassword,
+  createTokens,
 };
 
 // User with username testuser and password testpassword
@@ -53,16 +57,47 @@ async function login(
     return {
       message: 'Incorrect username or password',
       success: false,
-      token: '', // Won't be needed anymore
+      token: '',
     };
   } else {
-    ctx.session.user = user;
+    const tokens = await createTokens(user);
+    ctx.res.cookie('refresh-token', tokens.refreshToken);
+    ctx.res.cookie('access-token', tokens.accessToken);
     return {
       message: 'Success',
       success: true,
-      token: '',
+      token: tokens.accessToken,
     };
   }
+}
+
+async function logout(ctx: Context) {
+  ctx.res.clearCookie('access-token');
+  ctx.res.clearCookie('refresh-token');
+  return {
+    message: 'Logged out Succesfully',
+    success: true,
+    token: '',
+  };
+}
+
+async function createTokens(user: User) {
+  const accessToken = sign(
+    {
+      user: user,
+    },
+    SECRET_ACCESSTOKEN,
+    { expiresIn: '15s' } // Set Expiry Time
+  );
+
+  const refreshToken = sign(
+    {
+      user: user,
+    },
+    SECRET_REFRESHTOKEN,
+    { expiresIn: '7d' }
+  );
+  return { accessToken, refreshToken }; // Set Expiry Time
 }
 
 async function changePassword(
