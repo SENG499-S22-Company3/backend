@@ -84,8 +84,8 @@ const getMinMaxDateTime = (
   }
 
   return {
-    min: startTime,
-    max: endTime,
+    start: startTime,
+    end: endTime,
   };
 };
 
