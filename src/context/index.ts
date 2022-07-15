@@ -1,13 +1,11 @@
 import { Request } from 'express';
-import { Session, SessionData } from 'express-session';
 import { request } from '../algorithm';
+import { verifyToken } from '../auth/verifier';
+import { findUserByUsername } from '../prisma/user';
+import { FullUser } from '../resolvers/resolverUtils';
 
 export interface Context {
-  // TODO: keep here until we have login implemented. a partial given it could be undefined
-  session: Session & Partial<SessionData>;
-  // TODO: add context (aka. prisma, auth, etc.)
-  logout: () => Promise<void>;
-  // dependencies
+  user?: FullUser;
   algorithm: typeof request;
 }
 
@@ -16,12 +14,15 @@ export async function createContext({
 }: {
   req: Request;
 }): Promise<Context> {
-  // TODO: add any request specific context (aka. prisma, auth, etc.)
-  // TODO: check for session with cookie
-  const { session } = req;
+  const payload = verifyToken(req);
+  if (!payload || typeof payload === 'string' || !payload.username)
+    return { algorithm: request };
+
+  const user = await findUserByUsername(payload.username);
+  if (!user) return { algorithm: request };
+
   return {
-    session,
-    logout: async () => new Promise((resolve) => session.destroy(resolve)),
     algorithm: request,
+    user: user,
   };
 }

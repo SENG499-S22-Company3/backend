@@ -302,7 +302,7 @@ type AuthPayload {
   """
   Auth token used for future requests
   """
-  token: String! @deprecated
+  token: String!
   """
   Optional error message if success is false
   """

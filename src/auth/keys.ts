@@ -1,0 +1,1 @@
+export const SECRET_ACCESSTOKEN = process.env.SECRET_ACCESSTOKEN ?? 'MY_SECRET';

@@ -1,31 +1,31 @@
-import { findUserById, findAllUsers, updateUserSurvey } from '../prisma/user';
-import { findCourseSection, upsertCourses } from '../prisma/course';
-import { findSchedule, initiateSchedule } from '../prisma/schedule';
 import {
-  User,
-  CourseSection,
-  Schedule,
-  Term,
-  Role,
-  Day,
-  MeetingTime,
-  GenerateScheduleInput,
-  CourseInput,
-} from '../schema';
-import { Context } from '../context';
-
-import {
-  SchedulePostRequest,
-  Schedule as ScheduleAlgorithm,
-} from '../client/algorithm1/api';
-import { getSeqNumber } from '../utils';
-import {
-  User as PrismaUser,
   Course,
   CoursePreference,
   TeachingPreference,
+  User as PrismaUser,
 } from '@prisma/client';
+import {
+  Schedule as ScheduleAlgorithm,
+  SchedulePostRequest,
+} from '../client/algorithm1/api';
 import { CourseObject } from '../client/algorithm2';
+import { Context } from '../context';
+import { findCourseSection, upsertCourses } from '../prisma/course';
+import { findSchedule, initiateSchedule } from '../prisma/schedule';
+import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
+import {
+  CourseInput,
+  CourseSection,
+  Day,
+  GenerateScheduleInput,
+  MeetingTime,
+  Role,
+  Schedule,
+  Term,
+  User,
+} from '../schema';
+import { getSeqNumber } from '../utils';
+
 export {
   getMe,
   getAll,
@@ -52,18 +52,18 @@ export type PrismaTeachPref = (TeachingPreference & {
   })[];
 })[];
 
-async function getMe(ctx: Context): Promise<User | null> {
-  if (!ctx.session.user) return null;
+async function getMe(user: FullUser): Promise<User | null> {
+  if (!user) return null;
 
   return {
-    id: ctx.session.user.id,
-    username: ctx.session.user.username,
-    displayName: ctx.session.user.displayName,
-    password: ctx.session.user.password,
-    role: ctx.session.user.role as Role,
-    preferences: prismaPrefsToGraphQLPrefs(ctx.session.user.preference),
-    active: ctx.session.user.active,
-    hasPeng: ctx.session.user.hasPeng,
+    id: user.id,
+    username: user.username,
+    displayName: user.displayName,
+    password: user.password,
+    role: user.role as Role,
+    preferences: prismaPrefsToGraphQLPrefs(user.preference),
+    active: user.active,
+    hasPeng: user.hasPeng,
   };
 }
 
