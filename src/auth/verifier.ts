@@ -10,7 +10,7 @@ export const verifyToken = (req: Request): string | JwtPayload | null => {
     const payload = verify(token, SECRET_ACCESSTOKEN);
     return payload;
   } catch (e) {
-    console.error(e);
+    // console.log the error if needed
   }
 
   return null;

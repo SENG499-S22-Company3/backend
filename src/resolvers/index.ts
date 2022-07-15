@@ -40,6 +40,11 @@ const noPerms = {
   success: false,
 };
 
+const noCourses = {
+  message: 'No Courses',
+  success: false,
+};
+
 const apiErrorHandler = (alg: string, e: unknown) => {
   console.error(e);
   if (e instanceof AxiosError) {
@@ -142,7 +147,8 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     generateSchedule: async (_, { input }, ctx) => {
-      if (!ctx.user || !input.courses) return noLogin;
+      if (!ctx.user) return noLogin;
+      if (!input.courses) return noCourses;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can generate schedule
 
       const falltermCourses: CourseInput[] =
