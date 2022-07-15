@@ -63,8 +63,8 @@ async function login(
         username: user.username,
       },
       SECRET_ACCESSTOKEN,
-      { expiresIn: '30m' }
-    ); // token expires in 30 mins
+      { expiresIn: '2 days' }
+    ); // token expires in 2 days
 
     return {
       message: 'Success',
