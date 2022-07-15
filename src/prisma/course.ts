@@ -84,8 +84,8 @@ const getMinMaxDateTime = (
   }
 
   return {
-    min: startTime,
-    max: endTime,
+    start: startTime,
+    end: endTime,
   };
 };
 
@@ -99,8 +99,8 @@ async function upsertCourses(
   const startEnd = getMinMaxDateTime(term, scheduleyear, course.assignment);
   if (!startEnd) return;
 
-  const startDate = startEnd.min;
-  const endDate = startEnd.max;
+  const startDate = startEnd.start;
+  const endDate = startEnd.end;
   if (!startDate || !endDate) return;
 
   const prof = await prisma.user.findFirst({
