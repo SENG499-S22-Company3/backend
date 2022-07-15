@@ -1,20 +1,13 @@
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
-import cookieParser from 'cookie-parser';
 import express, { Express } from 'express';
-import { NextFunction, Response } from 'express-serve-static-core';
 import fs from 'fs';
 import http from 'http';
-import { verify } from 'jsonwebtoken';
 import path from 'path';
 import { algoUrl } from './algorithm';
-import { createTokens } from './auth';
-import { SECRET_ACCESSTOKEN, SECRET_REFRESHTOKEN } from './auth/keys';
 import { createContext } from './context';
-import { findUserByUsername } from './prisma/user';
 import { resolvers } from './resolvers';
 import { Resolvers } from './schema';
-
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 4000;
 const schemaPath = path.join(__dirname, 'schema/schema.graphql');
@@ -35,35 +28,6 @@ async function start(app: Express, typeDefs: any, resolvers: Resolvers) {
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     // TODO: add context (aka. prisma, auth, etc.)
     context: createContext,
-  });
-
-  app.use(cookieParser());
-  app.use(async (req: any, res, next) => {
-    const accessToken = await req.cookies['access-token'];
-    const refreshToken = await req.cookies['refresh-token'];
-
-    if (!accessToken && !refreshToken) return next();
-
-    try {
-      // Verfying Access Token
-      const data = verify(accessToken, SECRET_ACCESSTOKEN) as any;
-      req.user = data.user;
-      return next();
-    } catch {
-      // Access Token Expired
-    }
-
-    if (!refreshToken) return next();
-
-    try {
-      // Verifying Refresh Token
-      await tokenRefresh(refreshToken, res, req, next);
-    } catch (e) {
-      // Refresh Token Expired
-      console.log('TOKENS Have Expired, Please Login again');
-    }
-
-    next();
   });
 
   await server.start();
@@ -99,24 +63,6 @@ async function main() {
 
   // attach Apollo Server start the web server
   start(app, schema, resolvers);
-}
-
-async function tokenRefresh(
-  refreshToken: any,
-  res: Response<any, Record<string, any>, number>,
-  req: any,
-  next: NextFunction
-) {
-  const data = verify(refreshToken, SECRET_REFRESHTOKEN) as any;
-  const user = await findUserByUsername(data.user.username);
-
-  if (!user) return next();
-
-  const newTokens = await createTokens(user);
-
-  res.cookie('refresh-token', newTokens.refreshToken);
-  res.cookie('access-token', newTokens.accessToken);
-  req.user = user;
 }
 
 main();

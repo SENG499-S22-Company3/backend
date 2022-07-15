@@ -4,9 +4,9 @@ import {
   createNewUser,
   generateSchedule,
   login,
-  logout,
   resetPassword,
 } from '../auth';
+import { verifyLogin } from '../auth/verifier';
 import { Context } from '../context';
 import { getAllCourses } from '../prisma/course';
 import { findUserById } from '../prisma/user';
@@ -58,15 +58,18 @@ const apiErrorHandler = (alg: string, e: unknown) => {
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: async (_, _params, ctx) => {
-      if (!ctx.req.user) return null;
-      return await getMe(ctx);
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo || typeof userInfo == 'string') return null;
+      return await getMe(userInfo);
     },
     findUserById: async (_, params, ctx) => {
-      if (!ctx.req.user || !params.id) return null;
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo || !params.id) return null;
       return await getUserByID(+params.id);
     },
     survey: async (_, __, ctx) => {
-      if (!ctx.req.user) return { courses: [] };
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo) return { courses: [] };
 
       const courses = (await getAllCourses()).map((c) => ({
         ...c,
@@ -84,45 +87,49 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     courses: async (_, params, ctx) => {
-      if (!ctx.req.user || !params.term) return null;
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo || !params.term) return null;
       return await getCourses(params.term);
     },
     schedule: async (_, params, ctx) => {
-      if (!ctx.req.user) return null;
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo) return null;
       return getSchedule(params.year || new Date().getFullYear());
     },
     allUsers: async (_, _params, ctx) => {
-      if (!ctx.req.user || !utils.isAdmin(ctx.req.user)) return null;
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo || !utils.isAdmin(userInfo)) return null;
       return await getAll();
     },
   },
   Mutation: {
     login: async (_, params, ctx) => {
-      if (ctx.req.user) return alreadyLoggedIn;
+      const userInfo = verifyLogin(ctx.req);
+      if (userInfo) return alreadyLoggedIn;
       return await login(ctx, params.username, params.password);
     },
-    logout: async (_, _params, ctx) => {
-      if (!ctx.req.user) return noLogin;
-      return await logout(ctx);
-    },
     changeUserPassword: async (_, _params, ctx) => {
-      if (!ctx.req.user) return noLogin;
-      return changePassword(ctx.req.user, _params.input);
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo) return noLogin;
+      return changePassword(userInfo, _params.input);
     },
     resetPassword: async (_, _params, ctx) => {
-      if (!ctx.req.user) return noLogin;
-      else if (!utils.isAdmin(ctx.req.user)) return noPerms;
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo) return noLogin;
+      else if (!utils.isAdmin(userInfo)) return noPerms;
       return await resetPassword(_params.id);
     },
     createUser: async (_, { username }, ctx) => {
-      if (!ctx.req.user) return noLogin;
-      else if (!utils.isAdmin(ctx.req.user)) return noPerms;
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo) return noLogin;
+      else if (!utils.isAdmin(userInfo)) return noPerms;
       return await createNewUser(username);
     },
     createTeachingPreference: async (_, { input }, ctx) => {
-      if (!ctx.req.user) return noLogin;
+      let userInfo = verifyLogin(ctx.req);
+      if (!userInfo) return noLogin;
 
-      if (ctx.req.user.preference.length !== 0) {
+      if (userInfo.preference.length !== 0) {
         return {
           token: '',
           success: false,
@@ -131,13 +138,13 @@ export const resolvers: Resolvers<Context> = {
         };
       }
 
-      await updateUserSurvey(ctx.req.user.id, input);
+      await updateUserSurvey(userInfo.id, input);
 
       // refresh the context user when they update their preferences
-      const refreshedUser = await findUserById(ctx.req.user.id);
+      const refreshedUser = await findUserById(userInfo.id);
       // should never be null but just in case
       if (refreshedUser !== null) {
-        ctx.req.user = refreshedUser;
+        userInfo = refreshedUser;
       }
 
       return {
@@ -147,8 +154,9 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     generateSchedule: async (_, { input }, ctx) => {
-      if (!ctx.req.user || !input.courses) return noLogin;
-      else if (!utils.isAdmin(ctx.req.user)) return noPerms; // Only Admin can generate schedule
+      const userInfo = verifyLogin(ctx.req);
+      if (!userInfo || !input.courses) return noLogin;
+      else if (!utils.isAdmin(userInfo)) return noPerms; // Only Admin can generate schedule
 
       const falltermCourses: CourseInput[] =
         input.term == Term.Fall ? input.courses : [];

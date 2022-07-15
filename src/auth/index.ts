@@ -1,7 +1,7 @@
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
-import { sign } from 'jsonwebtoken';
+import { JwtPayload, sign } from 'jsonwebtoken';
 import type { Context } from '../context';
 import { prisma } from '../prisma';
 import { findUserByUsername } from '../prisma/user';
@@ -12,15 +12,13 @@ import type {
   GenerateScheduleInput,
   Response,
 } from '../schema/graphql';
-import { SECRET_ACCESSTOKEN, SECRET_REFRESHTOKEN } from './keys';
+import { SECRET_ACCESSTOKEN } from './keys';
 export {
   login,
-  logout,
   changePassword,
   createNewUser,
   generateSchedule,
   resetPassword,
-  createTokens,
 };
 
 // User with username testuser and password testpassword
@@ -60,48 +58,18 @@ async function login(
       token: '',
     };
   } else {
-    const tokens = await createTokens(user);
-    ctx.res.cookie('refresh-token', tokens.refreshToken);
-    ctx.res.cookie('access-token', tokens.accessToken);
+    const accessToken = sign(user, SECRET_ACCESSTOKEN, { expiresIn: '30m' }); // token expires in 30 mins
+
     return {
       message: 'Success',
       success: true,
-      token: tokens.accessToken,
+      token: accessToken,
     };
   }
 }
 
-async function logout(ctx: Context) {
-  ctx.res.clearCookie('access-token');
-  ctx.res.clearCookie('refresh-token');
-  return {
-    message: 'Logged out Succesfully',
-    success: true,
-    token: '',
-  };
-}
-
-async function createTokens(user: User) {
-  const accessToken = sign(
-    {
-      user: user,
-    },
-    SECRET_ACCESSTOKEN,
-    { expiresIn: '15s' } // Set Expiry Time
-  );
-
-  const refreshToken = sign(
-    {
-      user: user,
-    },
-    SECRET_REFRESHTOKEN,
-    { expiresIn: '7d' }
-  );
-  return { accessToken, refreshToken }; // Set Expiry Time
-}
-
 async function changePassword(
-  user: User,
+  user: JwtPayload,
   { currentPassword, newPassword }: ChangeUserPasswordInput
 ): Promise<Response> {
   const valid = await bcrypt.compare(currentPassword, user.password);
