@@ -1,2 +1,1 @@
-export const SECRET_ACCESSTOKEN = 'MY_SECRET';
-export const SECRET_REFRESHTOKEN = 'MY_SECRET';
+export const SECRET_ACCESSTOKEN = process.env.SECRET_ACCESSTOKEN ?? 'MY_SECRET';

@@ -6,7 +6,7 @@ import {
   login,
   resetPassword,
 } from '../auth';
-import { verifyLogin } from '../auth/verifier';
+import { verifyToken } from '../auth/verifier';
 import { Context } from '../context';
 import { getAllCourses } from '../prisma/course';
 import { findUserById } from '../prisma/user';
@@ -58,17 +58,16 @@ const apiErrorHandler = (alg: string, e: unknown) => {
 export const resolvers: Resolvers<Context> = {
   Query: {
     me: async (_, _params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
-      if (!userInfo || typeof userInfo == 'string') return null;
-      return await getMe(userInfo);
+      if (!ctx.user) return null;
+      return await getMe(ctx.user);
     },
     findUserById: async (_, params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo || !params.id) return null;
       return await getUserByID(+params.id);
     },
     survey: async (_, __, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo) return { courses: [] };
 
       const courses = (await getAllCourses()).map((c) => ({
@@ -87,46 +86,46 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     courses: async (_, params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo || !params.term) return null;
       return await getCourses(params.term);
     },
     schedule: async (_, params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo) return null;
       return getSchedule(params.year || new Date().getFullYear());
     },
     allUsers: async (_, _params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo || !utils.isAdmin(userInfo)) return null;
       return await getAll();
     },
   },
   Mutation: {
     login: async (_, params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (userInfo) return alreadyLoggedIn;
       return await login(ctx, params.username, params.password);
     },
     changeUserPassword: async (_, _params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo) return noLogin;
       return changePassword(userInfo, _params.input);
     },
     resetPassword: async (_, _params, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo) return noLogin;
       else if (!utils.isAdmin(userInfo)) return noPerms;
       return await resetPassword(_params.id);
     },
     createUser: async (_, { username }, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
+      const userInfo = verifyToken(ctx.req);
       if (!userInfo) return noLogin;
       else if (!utils.isAdmin(userInfo)) return noPerms;
       return await createNewUser(username);
     },
     createTeachingPreference: async (_, { input }, ctx) => {
-      let userInfo = verifyLogin(ctx.req);
+      let userInfo = verifyToken(ctx.req);
       if (!userInfo) return noLogin;
 
       if (userInfo.preference.length !== 0) {
@@ -154,9 +153,10 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     generateSchedule: async (_, { input }, ctx) => {
-      const userInfo = verifyLogin(ctx.req);
-      if (!userInfo || !input.courses) return noLogin;
-      else if (!utils.isAdmin(userInfo)) return noPerms; // Only Admin can generate schedule
+      if (!ctx.user) return noLogin;
+
+      if(!ctx.user)
+      else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can generate schedule
 
       const falltermCourses: CourseInput[] =
         input.term == Term.Fall ? input.courses : [];
