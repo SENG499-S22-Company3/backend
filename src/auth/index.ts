@@ -58,7 +58,13 @@ async function login(
       token: '',
     };
   } else {
-    const accessToken = sign(user, SECRET_ACCESSTOKEN, { expiresIn: '30m' }); // token expires in 30 mins
+    const accessToken = sign(
+      {
+        username: user.username,
+      },
+      SECRET_ACCESSTOKEN,
+      { expiresIn: '30m' }
+    ); // token expires in 30 mins
 
     return {
       message: 'Success',

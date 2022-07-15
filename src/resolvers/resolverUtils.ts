@@ -4,7 +4,6 @@ import {
   TeachingPreference,
   User as PrismaUser,
 } from '@prisma/client';
-import { JwtPayload } from 'jsonwebtoken';
 import {
   Schedule as ScheduleAlgorithm,
   SchedulePostRequest,
@@ -53,7 +52,7 @@ export type PrismaTeachPref = (TeachingPreference & {
   })[];
 })[];
 
-async function getMe(user: JwtPayload): Promise<User | null> {
+async function getMe(user: FullUser): Promise<User | null> {
   if (!user) return null;
 
   return {
