@@ -6,7 +6,6 @@ import {
   login,
   resetPassword,
 } from '../auth';
-import { verifyToken } from '../auth/verifier';
 import { Context } from '../context';
 import { getAllCourses } from '../prisma/course';
 import { findUserById } from '../prisma/user';
@@ -62,13 +61,11 @@ export const resolvers: Resolvers<Context> = {
       return await getMe(ctx.user);
     },
     findUserById: async (_, params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo || !params.id) return null;
+      if (!ctx.user || !params.id) return null;
       return await getUserByID(+params.id);
     },
     survey: async (_, __, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo) return { courses: [] };
+      if (!ctx.user) return { courses: [] };
 
       const courses = (await getAllCourses()).map((c) => ({
         ...c,
@@ -86,49 +83,41 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     courses: async (_, params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo || !params.term) return null;
+      if (!ctx.user || !params.term) return null;
       return await getCourses(params.term);
     },
     schedule: async (_, params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo) return null;
+      if (!ctx.user) return null;
       return getSchedule(params.year || new Date().getFullYear());
     },
     allUsers: async (_, _params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo || !utils.isAdmin(userInfo)) return null;
+      if (!ctx.user || !utils.isAdmin(ctx.user)) return null;
       return await getAll();
     },
   },
   Mutation: {
     login: async (_, params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (userInfo) return alreadyLoggedIn;
+      if (ctx.user) return alreadyLoggedIn;
       return await login(ctx, params.username, params.password);
     },
     changeUserPassword: async (_, _params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo) return noLogin;
-      return changePassword(userInfo, _params.input);
+      if (!ctx.user) return noLogin;
+      return changePassword(ctx.user, _params.input);
     },
     resetPassword: async (_, _params, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo) return noLogin;
-      else if (!utils.isAdmin(userInfo)) return noPerms;
+      if (!ctx.user) return noLogin;
+      else if (!utils.isAdmin(ctx.user)) return noPerms;
       return await resetPassword(_params.id);
     },
     createUser: async (_, { username }, ctx) => {
-      const userInfo = verifyToken(ctx.req);
-      if (!userInfo) return noLogin;
-      else if (!utils.isAdmin(userInfo)) return noPerms;
+      if (!ctx.user) return noLogin;
+      else if (!utils.isAdmin(ctx.user)) return noPerms;
       return await createNewUser(username);
     },
     createTeachingPreference: async (_, { input }, ctx) => {
-      let userInfo = verifyToken(ctx.req);
-      if (!userInfo) return noLogin;
+      if (!ctx.user) return noLogin;
 
-      if (userInfo.preference.length !== 0) {
+      if (ctx.user.preference.length !== 0) {
         return {
           token: '',
           success: false,
@@ -137,13 +126,13 @@ export const resolvers: Resolvers<Context> = {
         };
       }
 
-      await updateUserSurvey(userInfo.id, input);
+      await updateUserSurvey(ctx.user.id, input);
 
       // refresh the context user when they update their preferences
-      const refreshedUser = await findUserById(userInfo.id);
+      const refreshedUser = await findUserById(ctx.user.id);
       // should never be null but just in case
       if (refreshedUser !== null) {
-        userInfo = refreshedUser;
+        ctx.user = refreshedUser;
       }
 
       return {
@@ -153,9 +142,7 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     generateSchedule: async (_, { input }, ctx) => {
-      if (!ctx.user) return noLogin;
-
-      if(!ctx.user)
+      if (!ctx.user || !input.courses) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can generate schedule
 
       const falltermCourses: CourseInput[] =
