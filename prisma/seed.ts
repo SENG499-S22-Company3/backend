@@ -61,6 +61,31 @@ async function seedUsers(): Promise<void> {
       role: Role.USER,
     },
   });
+
+  // Special tbd User for courses without profs
+  await prisma.user.upsert({
+    where: {
+      username: 'TBD',
+    },
+
+    create: {
+      displayName: 'TBD',
+      username: 'TBD',
+      password: await bcrypt.hash('testpassword', 10),
+      active: false,
+      hasPeng: false,
+      role: Role.USER,
+    },
+
+    update: {
+      displayName: 'TBD',
+      username: 'TBD',
+      password: await bcrypt.hash('testpassword', 10),
+      active: false,
+      hasPeng: false,
+      role: Role.USER,
+    },
+  });
 }
 
 async function seedPref() {

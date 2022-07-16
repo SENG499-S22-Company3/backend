@@ -191,7 +191,7 @@ export const resolvers: Resolvers<Context> = {
       } catch (e) {
         return apiErrorHandler('1', e);
       }
-      console.log(scheduleResponse.data);
+      console.log(JSON.stringify(scheduleResponse.data, null, 2));
       try {
         await createSchedule(input.year, input.term, scheduleResponse.data);
       } catch (e) {
