@@ -98,7 +98,6 @@ async function upsertCourses(
   if (!course.assignment) return;
   const startEnd = getMinMaxDateTime(term, scheduleyear, course.assignment);
   if (!startEnd) return;
-
   const startDate = startEnd.start;
   const endDate = startEnd.end;
   if (!startDate || !endDate) return;

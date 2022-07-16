@@ -295,8 +295,10 @@ async function generateScheduleWithCapacities(
         );
       })?.capacity ?? 0,
     // default capacity to 0 if not found
-    courseTitle: 'testing',
-    // TODO: figure out best value here
+    courseTitle: 'Untitled(New Course)',
+    // Course title is returned by algo1 as we send it but they just send it back.
+    // The course title they send back matters when it's a course we don't have in
+    // our db. The new course gets inserted with this courseTitle.
     sequenceNumber: 'A01',
     streamSequence: getSeqNumber(input.subject, input.code),
   });
