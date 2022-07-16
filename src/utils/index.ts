@@ -1,11 +1,12 @@
-import { User, Role, Day } from '@prisma/client';
-import { getISOTime, getMeetingDays } from './time';
+import { Day, Role } from '@prisma/client';
+import { FullUser } from '../resolvers/resolverUtils';
+import { getSeqNumber } from './courseSequenceNumber';
 import {
   addCourseSections,
   addTeachingAndCoursePreferences,
 } from './seedingFunctions';
-import { getSeqNumber } from './courseSequenceNumber';
-const isAdmin = (user: User) => user.role === Role.ADMIN;
+import { getISOTime, getMeetingDays } from './time';
+const isAdmin = (user: FullUser) => user.role === Role.ADMIN;
 
 export {
   getISOTime,

@@ -1,16 +1,18 @@
-import { Prisma, User } from '@prisma/client';
-import { findUserByUsername } from '../prisma/user';
-import { prisma } from '../prisma';
+import { Prisma } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
+import { JwtPayload, sign } from 'jsonwebtoken';
+import type { Context } from '../context';
+import { prisma } from '../prisma';
+import { findUserByUsername } from '../prisma/user';
 import type {
   AuthPayload,
   ChangeUserPasswordInput,
-  Response,
   CreateUserMutationResult,
   GenerateScheduleInput,
+  Response,
 } from '../schema/graphql';
-import type { Context } from '../context';
+import { SECRET_ACCESSTOKEN } from './keys';
 export {
   login,
   changePassword,
@@ -53,20 +55,27 @@ async function login(
     return {
       message: 'Incorrect username or password',
       success: false,
-      token: '', // Won't be needed anymore
+      token: '',
     };
   } else {
-    ctx.session.user = user;
+    const accessToken = sign(
+      {
+        username: user.username,
+      },
+      SECRET_ACCESSTOKEN,
+      { expiresIn: '2 days' }
+    ); // token expires in 2 days
+
     return {
       message: 'Success',
       success: true,
-      token: '',
+      token: accessToken,
     };
   }
 }
 
 async function changePassword(
-  user: User,
+  user: JwtPayload,
   { currentPassword, newPassword }: ChangeUserPasswordInput
 ): Promise<Response> {
   const valid = await bcrypt.compare(currentPassword, user.password);
