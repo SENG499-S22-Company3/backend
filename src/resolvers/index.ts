@@ -44,7 +44,7 @@ const apiErrorHandler = (alg: string, e: unknown) => {
   console.error(e);
   if (e instanceof AxiosError) {
     return {
-      message: `API call error: Bad response from algorithm ${alg}:\n${e.response?.data}`,
+      message: `API call error: Bad response from algorithm ${alg}:${e.message}:${e.response?.data}`,
       success: false,
     };
   } else
