@@ -105,6 +105,13 @@ export const resolvers: Resolvers<Context> = {
       if (ctx.user) return alreadyLoggedIn;
       return await login(ctx, params.username, params.password);
     },
+    logout: async () => {
+      return {
+        success: true,
+        message: 'logged out',
+        token: '',
+      };
+    },
     changeUserPassword: async (_, _params, ctx) => {
       if (!ctx.user) return noLogin;
       return changePassword(ctx.user, _params.input);
