@@ -44,7 +44,7 @@ const apiErrorHandler = (alg: string, e: unknown) => {
   console.error(e);
   if (e instanceof AxiosError) {
     return {
-      message: `API call error: Bad response from algorithm ${alg}:\n${e.message}`,
+      message: `API call error: Bad response from algorithm ${alg}:\n${e.response?.data}`,
       success: false,
     };
   } else
@@ -177,9 +177,9 @@ export const resolvers: Resolvers<Context> = {
       } catch (e) {
         return apiErrorHandler('2', e);
       }
-
+      let scheduleResponse;
       try {
-        const scheduleResponse = await generateScheduleWithCapacities(
+        scheduleResponse = await generateScheduleWithCapacities(
           ctx,
           input,
           falltermCourses,
@@ -188,12 +188,18 @@ export const resolvers: Resolvers<Context> = {
           users,
           capacityDataResponse.data
         );
-        console.log(scheduleResponse.data);
-
-        await createSchedule(input.year, input.term, scheduleResponse.data);
-        // console.info(JSON.stringify(algorithm1Data.data, null, 2));
       } catch (e) {
         return apiErrorHandler('1', e);
+      }
+      console.log(scheduleResponse.data);
+      try {
+        await createSchedule(input.year, input.term, scheduleResponse.data);
+      } catch (e) {
+        console.log(`Failed to generate schedule: '${e}'`);
+        return {
+          success: false,
+          message: 'backend failed to insert generated schedule into database',
+        };
       }
 
       return generateSchedule(input);
