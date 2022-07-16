@@ -126,7 +126,7 @@ async function upsertCourses(
       courseSection: {
         create: {
           sectionNumber: course.sequenceNumber,
-          capacity: course.courseCapacity,
+          capacity: course.courseCapacity ?? 0,
           startDate,
           endDate,
           hoursPerWeek: 0,
@@ -146,7 +146,7 @@ async function upsertCourses(
       courseSection: {
         create: {
           sectionNumber: course.sequenceNumber,
-          capacity: course.courseCapacity,
+          capacity: course.courseCapacity ?? 0,
           startDate,
           endDate,
           hoursPerWeek: course.assignment?.hoursWeek ?? 0,
