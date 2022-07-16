@@ -136,3 +136,6 @@ dist
 # 
 build
 db-data
+
+# Snapshot files used in unit tests
+*.snap

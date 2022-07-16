@@ -49,17 +49,22 @@ const algo2c4 = createPredict(
   })
 );
 
+// Set of endpoints returned when calling request for company 3 or company 4 algorithms.
+export const company3AxiosEndpoints = {
+  algo1: algo1c3,
+  algo2: algo2c3,
+};
+
+export const company4AxiosEndpoints = {
+  algo1: algo1c4,
+  algo2: algo2c4,
+};
+
 export const request = (company: Company) => {
   if (company === 'COMPANY3') {
-    return {
-      algo1: algo1c3,
-      algo2: algo2c3,
-    };
+    return company3AxiosEndpoints;
   }
-  return {
-    algo1: algo1c4,
-    algo2: algo2c4,
-  };
+  return company4AxiosEndpoints;
 };
 
 console.info('Setting up Algorithm APIs...');

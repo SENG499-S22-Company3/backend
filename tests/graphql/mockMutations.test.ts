@@ -16,7 +16,7 @@ import {
   expectResetPassword,
   expectResponse,
 } from './mockExpect';
-import { Company, Term } from '../src/schema';
+import { Company, Term } from '../../src/schema';
 
 const typeDefs = fs.readFileSync('./src/schema/schema.graphql', 'utf8');
 let testServer: ApolloServer<ExpressContext>;

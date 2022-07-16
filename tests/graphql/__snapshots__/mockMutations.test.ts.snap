@@ -3,7 +3,7 @@
 exports[`MUTATION MOCK TESTS Mock changePassword 1`] = `
 Object {
   "changeUserPassword": Object {
-    "message": "Small Münsterländer",
+    "message": "Border Terrier",
     "success": true,
   },
 }
@@ -12,7 +12,7 @@ Object {
 exports[`MUTATION MOCK TESTS Mock createTeachingPreferences 1`] = `
 Object {
   "createTeachingPreference": Object {
-    "message": "Chinese Crested Dog",
+    "message": "Huntaway",
     "success": true,
   },
 }
@@ -23,10 +23,10 @@ exports[`MUTATION MOCK TESTS Mock createUser 1`] = `undefined`;
 exports[`MUTATION MOCK TESTS Mock createUser 2`] = `
 Object {
   "createUser": Object {
-    "message": "If we synthesize the array, we can get to the TCP capacitor through the digital OCR transmitter!",
-    "password": "Donskoy",
+    "message": "Try to program the HTTP sensor, maybe it will connect the open-source sensor!",
+    "password": "Singapura",
     "success": true,
-    "username": "Catalina",
+    "username": "Amos",
   },
 }
 `;
@@ -34,7 +34,7 @@ Object {
 exports[`MUTATION MOCK TESTS Mock generateSchedule 1`] = `
 Object {
   "generateSchedule": Object {
-    "message": "Kerry Blue Terrier",
+    "message": "English Setter",
     "success": true,
   },
 }
@@ -43,9 +43,9 @@ Object {
 exports[`MUTATION MOCK TESTS Mock login 1`] = `
 Object {
   "login": Object {
-    "message": "secondary",
+    "message": "client-driven",
     "success": true,
-    "token": "32.55.35.176",
+    "token": "180.49.130.243",
   },
 }
 `;
@@ -53,9 +53,9 @@ Object {
 exports[`MUTATION MOCK TESTS Mock logout 1`] = `
 Object {
   "logout": Object {
-    "message": "content-based",
+    "message": "zero administration",
     "success": true,
-    "token": "174.219.205.26",
+    "token": "79.105.140.175",
   },
 }
 `;
@@ -63,8 +63,8 @@ Object {
 exports[`MUTATION MOCK TESTS Mock resetPassword 1`] = `
 Object {
   "resetPassword": Object {
-    "message": "Jry_^R+QDR",
-    "password": "Gary",
+    "message": ",tw:FOIV}I",
+    "password": "Sparks",
     "success": true,
   },
 }

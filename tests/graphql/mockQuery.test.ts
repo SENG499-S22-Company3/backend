@@ -1,6 +1,6 @@
 import { ApolloServer, ExpressContext } from 'apollo-server-express';
 import { mocks } from './mockDataSource';
-import { Term } from '../src/schema';
+import { Term } from '../../src/schema';
 import fs from 'fs';
 import {
   expectUser,
