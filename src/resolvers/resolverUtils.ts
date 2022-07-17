@@ -16,6 +16,7 @@ import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
 import {
   CourseInput,
   CourseSection,
+  Company,
   Day,
   GenerateScheduleInput,
   MeetingTime,
