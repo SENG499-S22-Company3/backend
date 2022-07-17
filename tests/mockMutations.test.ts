@@ -134,8 +134,9 @@ describe('MUTATION MOCK TESTS', () => {
       variables: {
         input: {
           year: 2021,
-          term: Term.Fall,
-          courses: [],
+          fallCourses: [],
+          springCourses: [],
+          summerCourses: [],
           algorithm1: Company.Company3,
           algorithm2: Company.Company4,
         },

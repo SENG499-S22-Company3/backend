@@ -192,6 +192,14 @@ export const resolvers: Resolvers<Context> = {
       } catch (e) {
         return apiErrorHandler('1', e);
       }
+
+      if (!scheduleResponse?.data) {
+        return {
+          success: false,
+          message: 'Error: No response from algorithm 1',
+        };
+      }
+
       console.log('ALG 1 RESPONSE DATA');
       console.log(scheduleResponse.data);
       console.log('END ALG 1 RESPONSE DATA');
