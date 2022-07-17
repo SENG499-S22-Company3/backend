@@ -256,33 +256,27 @@ async function getCourseCapacities(
     return null;
   }
 
-  const summerRequest: CourseObject[] = summerCourses.map((course) => {
+  const courseMapper = (course: CourseInput, term: Term) => {
     return {
       subject: course.subject,
       code: course.code,
       seng_ratio: 0.75,
-      semester: Term.Summer,
+      semester: term,
       capacity: 0,
     };
-  });
-  const springRequest: CourseObject[] = springCourses.map((course) => {
-    return {
-      subject: course.subject,
-      code: course.code,
-      seng_ratio: 0.75,
-      semester: Term.Spring,
-      capacity: 0,
-    };
-  });
-  const fallRequest: CourseObject[] = fallCourses.map((course) => {
-    return {
-      subject: course.subject,
-      code: course.code,
-      seng_ratio: 0.75,
-      semester: Term.Fall,
-      capacity: 0,
-    };
-  });
+  };
+
+  const summerRequest: CourseObject[] = summerCourses.map((course) =>
+    courseMapper(course, Term.Summer)
+  );
+
+  const springRequest: CourseObject[] = springCourses.map((course) =>
+    courseMapper(course, Term.Spring)
+  );
+
+  const fallRequest: CourseObject[] = fallCourses.map((course) =>
+    courseMapper(course, Term.Fall)
+  );
 
   const combinedRequest = ([] as CourseObject[]).concat(
     summerRequest,
