@@ -5,77 +5,77 @@ Object {
   "courses": Array [
     Object {
       "CourseID": Object {
-        "code": "47.23.28.33",
-        "subject": "Zboncak, Prohaska and King",
+        "code": "14.242.114.207",
+        "subject": "Prohaska and Sons",
         "term": "FALL",
       },
-      "capacity": 73245,
-      "endDate": "W_!8@R)I>&",
-      "hoursPerWeek": 48615,
+      "capacity": 79667,
+      "endDate": "uPC++p*SiA",
+      "hoursPerWeek": 8209,
       "meetingTimes": Array [
         Object {
           "day": "FRIDAY",
-          "endTime": "=JUWbIqCA]",
-          "startTime": ")U:\`z8Kzw]",
+          "endTime": "i\`4hG;?K.5",
+          "startTime": "x^2}!Z{e]H",
         },
       ],
       "professors": Array [
         Object {
           "active": true,
-          "id": 15364,
-          "password": "Investment Account",
+          "id": 38395,
+          "password": "Savings Account",
           "preferences": Array [
             Object {
               "id": Object {
-                "code": "217.0.188.173",
-                "subject": "Kunze, Crona and Muller",
+                "code": "218.172.178.179",
+                "subject": "Larkin, Morissette and Aufderhar",
                 "term": "FALL",
               },
-              "preference": 76025,
+              "preference": 75682,
             },
           ],
           "role": "USER",
-          "username": "Raleigh",
+          "username": "Emmalee",
         },
       ],
-      "startDate": "e+g#EWZa@6",
+      "startDate": "C&'Aj+?zm)",
     },
     Object {
       "CourseID": Object {
-        "code": "252.178.184.3",
-        "subject": "Johnson Inc",
+        "code": "144.111.49.112",
+        "subject": "Nienow - Green",
         "term": "FALL",
       },
-      "capacity": 5184,
-      "endDate": "o9wv^}f\\\\CG",
-      "hoursPerWeek": 85776,
+      "capacity": 25715,
+      "endDate": "\`R{K,\\\\b))T",
+      "hoursPerWeek": 1043,
       "meetingTimes": Array [
         Object {
           "day": "FRIDAY",
-          "endTime": "f<N&o)e!l_",
-          "startTime": "u0VsmAZAbk",
+          "endTime": "K3vPOA{')I",
+          "startTime": "1iG)9Dwvdo",
         },
       ],
       "professors": Array [
         Object {
           "active": true,
-          "id": 59955,
-          "password": "Money Market Account",
+          "id": 37600,
+          "password": "Checking Account",
           "preferences": Array [
             Object {
               "id": Object {
-                "code": "217.0.188.173",
-                "subject": "Kunze, Crona and Muller",
+                "code": "218.172.178.179",
+                "subject": "Larkin, Morissette and Aufderhar",
                 "term": "FALL",
               },
-              "preference": 76025,
+              "preference": 75682,
             },
           ],
           "role": "USER",
-          "username": "Kimberly",
+          "username": "Dawson",
         },
       ],
-      "startDate": ">'e;ppc=p.",
+      "startDate": "\`!J$b?=\\"(2",
     },
   ],
 }
@@ -87,45 +87,45 @@ Object {
     "courses": Array [
       Object {
         "CourseID": Object {
-          "code": "40.225.77.77",
-          "subject": "Goodwin - Langworth",
+          "code": "193.33.198.29",
+          "subject": "Effertz, Raynor and Schmitt",
           "term": "FALL",
         },
-        "capacity": 14488,
-        "endDate": "rS|I&-+rbk",
-        "hoursPerWeek": 34646,
+        "capacity": 71492,
+        "endDate": "]++3eAFS)<",
+        "hoursPerWeek": 76506,
         "meetingTimes": Array [
           Object {
             "day": "FRIDAY",
-            "endTime": "q*(qqO%P'5",
-            "startTime": "]*}d9)AJ0\\"",
+            "endTime": "t\`|hhk}{nh",
+            "startTime": "]f+Fa=.H.7",
           },
         ],
         "professors": Array [
           Object {
             "active": true,
-            "id": 1668,
-            "password": "Home Loan Account",
+            "id": 27706,
+            "password": "Savings Account",
             "preferences": Array [
               Object {
                 "id": Object {
-                  "code": "217.0.188.173",
-                  "subject": "Kunze, Crona and Muller",
+                  "code": "218.172.178.179",
+                  "subject": "Larkin, Morissette and Aufderhar",
                   "term": "FALL",
                 },
-                "preference": 76025,
+                "preference": 75682,
               },
             ],
             "role": "USER",
-            "username": "Ora",
+            "username": "Brycen",
           },
         ],
-        "startDate": "{6H#R|9B(l",
+        "startDate": "u\\"{F{GJ]r^",
       },
     ],
-    "createdAt": ".&nh.Z\\"505",
-    "id": "Maldives",
-    "year": 5,
+    "createdAt": ".tKW>j%NY2",
+    "id": "Cote d'Ivoire",
+    "year": 9,
   },
 }
 `;
@@ -134,20 +134,20 @@ exports[`QUERY MOCK TESTS Mocking findUserByID 1`] = `
 Object {
   "findUserById": Object {
     "active": true,
-    "id": 91421,
-    "password": "Money Market Account",
+    "id": 29639,
+    "password": "Checking Account",
     "preferences": Array [
       Object {
         "id": Object {
-          "code": "217.0.188.173",
-          "subject": "Kunze, Crona and Muller",
+          "code": "218.172.178.179",
+          "subject": "Larkin, Morissette and Aufderhar",
           "term": "FALL",
         },
-        "preference": 76025,
+        "preference": 75682,
       },
     ],
     "role": "USER",
-    "username": "Monica",
+    "username": "Sean",
   },
 }
 `;
@@ -156,20 +156,20 @@ exports[`QUERY MOCK TESTS Mocking me 1`] = `
 Object {
   "me": Object {
     "active": true,
-    "id": 49193,
-    "password": "Credit Card Account",
+    "id": 51909,
+    "password": "Personal Loan Account",
     "preferences": Array [
       Object {
         "id": Object {
-          "code": "217.0.188.173",
-          "subject": "Kunze, Crona and Muller",
+          "code": "218.172.178.179",
+          "subject": "Larkin, Morissette and Aufderhar",
           "term": "FALL",
         },
-        "preference": 76025,
+        "preference": 75682,
       },
     ],
     "role": "USER",
-    "username": "Emory",
+    "username": "Delmer",
   },
 }
 `;
@@ -179,8 +179,8 @@ Object {
   "survey": Object {
     "courses": Array [
       Object {
-        "code": "254.16.158.197",
-        "subject": "Wolf - Hilll",
+        "code": "207.121.7.91",
+        "subject": "McLaughlin - Powlowski",
         "term": "FALL",
       },
     ],

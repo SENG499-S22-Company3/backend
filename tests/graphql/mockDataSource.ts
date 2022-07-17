@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Day, Role, Term } from '../src/schema';
+import { Day, Role, Term } from '../../src/schema';
 export { mocks };
 
 const mocks = {
