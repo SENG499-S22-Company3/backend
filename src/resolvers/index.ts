@@ -1,5 +1,5 @@
 import { Context } from '../context';
-import { CourseInput, Resolvers, Term } from '../schema';
+import { Resolvers, Term } from '../schema';
 import { AxiosError } from 'axios';
 import {
   login,
@@ -22,7 +22,6 @@ import {
 } from './resolverUtils';
 import { findUserById } from '../prisma/user';
 import { getAllCourses } from '../prisma/course';
-
 const noLogin = {
   success: false,
   message: 'Not logged in',
@@ -151,49 +150,55 @@ export const resolvers: Resolvers<Context> = {
       };
     },
     generateSchedule: async (_, { input }, ctx) => {
-      if (!ctx.session.user || !input.courses) return noLogin;
+      if (!ctx.session.user) return noLogin;
       else if (!utils.isAdmin(ctx.session.user)) return noPerms; // Only Admin can generate schedule
 
-      const falltermCourses: CourseInput[] =
-        input.term == Term.Fall ? input.courses : [];
-      const springtermCourses: CourseInput[] =
-        input.term == Term.Spring ? input.courses : [];
-      const summertermCourses: CourseInput[] =
-        input.term == Term.Summer ? input.courses : [];
       const users = await getAll();
 
       let capacityDataResponse;
       try {
-        capacityDataResponse = await getCourseCapacities(ctx, input);
-
-        if (!capacityDataResponse) {
-          return {
-            message: 'Algorithm 2 error: No data returned',
-            success: false,
-          };
-        }
-
-        console.log(capacityDataResponse.data);
+        capacityDataResponse = await getCourseCapacities(
+          ctx,
+          input.summerCourses ?? [],
+          input.springCourses ?? [],
+          input.fallCourses ?? [],
+          input.algorithm2
+        );
       } catch (e) {
         return apiErrorHandler('2', e);
       }
+
+      if (!capacityDataResponse) {
+        return {
+          success: false,
+          message: 'Error: No Courses Input',
+        };
+      }
+
+      console.log('ALG 2 RESPONSE DATA');
+      console.log(capacityDataResponse.data);
+      console.log('END ALG 2 RESPONSE DATA');
+
       let scheduleResponse;
       try {
         scheduleResponse = await generateScheduleWithCapacities(
           ctx,
           input,
-          falltermCourses,
-          summertermCourses,
-          springtermCourses,
+          input.fallCourses ?? [],
+          input.summerCourses ?? [],
+          input.springCourses ?? [],
           users,
           capacityDataResponse.data
         );
       } catch (e) {
         return apiErrorHandler('1', e);
       }
-      console.log(JSON.stringify(scheduleResponse.data, null, 2));
+      console.log('ALG 1 RESPONSE DATA');
+      console.log(scheduleResponse.data);
+      console.log('END ALG 1 RESPONSE DATA');
+
       try {
-        await createSchedule(input.year, input.term, scheduleResponse.data);
+        await createSchedule(input.year, scheduleResponse.data);
       } catch (e) {
         console.log(`Failed to generate schedule: '${e}'`);
         return {

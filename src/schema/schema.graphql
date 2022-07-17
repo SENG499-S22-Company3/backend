@@ -90,6 +90,80 @@ type Mutation {
   Edit schedule and Plug and Play Compnay 3's and 4's Algorithms
   """
   editCourse(input: EditCourseInput): Response!
+    @deprecated(reason: "Use updateSchedule instead")
+  """
+  Update an entire schdule.
+  """
+  updateSchedule(input: UpdateScheduleInput!): UpdateScheduleResponse!
+}
+
+input UpdateScheduleInput {
+  """
+  ID of the schedule to update. If not given, the current schedule will be updated.
+  """
+  id: ID
+  """
+  The updated courses
+  """
+  courses: [CourseSectionInput!]!
+  """
+  Whether to perform validation on the backend through algorithm 1.
+  """
+  skipValidation: Boolean!
+  """
+  Which algorithm to use. If COMPANY4 is selected then validation will not be performed regardless of skipValidation.
+  """
+  validation: Company!
+}
+
+input CourseSectionInput {
+  """
+  The course identifier
+  """
+  id: CourseUpdateInput!
+  """
+  How many hours per week a course takes
+  """
+  hoursPerWeek: Float!
+  """
+  Maximum capacity of the section
+  """
+  capacity: Int!
+  """
+  Section number for courses, eg: A01, A02
+  """
+  sectionNumber: String
+  """
+  Professor's info, if any professors are assigned. Usernames
+  """
+  professors: [String!]!
+  """
+  The start date of the course
+  """
+  startDate: Date!
+  """
+  The end date of the course
+  """
+  endDate: Date!
+  """
+  Days of the week the class is offered in - see Day
+  """
+  meetingTimes: [MeetingTimeInput!]!
+}
+
+type UpdateScheduleResponse {
+  """
+  Whether the update was successful
+  """
+  success: Boolean!
+  """
+  General messaging for the client to consume.
+  """
+  message: String
+  """
+  Errors associated to updating the schedule. Only populated if success is false. This could include validation issues.
+  """
+  errors: [String!]
 }
 
 type Response {
@@ -116,6 +190,18 @@ input CreateTeachingPreferenceInput {
   reliefReason: String
   hasTopic: Boolean!
   topicDescription: String
+  """
+  Number of courses a professor prefers to teach in the FALL semester. Defaults to 1.
+  """
+  fallTermCourses: Int
+  """
+  Number of courses a professor prefers to teach in the SPRING semester. Defaults to 1.
+  """
+  springTermCourses: Int
+  """
+  Number of courses a professor prefers to teach in the SUMMER semester. Defaults to 1.
+  """
+  summerTermCourses: Int
 }
 
 type TeachingPreferenceSurvey {
@@ -144,9 +230,22 @@ input CoursePreferenceInput {
 }
 
 input GenerateScheduleInput {
+  """
+  Base year for the schedule to be generated.
+  """
   year: Int!
-  term: Term!
-  courses: [CourseInput!]
+  """
+  Fall term courses to be scheduled. For fall, this would be same year as the base year.
+  """
+  fallCourses: [CourseInput!]
+  """
+  Spring term courses to be scheduled. For spring, this would be base year + 1 (e.g. if base year is 2019, spring courses would be 2020)
+  """
+  springCourses: [CourseInput!]
+  """
+  Summer term courses to be scheduled. For summer, this would be base year + 1 (e.g. if base year is 2019, summer courses would be 2020)
+  """
+  summerCourses: [CourseInput!]
   algorithm1: Company!
   algorithm2: Company!
 }
@@ -180,6 +279,25 @@ input CourseInput {
   Number of Sections for a course
   """
   section: Int!
+}
+
+input CourseUpdateInput {
+  """
+  Course subject, e.g. SENG, CSC
+  """
+  subject: String!
+  """
+  Course title. e.g. Introduction to Artificial Intelligence
+  """
+  title: String!
+  """
+  Course code, e.g. 499, 310
+  """
+  code: String!
+  """
+  Term course is offered in
+  """
+  term: Term!
 }
 
 type CourseID {
