@@ -16,6 +16,7 @@ import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
 import {
   CourseInput,
   CourseSection,
+  Company,
   Day,
   GenerateScheduleInput,
   MeetingTime,
@@ -37,7 +38,6 @@ export {
   createSchedule,
   updateUserSurvey,
 };
-
 /**
  * Prisma-based type representing the User model
  * with the preferences joined in
@@ -231,44 +231,62 @@ async function getSchedule(year: number): Promise<Schedule | null> {
   };
 }
 
-async function createSchedule(
-  year: number,
-  term: Term,
-  scheduleData: ScheduleAlgorithm
-) {
+async function createSchedule(year: number, scheduleData: ScheduleAlgorithm) {
   const schedule = await initiateSchedule(year);
 
-  if (term === Term.Fall) {
-    scheduleData.fallCourses?.forEach(async (course) => {
-      await upsertCourses(course, term, year, schedule);
-    });
-  } else if (term === Term.Spring) {
-    scheduleData.springCourses?.forEach(async (course) => {
-      await upsertCourses(course, term, year, schedule);
-    });
-  } else if (term === Term.Summer) {
-    scheduleData.summerCourses?.forEach(async (course) => {
-      await upsertCourses(course, term, year, schedule);
-    });
-  }
+  scheduleData.fallCourses?.forEach(async (course) => {
+    await upsertCourses(course, Term.Fall, year, schedule);
+  });
+  scheduleData.springCourses?.forEach(async (course) => {
+    await upsertCourses(course, Term.Spring, year, schedule);
+  });
+  scheduleData.summerCourses?.forEach(async (course) => {
+    await upsertCourses(course, Term.Summer, year, schedule);
+  });
 }
 
-async function getCourseCapacities(ctx: Context, input: GenerateScheduleInput) {
-  if (!input.courses) return null;
+async function getCourseCapacities(
+  ctx: Context,
+  summerCourses: CourseInput[],
+  springCourses: CourseInput[],
+  fallCourses: CourseInput[],
+  company: Company
+) {
+  if (summerCourses.length + springCourses.length + fallCourses.length === 0) {
+    return null;
+  }
 
-  const request: CourseObject[] = input.courses.map((course) => {
+  const courseMapper = (course: CourseInput, term: Term) => {
     return {
       subject: course.subject,
       code: course.code,
       seng_ratio: 0.75,
-      semester: input.term,
+      semester: term,
       capacity: 0,
     };
-  });
+  };
 
-  const alg2 = ctx.algorithm(input.algorithm2).algo2;
+  const summerRequest: CourseObject[] = summerCourses.map((course) =>
+    courseMapper(course, Term.Summer)
+  );
 
-  const algorithm2Response = await alg2(request);
+  const springRequest: CourseObject[] = springCourses.map((course) =>
+    courseMapper(course, Term.Spring)
+  );
+
+  const fallRequest: CourseObject[] = fallCourses.map((course) =>
+    courseMapper(course, Term.Fall)
+  );
+
+  const combinedRequest = ([] as CourseObject[]).concat(
+    summerRequest,
+    springRequest,
+    fallRequest
+  );
+
+  const alg2 = ctx.algorithm(company).algo2;
+
+  const algorithm2Response = await alg2(combinedRequest);
 
   return algorithm2Response;
 }
@@ -336,6 +354,14 @@ async function generateScheduleWithCapacities(
   };
 
   const alg1 = ctx.algorithm(input.algorithm1).algo1;
+  //  const fs = require('fs');
+  //  await fs.promises.writeFile(
+  //    '/tmp/payload.json',
+  //    JSON.stringify(payload, null, 2),
+  //    'utf8'
+  //  );
+  //  console.log('Saved agl1 payload to /tmp/payload.json');
+
   const response = await alg1(payload);
 
   return response;

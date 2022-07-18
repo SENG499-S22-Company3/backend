@@ -108,17 +108,25 @@ async function upsertCourses(
     },
   });
 
+  // Grab the title from previous entries
+  const existingCourse = await prisma.course.findFirst({
+    where: {
+      courseCode: course.courseNumber,
+      subject: course.subject,
+    },
+  });
+
   await prisma.course.upsert({
     create: {
       courseCode: course.courseNumber,
-      title: course.courseTitle,
+      title: existingCourse?.title ?? course.courseTitle,
       subject: course.subject,
       term: term,
       streamSequence: utils.getSeqNumber(course.subject, course.courseNumber),
       courseSection: {
         create: {
           sectionNumber: course.sequenceNumber,
-          capacity: course.courseCapacity,
+          capacity: course.courseCapacity ?? 0,
           startDate,
           endDate,
           hoursPerWeek: 0,
@@ -138,7 +146,7 @@ async function upsertCourses(
       courseSection: {
         create: {
           sectionNumber: course.sequenceNumber,
-          capacity: course.courseCapacity,
+          capacity: course.courseCapacity ?? 0,
           startDate,
           endDate,
           hoursPerWeek: course.assignment?.hoursWeek ?? 0,
