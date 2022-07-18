@@ -72,6 +72,9 @@ model TeachingPreference {
   studyLeaveReason   String?
   topicsOrGradCourse Boolean
   topicDescription   String?
+  fallTermCourses    Int                @default(1)
+  springTermCourses  Int                @default(1)
+  summerTermCourses  Int                @default(1)
   User               User?              @relation(fields: [userId], references: [id])
   userId             Int?               @unique
 
