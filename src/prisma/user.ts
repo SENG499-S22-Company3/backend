@@ -77,6 +77,9 @@ async function updateUserSurvey(
     reliefReason: input.reliefReason,
     studyLeave: false,
     topicsOrGradCourse: input.hasTopic,
+    fallTermCourses: input.fallTermCourses ?? 1,
+    springTermCourses: input.springTermCourses ?? 1,
+    summerTermCourses: input.summerTermCourses ?? 1,
   };
 
   await prisma.user.update({
