@@ -106,10 +106,9 @@ async function updateCurrentSchedule(
           },
           course: {
             connect: {
-              subject_courseCode_term_title: {
+              subject_courseCode_term: {
                 subject: course.id.subject,
                 courseCode: course.id.code,
-                title: course.id.title,
                 term: course.id.term,
               },
             },
