@@ -58,7 +58,7 @@ model Course {
   courseSection    CourseSection[]
   coursePreference CoursePreference[]
 
-  @@unique([subject, courseCode, term])
+  @@unique([subject, courseCode, term, title])
 }
 
 model TeachingPreference {
