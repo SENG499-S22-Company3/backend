@@ -152,8 +152,6 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.user) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can generate schedule
 
-      const users = await getAll();
-
       let capacityDataResponse;
       try {
         capacityDataResponse = await getCourseCapacities(
@@ -186,7 +184,6 @@ export const resolvers: Resolvers<Context> = {
           input.fallCourses ?? [],
           input.summerCourses ?? [],
           input.springCourses ?? [],
-          users,
           capacityDataResponse.data
         );
       } catch (e) {
