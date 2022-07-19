@@ -109,7 +109,7 @@ async function createNewUser(
   try {
     await prisma.user.create({
       data: {
-        // so the user can be created with the same username as the admin
+        // so the user can be with a displayname
         displayName: username,
         username: username,
         password:
