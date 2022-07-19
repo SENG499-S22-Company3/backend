@@ -25,17 +25,17 @@ export {
 // username: 'testuser',
 // password: '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
 
-const failedAuth = {
+const failedAuth: AuthPayload = {
   message: 'Incorrect username or password',
   success: false,
   token: '', // Won't be needed anymore
 };
 
-const failScheduleGenerate = {
+const failScheduleGenerate: Response = {
   message: `No schedule available for the input year`,
   success: false,
 };
-const invalidYearInput = {
+const invalidYearInput: Response = {
   message: `Invalid year input. Year format: YYYY`,
   success: false,
 };
@@ -86,14 +86,14 @@ async function changePassword(
     };
   } else {
     console.log('UPDATING PASSWORD TO', newPassword);
-    const pwsalt = bcrypt.genSaltSync(10);
-    const pwhash = bcrypt.hashSync(newPassword, pwsalt);
+
+    const hash = bcrypt.hashSync(newPassword, 10);
     await prisma.user.update({
       where: {
         username: user.username,
       },
       data: {
-        password: pwhash,
+        password: hash,
       },
     });
     return {
@@ -109,11 +109,14 @@ async function createNewUser(
   try {
     await prisma.user.create({
       data: {
+        // so the user can be created with the same username as the admin
+        displayName: username,
         username: username,
         password:
           '$2b$10$ogZBif.TabQ/LoAk8LjlG./hNq3tsWBE9OAzbc.dY/hQdYMIPhBly',
-        active: false,
+        active: true,
         hasPeng: false,
+        role: 'USER',
       },
     });
   } catch (e: unknown) {
@@ -146,8 +149,7 @@ async function resetPassword(userId: number | string) {
     numbers: true,
   });
 
-  const pwsalt = bcrypt.genSaltSync(10);
-  const pwhash = bcrypt.hashSync(newPassword, pwsalt);
+  const hash = await bcrypt.hash(newPassword, 10);
 
   if (typeof userId === 'string') {
     userId = parseInt(userId);
@@ -158,9 +160,8 @@ async function resetPassword(userId: number | string) {
       where: {
         id: userId,
       },
-
       data: {
-        password: pwhash,
+        password: hash,
       },
     });
     return {
