@@ -22,6 +22,7 @@ import {
   getSchedule,
   getUserByID,
   updateUserSurvey,
+  checkSchedule,
 } from './resolverUtils';
 
 const noLogin = {
@@ -220,10 +221,28 @@ export const resolvers: Resolvers<Context> = {
     updateSchedule: async (_, { input }, ctx) => {
       if (!ctx.user) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can update schedule
+      const err = [];
+      if (!input.skipValidation && input.validation === Company.Company3) {
+        console.log('Validating schedule...');
+        const users = await getAll();
+        let validation;
+        try {
+          validation = await checkSchedule(ctx, input, users);
+        } catch (error) {
+          console.log(`Failed to validate schedule: '${error}'`);
+          err.push(error); // can be sent to updateCurrentSchedule function
+        }
 
-      if (!input.skipValidation && input.validation == Company.Company3) {
-        // TODO
-        console.log('Validate schedule');
+        if (!validation?.data) {
+          return {
+            success: false,
+            message: 'Error: No response from algorithm 1',
+          };
+        }
+
+        console.log('ALG 1 checkSchedule response below');
+        console.log(validation.data);
+        console.log('END ALG 1 checkSchedule RESPONSE');
       }
 
       return await updateCurrentSchedule(input.id, input.courses);

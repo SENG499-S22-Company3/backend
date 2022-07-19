@@ -24,6 +24,8 @@ import {
   Schedule,
   Term,
   User,
+  CourseSectionInput,
+  UpdateScheduleInput,
 } from '../schema';
 import { getSeqNumber } from '../utils';
 
@@ -37,6 +39,7 @@ export {
   generateScheduleWithCapacities,
   createSchedule,
   updateUserSurvey,
+  checkSchedule,
 };
 /**
  * Prisma-based type representing the User model
@@ -289,6 +292,43 @@ async function getCourseCapacities(
   const algorithm2Response = await alg2(combinedRequest);
 
   return algorithm2Response;
+}
+
+async function checkSchedule(
+  ctx: Context,
+  input: UpdateScheduleInput,
+  users: User[] | null
+) {
+  const courseToCourseInput = (term: Term) => (input: CourseSectionInput) =>
+    [
+      {
+        subject: input.id.subject,
+        courseNumber: input.id.code,
+        courseTitle: input.id.title,
+        numSections: input.sectionNumber,
+        courseCapacity: input.capacity,
+        sequenceNumber: 'A01',
+        streamSequence: getSeqNumber(input.id.subject, input.id.code),
+      },
+    ];
+  console.log(courseToCourseInput);
+  const payload: SchedulePostRequest = {
+    coursesToSchedule: {
+      fallCourses: [],
+      springCourses: [],
+      summerCourses: [],
+    },
+    hardScheduled: {
+      fallCourses: [], // courseToCourseInput(Term.Fall),
+      springCourses: [],
+      summerCourses: [],
+    },
+    professors: [],
+  };
+  const alg1CheckSchedule = ctx.algorithm(Company.Company3).algo1Cs;
+  const response = await alg1CheckSchedule?.(payload);
+  console.log('RESPONSE: ', response?.status, response?.config.data);
+  return response;
 }
 
 async function generateScheduleWithCapacities(
