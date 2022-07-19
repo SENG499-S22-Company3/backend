@@ -9,7 +9,8 @@ import {
 import { Context } from '../context';
 import { getAllCourses } from '../prisma/course';
 import { findUserById } from '../prisma/user';
-import { Resolvers, Term } from '../schema';
+import { updateCurrentSchedule } from '../prisma/schedule';
+import { Resolvers, Term, Company } from '../schema';
 import * as utils from '../utils';
 import {
   createSchedule,
@@ -215,6 +216,17 @@ export const resolvers: Resolvers<Context> = {
       }
 
       return generateSchedule(input);
+    },
+    updateSchedule: async (_, { input }, ctx) => {
+      if (!ctx.user) return noLogin;
+      else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can update schedule
+
+      if (!input.skipValidation && input.validation == Company.Company3) {
+        // TODO
+        console.log('Validate schedule');
+      }
+
+      return await updateCurrentSchedule(input.id, input.courses);
     },
   },
 };
