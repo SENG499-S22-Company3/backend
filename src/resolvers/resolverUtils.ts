@@ -9,14 +9,13 @@ import {
   SchedulePostRequest,
 } from '../client/algorithm1/api';
 import { CourseObject } from '../client/algorithm2';
-import { Context } from '../context';
+
 import { findCourseSection, upsertCourses } from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
 import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
 import {
   CourseInput,
   CourseSection,
-  Company,
   Day,
   GenerateScheduleInput,
   MeetingTime,
@@ -33,8 +32,7 @@ export {
   getUserByID,
   getCourses,
   getSchedule,
-  getCourseCapacities,
-  generateScheduleWithCapacities,
+  prepareScheduleWithCapacities,
   createSchedule,
   updateUserSurvey,
 };
@@ -245,14 +243,16 @@ async function createSchedule(year: number, scheduleData: ScheduleAlgorithm) {
   });
 }
 
-async function getCourseCapacities(
-  ctx: Context,
-  summerCourses: CourseInput[],
-  springCourses: CourseInput[],
-  fallCourses: CourseInput[],
-  company: Company
-) {
-  if (summerCourses.length + springCourses.length + fallCourses.length === 0) {
+export function prepareCourseCapacities({
+  fallCourses,
+  springCourses,
+  summerCourses,
+}: GenerateScheduleInput): CourseObject[] | null {
+  const fall = fallCourses ?? [];
+  const spring = springCourses ?? [];
+  const summer = summerCourses ?? [];
+
+  if (summer.length + spring.length + fall.length === 0) {
     return null;
   }
 
@@ -266,15 +266,15 @@ async function getCourseCapacities(
     };
   };
 
-  const summerRequest: CourseObject[] = summerCourses.map((course) =>
+  const summerRequest: CourseObject[] = summer.map((course) =>
     courseMapper(course, Term.Summer)
   );
 
-  const springRequest: CourseObject[] = springCourses.map((course) =>
+  const springRequest: CourseObject[] = spring.map((course) =>
     courseMapper(course, Term.Spring)
   );
 
-  const fallRequest: CourseObject[] = fallCourses.map((course) =>
+  const fallRequest: CourseObject[] = fall.map((course) =>
     courseMapper(course, Term.Fall)
   );
 
@@ -283,20 +283,11 @@ async function getCourseCapacities(
     springRequest,
     fallRequest
   );
-
-  const alg2 = ctx.algorithm(company).algo2;
-
-  const algorithm2Response = await alg2(combinedRequest);
-
-  return algorithm2Response;
+  return combinedRequest;
 }
 
-async function generateScheduleWithCapacities(
-  ctx: Context,
-  input: GenerateScheduleInput,
-  falltermCourses: CourseInput[],
-  summertermCourses: CourseInput[],
-  springtermCourses: CourseInput[],
+async function prepareScheduleWithCapacities(
+  { fallCourses, springCourses, summerCourses }: GenerateScheduleInput,
   users: User[] | null,
   capacities: CourseObject[]
 ) {
@@ -324,9 +315,9 @@ async function generateScheduleWithCapacities(
   const payload: SchedulePostRequest = {
     // in theory only one of the term arrays will be populated with values
     coursesToSchedule: {
-      fallCourses: falltermCourses.map(courseToCourseInput(Term.Fall)),
-      springCourses: springtermCourses.map(courseToCourseInput(Term.Spring)),
-      summerCourses: summertermCourses.map(courseToCourseInput(Term.Summer)),
+      fallCourses: fallCourses?.map(courseToCourseInput(Term.Fall)) ?? [],
+      springCourses: springCourses?.map(courseToCourseInput(Term.Spring)) ?? [],
+      summerCourses: summerCourses?.map(courseToCourseInput(Term.Summer)) ?? [],
     },
     hardScheduled: {
       fallCourses: [],
@@ -353,16 +344,5 @@ async function generateScheduleWithCapacities(
     ).filter((p) => p.preferences.length > 0),
   };
 
-  const alg1 = ctx.algorithm(input.algorithm1).algo1;
-  //  const fs = require('fs');
-  //  await fs.promises.writeFile(
-  //    '/tmp/payload.json',
-  //    JSON.stringify(payload, null, 2),
-  //    'utf8'
-  //  );
-  //  console.log('Saved agl1 payload to /tmp/payload.json');
-
-  const response = await alg1(payload);
-
-  return response;
+  return payload;
 }

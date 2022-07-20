@@ -24,6 +24,7 @@ async function start(app: Express, typeDefs: any, resolvers: Resolvers) {
     typeDefs,
     resolvers,
     // csrfPrevention: true,
+    introspection: true,
     // eslint-disable-next-line new-cap
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     // TODO: add context (aka. prisma, auth, etc.)
