@@ -46,28 +46,13 @@ async function updateCurrentSchedule(
 ) {
   // Simply creates a new schedule instead of updating the current schedule
 
-  let currentSchedule;
-
-  try {
-    currentSchedule = await prisma.schedule.findFirst({
-      where: {
-        id: parseInt(scheduleId),
-      },
-    });
-  } catch (error) {
-    return {
-      success: false,
-      message: "Couldn't find schedule",
-      errors: error,
-    };
-  }
-
+  const currentYear = new Date().getFullYear();
   let newSchedule;
 
   try {
     newSchedule = await prisma.schedule.create({
       data: {
-        year: currentSchedule?.year ?? 2022,
+        year: currentYear,
       },
     });
   } catch (error) {
