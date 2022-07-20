@@ -221,7 +221,7 @@ export const resolvers: Resolvers<Context> = {
     updateSchedule: async (_, { input }, ctx) => {
       if (!ctx.user) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can update schedule
-      const err = [];
+      // const err = [];
       if (!input.skipValidation && input.validation === Company.Company3) {
         console.log('Validating schedule...');
         const users = await getAll();
@@ -230,19 +230,23 @@ export const resolvers: Resolvers<Context> = {
           validation = await checkSchedule(ctx, input, users);
         } catch (error) {
           console.log(`Failed to validate schedule: '${error}'`);
-          err.push(error); // can be sent to updateCurrentSchedule function
+          return {
+            success: false,
+            message: 'Error: No response from algorithm 1',
+            errors: error,
+          };
         }
 
         if (!validation?.data) {
           return {
             success: false,
             message: 'Error: No response from algorithm 1',
-            // errors: err,
+            errors: [''],
           };
         } else if (validation.data.match(/Error:/)) {
           return {
             success: false,
-            message: validation.data,
+            message: String(validation.data),
           };
         }
 

@@ -296,34 +296,42 @@ async function getCourseCapacities(
   return algorithm2Response;
 }
 
+function removeObjectFromArray(array: Course[]) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].subject == 'not found') {
+      array.splice(i, 1);
+      i--;
+    }
+  }
+}
+
 async function checkSchedule(
   ctx: Context,
   input: UpdateScheduleInput,
   users: User[] | null
 ) {
   if (!input) return null;
-  const fallcourses = input.courses.map((course) => {
-    if (course.id.term !== 'FALL')
-      return [
-        {
-          subject: 'not found',
-          courseNumber: 'not found',
-          courseTitle: 'not found',
-          numSections: 1,
-          courseCapacity: 100,
-          sequenceNumber: 'A01',
-          streamSequence: 'not found',
-        },
-      ];
+  // Defining default values to avoid undefined error.
+  const defaultValues = {
+    subject: 'not found',
+    courseNumber: 'not found',
+    courseTitle: 'not found',
+    numSections: 1,
+    courseCapacity: 100,
+    sequenceNumber: 'A01',
+    streamSequence: 'not found',
+  };
+  /*
+  // courseMapping gives type error
+  const courseMapping = (course: CourseSectionInput): Course => {
     return {
       subject: course.id.subject,
       courseNumber: course.id.code,
       courseTitle: course.id.title,
       numSections: 1,
       courseCapacity: course.capacity,
-      sequenceNumber: 'A01',
+      sequenceNumber: course.sectionNumber ?? 'A01',
       streamSequence: getSeqNumber(course.id.subject, course.id.code),
-      /*
       assignment: {
         startDate: 'Sep 05, 2018',
         endDate: 'Dec 05, 2018',
@@ -339,26 +347,122 @@ async function checkSchedule(
         saturday: false,
       },
       prof: {
-        displayName: 'Bird, Bill',
+        displayName: course.professors[0],
         preferences: [],
       },
-      */
+    };
+  };
+*/
+  // Summer Courses
+  const summerCourses = input.courses.map((course: CourseSectionInput) => {
+    if (course.id.term !== Term.Summer) {
+      return defaultValues;
+    }
+    // returning courseMapping here gives type error in payload
+    return {
+      subject: course.id.subject,
+      courseNumber: course.id.code,
+      courseTitle: course.id.title,
+      numSections: 1,
+      courseCapacity: course.capacity,
+      sequenceNumber: course.sectionNumber ?? 'A01',
+      streamSequence: getSeqNumber(course.id.subject, course.id.code),
+      assignment: {
+        startDate: 'Sep 05, 2018',
+        endDate: 'Dec 05, 2018',
+        beginTime: '1300',
+        endTime: '1420',
+        hoursWeek: 3,
+        sunday: false,
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: false,
+        saturday: false,
+      },
+      prof: {
+        displayName: course.professors[0],
+        preferences: [],
+      },
     };
   });
 
-  console.log('FallCourses: ', fallcourses);
-  /*
-  const courseToCourseInput = (term: Term) => (input: CourseSectionInput) => ({
-    subject: input.id.subject,
-    courseNumber: input.id.code,
-    courseTitle: input.id.title,
-    numSections: input.sectionNumber,
-    courseCapacity: input.capacity,
-    sequenceNumber: 'A01',
-    streamSequence: getSeqNumber(input.id.subject, input.id.code),
+  // Fall Courses
+  const fallCourses = input.courses.map((course: CourseSectionInput) => {
+    if (course.id.term !== Term.Fall) {
+      return defaultValues;
+    }
+    return {
+      subject: course.id.subject,
+      courseNumber: course.id.code,
+      courseTitle: course.id.title,
+      numSections: 1,
+      courseCapacity: course.capacity,
+      sequenceNumber: course.sectionNumber ?? 'A01',
+      streamSequence: getSeqNumber(course.id.subject, course.id.code),
+      assignment: {
+        startDate: 'Sep 05, 2018',
+        endDate: 'Dec 05, 2018',
+        beginTime: '1300',
+        endTime: '1420',
+        hoursWeek: 3,
+        sunday: false,
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: false,
+        saturday: false,
+      },
+      prof: {
+        displayName: course.professors[0], // 'Wu, Kui',
+        preferences: [],
+      },
+    };
   });
-  */
-  // console.log(courseToCourseInput);
+
+  // Spring Courses
+  const springCourses = input.courses.map((course: CourseSectionInput) => {
+    if (course.id.term !== Term.Spring) {
+      return defaultValues;
+    }
+    return {
+      subject: course.id.subject,
+      courseNumber: course.id.code,
+      courseTitle: course.id.title,
+      numSections: 1,
+      courseCapacity: course.capacity,
+      sequenceNumber: course.sectionNumber ?? 'A01',
+      streamSequence: getSeqNumber(course.id.subject, course.id.code),
+      assignment: {
+        startDate: 'Sep 05, 2018',
+        endDate: 'Dec 05, 2018',
+        beginTime: '1300',
+        endTime: '1420',
+        hoursWeek: 3,
+        sunday: false,
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: false,
+        saturday: false,
+      },
+      prof: {
+        displayName: course.professors[0],
+        preferences: [],
+      },
+    };
+  });
+
+  removeObjectFromArray(summerCourses);
+  removeObjectFromArray(fallCourses);
+  removeObjectFromArray(springCourses);
+  console.log('SummerCourses: ', summerCourses);
+  console.log('FallCourses: ', fallCourses);
+  console.log('SpringCourses: ', springCourses);
+
   const payload: SchedulePostRequest = {
     coursesToSchedule: {
       fallCourses: [],
@@ -366,41 +470,9 @@ async function checkSchedule(
       summerCourses: [],
     },
     hardScheduled: {
-      fallCourses: input.courses.map((course: CourseSectionInput) => {
-        // if (course.id.term !== 'FALL') return [];
-        return {
-          subject: course.id.subject,
-          courseNumber: course.id.code,
-          courseTitle: course.id.title,
-          numSections: 1,
-          courseCapacity: course.capacity,
-          sequenceNumber: 'A01',
-          streamSequence: getSeqNumber(course.id.subject, course.id.code),
-          assignment: {
-            startDate: 'Sep 05, 2018',
-            endDate: 'Dec 05, 2018',
-            beginTime: '1300',
-            endTime: '1420',
-            hoursWeek: 3,
-            sunday: false,
-            monday: true,
-            tuesday: false,
-            wednesday: false,
-            thursday: true,
-            friday: false,
-            saturday: false,
-          },
-          prof: {
-            displayName: 'Wu, Kui',
-            preferences: [],
-          },
-        };
-        // return [];
-      }),
-
-      // fallCourses: fallcourses, //{ fallcourses },
-      springCourses: [],
-      summerCourses: [],
+      fallCourses: fallCourses ?? [],
+      springCourses: springCourses ?? [],
+      summerCourses: summerCourses ?? [],
     },
     professors: (
       users?.map<Professor>((user) => {
@@ -424,7 +496,11 @@ async function checkSchedule(
 
   const alg1CheckSchedule = ctx.algorithm(Company.Company3).algo1Cs;
   const response = await alg1CheckSchedule?.(payload);
-  console.log('RESPONSE: ', response?.data);
+  console.log(
+    'RESPONSE: ',
+    response?.status
+    // JSON.stringify(response?.config.data)
+  );
   return response;
 }
 
