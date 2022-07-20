@@ -28,7 +28,7 @@ const createPredict = (instance: AxiosInstance) => (input: CourseObject[]) => {
 
 const checkSchedule =
   (instance: AxiosInstance) => (input: SchedulePostRequest) => {
-    return instance.post<String>('/checkSchedule', input);
+    return instance.post<String>('/check_schedule', input);
   };
 
 const algo1c3Cs = checkSchedule(

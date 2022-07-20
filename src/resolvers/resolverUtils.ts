@@ -4,7 +4,9 @@ import {
   TeachingPreference,
   User as PrismaUser,
 } from '@prisma/client';
+// import { coursesquery } from '../../tests/typeDefs';
 import {
+  Professor,
   Schedule as ScheduleAlgorithm,
   SchedulePostRequest,
 } from '../client/algorithm1/api';
@@ -299,19 +301,64 @@ async function checkSchedule(
   input: UpdateScheduleInput,
   users: User[] | null
 ) {
-  const courseToCourseInput = (term: Term) => (input: CourseSectionInput) =>
-    [
-      {
-        subject: input.id.subject,
-        courseNumber: input.id.code,
-        courseTitle: input.id.title,
-        numSections: input.sectionNumber,
-        courseCapacity: input.capacity,
-        sequenceNumber: 'A01',
-        streamSequence: getSeqNumber(input.id.subject, input.id.code),
+  if (!input) return null;
+  const fallcourses = input.courses.map((course) => {
+    if (course.id.term !== 'FALL')
+      return [
+        {
+          subject: 'not found',
+          courseNumber: 'not found',
+          courseTitle: 'not found',
+          numSections: 1,
+          courseCapacity: 100,
+          sequenceNumber: 'A01',
+          streamSequence: 'not found',
+        },
+      ];
+    return {
+      subject: course.id.subject,
+      courseNumber: course.id.code,
+      courseTitle: course.id.title,
+      numSections: 1,
+      courseCapacity: course.capacity,
+      sequenceNumber: 'A01',
+      streamSequence: getSeqNumber(course.id.subject, course.id.code),
+      /*
+      assignment: {
+        startDate: 'Sep 05, 2018',
+        endDate: 'Dec 05, 2018',
+        beginTime: '1300',
+        endTime: '1420',
+        hoursWeek: 3,
+        sunday: false,
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: false,
+        saturday: false,
       },
-    ];
-  console.log(courseToCourseInput);
+      prof: {
+        displayName: 'Bird, Bill',
+        preferences: [],
+      },
+      */
+    };
+  });
+
+  console.log('FallCourses: ', fallcourses);
+  /*
+  const courseToCourseInput = (term: Term) => (input: CourseSectionInput) => ({
+    subject: input.id.subject,
+    courseNumber: input.id.code,
+    courseTitle: input.id.title,
+    numSections: input.sectionNumber,
+    courseCapacity: input.capacity,
+    sequenceNumber: 'A01',
+    streamSequence: getSeqNumber(input.id.subject, input.id.code),
+  });
+  */
+  // console.log(courseToCourseInput);
   const payload: SchedulePostRequest = {
     coursesToSchedule: {
       fallCourses: [],
@@ -319,15 +366,65 @@ async function checkSchedule(
       summerCourses: [],
     },
     hardScheduled: {
-      fallCourses: [], // courseToCourseInput(Term.Fall),
+      fallCourses: input.courses.map((course: CourseSectionInput) => {
+        // if (course.id.term !== 'FALL') return [];
+        return {
+          subject: course.id.subject,
+          courseNumber: course.id.code,
+          courseTitle: course.id.title,
+          numSections: 1,
+          courseCapacity: course.capacity,
+          sequenceNumber: 'A01',
+          streamSequence: getSeqNumber(course.id.subject, course.id.code),
+          assignment: {
+            startDate: 'Sep 05, 2018',
+            endDate: 'Dec 05, 2018',
+            beginTime: '1300',
+            endTime: '1420',
+            hoursWeek: 3,
+            sunday: false,
+            monday: true,
+            tuesday: false,
+            wednesday: false,
+            thursday: true,
+            friday: false,
+            saturday: false,
+          },
+          prof: {
+            displayName: 'Wu, Kui',
+            preferences: [],
+          },
+        };
+        // return [];
+      }),
+
+      // fallCourses: fallcourses, //{ fallcourses },
       springCourses: [],
       summerCourses: [],
     },
-    professors: [],
+    professors: (
+      users?.map<Professor>((user) => {
+        return {
+          displayName: user.displayName ?? '',
+          fallTermCourses: 2,
+          springTermCourses: 2,
+          summerTermCourses: 2,
+          preferences:
+            user.preferences?.map((preference) => {
+              return {
+                courseNum: preference.id.subject + preference.id.code,
+                // term: preference.id.term,
+                preferenceNum: preference.preference,
+              };
+            }) ?? [],
+        };
+      }) ?? []
+    ).filter((p) => p.preferences.length > 0),
   };
+
   const alg1CheckSchedule = ctx.algorithm(Company.Company3).algo1Cs;
   const response = await alg1CheckSchedule?.(payload);
-  console.log('RESPONSE: ', response?.status, response?.config.data);
+  console.log('RESPONSE: ', response?.data);
   return response;
 }
 

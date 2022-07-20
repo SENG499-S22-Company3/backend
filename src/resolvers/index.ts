@@ -237,6 +237,12 @@ export const resolvers: Resolvers<Context> = {
           return {
             success: false,
             message: 'Error: No response from algorithm 1',
+            // errors: err,
+          };
+        } else if (validation.data.match(/Error:/)) {
+          return {
+            success: false,
+            message: validation.data,
           };
         }
 
