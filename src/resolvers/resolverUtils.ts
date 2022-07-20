@@ -5,6 +5,7 @@ import {
   User as PrismaUser,
 } from '@prisma/client';
 // import { coursesquery } from '../../tests/typeDefs';
+// import { getTime, getDate } from '../utils/time';
 import {
   Professor,
   Schedule as ScheduleAlgorithm,
@@ -322,7 +323,7 @@ async function checkSchedule(
     streamSequence: 'not found',
   };
   /*
-  // courseMapping gives type error
+  // using this object gives type error in hardScheduled
   const courseMapping = (course: CourseSectionInput): Course => {
     return {
       subject: course.id.subject,
@@ -358,7 +359,16 @@ async function checkSchedule(
     if (course.id.term !== Term.Summer) {
       return defaultValues;
     }
-    // returning courseMapping here gives type error in payload
+    // const date = new Date('2018-09-05');
+    const date: Date = course.startDate;
+    const x = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    console.log(x);
+
+    // returning the commented object 'courseMapping' here gives a type error in 'payload'
     return {
       subject: course.id.subject,
       courseNumber: course.id.code,
@@ -368,7 +378,7 @@ async function checkSchedule(
       sequenceNumber: course.sectionNumber ?? 'A01',
       streamSequence: getSeqNumber(course.id.subject, course.id.code),
       assignment: {
-        startDate: 'Sep 05, 2018',
+        startDate: String(course.startDate), // 'Sep 05, 2018',
         endDate: 'Dec 05, 2018',
         beginTime: '1300',
         endTime: '1420',
@@ -459,9 +469,9 @@ async function checkSchedule(
   removeObjectFromArray(summerCourses);
   removeObjectFromArray(fallCourses);
   removeObjectFromArray(springCourses);
-  console.log('SummerCourses: ', summerCourses);
-  console.log('FallCourses: ', fallCourses);
-  console.log('SpringCourses: ', springCourses);
+  // console.log('SummerCourses: ', summerCourses);
+  // console.log('FallCourses: ', fallCourses);
+  // console.log('SpringCourses: ', springCourses);
 
   const payload: SchedulePostRequest = {
     coursesToSchedule: {
