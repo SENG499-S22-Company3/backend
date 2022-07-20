@@ -16,4 +16,4 @@ jobs:
       - name: Code Linting
         run: npx -y prisma migrate reset
         env: 
-          DATABASE_URL: ${{ secrets.DATABSE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
