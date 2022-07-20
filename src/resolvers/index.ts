@@ -179,7 +179,11 @@ export const resolvers: Resolvers<Context> = {
           .algorithm(input.algorithm2)
           .algo2(algo2Payload);
       } catch (e) {
-        return apiErrorHandler(`ALGORITHM2_${input.algorithm2}`, e);
+        return apiErrorHandler(`ALGORITHM2_${input.algorithm2}`, e, {
+          algorithm2: {
+            request: algo2Payload,
+          },
+        });
       }
 
       if (!capacityDataResponse) {
