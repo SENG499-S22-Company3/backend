@@ -46,6 +46,36 @@ async function updateCurrentSchedule(
 ) {
   // Simply creates a new schedule instead of updating the current schedule
 
+  try {
+    const currentSchedule = await prisma.schedule.findFirst({
+      where: {
+        id: parseInt(scheduleId),
+      },
+    });
+
+    if (currentSchedule) {
+      // Delete course sections linked to original schedule
+      await prisma.courseSection.deleteMany({
+        where: {
+          scheduleId: parseInt(scheduleId),
+        },
+      });
+
+      // Delete original schedule
+      await prisma.schedule.delete({
+        where: {
+          id: parseInt(scheduleId),
+        },
+      });
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Error deleting original schedule',
+      errors: error,
+    };
+  }
+
   const currentYear = new Date().getFullYear();
   let newSchedule;
 
