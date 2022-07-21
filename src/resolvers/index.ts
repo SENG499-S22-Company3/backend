@@ -163,18 +163,16 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.user) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can generate schedule
 
-      const users = await getAll();
-
       let capacityDataResponse: AxiosResponse<CourseObject[], any> | null;
       const algo2Payload = prepareCourseCapacities(input);
-      try {
-        if (algo2Payload === null) {
-          return {
-            success: false,
-            message: 'No courses selected',
-          };
-        }
+      if (algo2Payload === null) {
+        return {
+          success: false,
+          message: 'No courses selected',
+        };
+      }
 
+      try {
         capacityDataResponse = await ctx
           .algorithm(input.algorithm2)
           .algo2(algo2Payload);
@@ -200,7 +198,6 @@ export const resolvers: Resolvers<Context> = {
       let scheduleResponse: AxiosResponse<Schedule, any> | null;
       const algo1Payload = await prepareScheduleWithCapacities(
         input,
-        users,
         capacityDataResponse.data
       );
       try {
