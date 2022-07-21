@@ -5,12 +5,18 @@ import {
   User as PrismaUser,
 } from '@prisma/client';
 import {
+  Preference,
+  Professor,
   Schedule as ScheduleAlgorithm,
   SchedulePostRequest,
 } from '../client/algorithm1/api';
 import { CourseObject } from '../client/algorithm2';
 
-import { findCourseSection, upsertCourses } from '../prisma/course';
+import {
+  findCourseSection,
+  getAllCourses,
+  upsertCourses,
+} from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
 import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
 import {
@@ -24,7 +30,9 @@ import {
   Term,
   User,
 } from '../schema';
-import { getSeqNumber } from '../utils';
+import { getSeqNumber, prefValue } from '../utils';
+
+const defaultPref = prefValue();
 
 export {
   getMe,
@@ -288,7 +296,6 @@ export function prepareCourseCapacities({
 
 async function prepareScheduleWithCapacities(
   { fallCourses, springCourses, summerCourses }: GenerateScheduleInput,
-  users: User[] | null,
   capacities: CourseObject[]
 ) {
   const courseToCourseInput = (term: Term) => (input: CourseInput) => ({
@@ -312,6 +319,55 @@ async function prepareScheduleWithCapacities(
     streamSequence: getSeqNumber(input.subject, input.code),
   });
 
+  const users = await findAllUsers();
+  const courses = await getAllCourses();
+
+  const defaultCourses = 2;
+
+  const profs = users.map<Professor>((user) => {
+    // preferred number of courses to be taught by a prof in a given term
+    const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
+    const springTermCourses = user.preference.find((p) => p.springTermCourses);
+    const summerTermCourses = user.preference.find((p) => p.summerTermCourses);
+
+    // while the schema returns multiple instances of a teaching preference survey for a user
+    // we can only have one teaching pref for a given user by a unique contraint on the user id field.
+    const preferences = user.preference.flatMap<Preference>((teachingPref) =>
+      teachingPref.coursePreference.map(
+        ({ course: { subject, courseCode, term }, preference }) => ({
+          courseNum: `${subject}${courseCode}`,
+          preferenceNum: preference,
+          term,
+        })
+      )
+    );
+
+    const userPrefs = new Map<string, number>(
+      preferences.map((p) => [
+        `${p.courseNum}-${p.term ?? ''}`,
+        p.preferenceNum,
+      ])
+    );
+
+    // inject default values for preference if not found
+    const prefs = courses.map<Preference>(({ subject, courseCode, term }) => ({
+      courseNum: `${subject}${courseCode}`,
+      preferenceNum:
+        userPrefs.get(`${subject}${courseCode}-${term}`) ?? defaultPref,
+      term,
+    }));
+
+    return {
+      // fallback to username for display name
+      displayName: user.displayName ?? user.username,
+      // default values to pass into algorithm 1
+      fallTermCourses: fallTermCourses?.fallTermCourses ?? defaultCourses,
+      springTermCourses: springTermCourses?.springTermCourses ?? defaultCourses,
+      summerTermCourses: summerTermCourses?.summerTermCourses ?? defaultCourses,
+      preferences: prefs,
+    };
+  });
+
   const payload: SchedulePostRequest = {
     // in theory only one of the term arrays will be populated with values
     coursesToSchedule: {
@@ -324,24 +380,8 @@ async function prepareScheduleWithCapacities(
       springCourses: [],
       summerCourses: [],
     },
-    professors: (
-      users?.map((user) => {
-        return {
-          displayName: user.displayName ?? '',
-          fallTermCourses: 1,
-          springTermCourses: 1,
-          summerTermCourses: 1,
-          preferences:
-            user.preferences?.map((preference) => {
-              return {
-                courseNum: preference.id.subject + preference.id.code,
-                term: preference.id.term,
-                preferenceNum: preference.preference,
-              };
-            }) ?? [],
-        };
-      }) ?? []
-    ).filter((p) => p.preferences.length > 0),
+    // avoid sending profs with no preferences.
+    professors: profs.filter((prof) => prof.preferences.length > 0),
   };
 
   return payload;
