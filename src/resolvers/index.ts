@@ -266,12 +266,12 @@ export const resolvers: Resolvers<Context> = {
             .algo1Cs?.(algo1CSPayload);
           console.log('RESPONSE: ', validation?.status);
         } catch (error) {
-          console.log(`Failed to validate schedule: '${error}'`);
-          return {
-            success: false,
-            message: `Failed to validate schedule: '${error}'`,
-            errors: [String(error)],
-          };
+          return apiErrorHandler(`ALGORITHM1_${Company.Company3}`, error, {
+            algorithm1: {
+              request: algo1CSPayload,
+              response: validation?.data,
+            },
+          });
         }
 
         if (!validation?.data) {

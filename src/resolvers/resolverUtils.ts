@@ -301,23 +301,34 @@ export function prepareCourseCapacities({
   return combinedRequest;
 }
 
-type customCourse = {
-  subject: string;
-  courseNumber: string;
-  courseTitle: string;
-  numSections: number;
-  courseCapacity: number;
-  sequenceNumber: string;
-  streamSequence: string;
-};
-
-function removeDefaultObjectFromArray(array: customCourse[]) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].subject == 'not found') {
-      array.splice(i, 1);
-      i--;
-    }
-  }
+function courseSectionInputToCourse(course: CourseSectionInput): Course {
+  return {
+    subject: course.id.subject,
+    courseNumber: course.id.code,
+    courseTitle: course.id.title,
+    numSections: 1,
+    courseCapacity: course.capacity,
+    sequenceNumber: course.sectionNumber ?? 'A01',
+    streamSequence: getSeqNumber(course.id.subject, course.id.code),
+    assignment: {
+      startDate: getFormattedDate(course.startDate),
+      endDate: getFormattedDate(course.endDate),
+      beginTime: getClassTime(course, 'beginTime'),
+      endTime: getClassTime(course, 'endTime'),
+      hoursWeek: course.hoursPerWeek,
+      sunday: isMeetingDay(course, Day.Sunday),
+      monday: isMeetingDay(course, Day.Monday),
+      tuesday: isMeetingDay(course, Day.Tuesday),
+      wednesday: isMeetingDay(course, Day.Wednesday),
+      thursday: isMeetingDay(course, Day.Thursday),
+      friday: isMeetingDay(course, Day.Friday),
+      saturday: isMeetingDay(course, Day.Saturday),
+    },
+    prof: {
+      displayName: course.professors[0],
+      preferences: [],
+    },
+  };
 }
 
 async function checkSchedule(
@@ -326,125 +337,27 @@ async function checkSchedule(
   users: User[] | null
 ) {
   if (!input) return null;
-  // Defining default values to avoid undefined error.
-  const defaultValues = {
-    subject: 'not found',
-    courseNumber: 'not found',
-    courseTitle: 'not found',
-    numSections: 1,
-    courseCapacity: 100,
-    sequenceNumber: 'A01',
-    streamSequence: 'not found',
-  };
 
   // Summer Courses
-  const summerCourses = input.courses.map((course: CourseSectionInput) => {
-    if (course.id.term !== Term.Summer) {
-      return defaultValues;
-    }
-    return {
-      subject: course.id.subject,
-      courseNumber: course.id.code,
-      courseTitle: course.id.title,
-      numSections: 1,
-      courseCapacity: course.capacity,
-      sequenceNumber: course.sectionNumber ?? 'A01',
-      streamSequence: getSeqNumber(course.id.subject, course.id.code),
-      assignment: {
-        startDate: getFormattedDate(course.startDate),
-        endDate: getFormattedDate(course.endDate),
-        beginTime: getClassTime(course, 'beginTime'),
-        endTime: getClassTime(course, 'endTime'),
-        hoursWeek: course.hoursPerWeek,
-        sunday: isMeetingDay(course, Day.Sunday),
-        monday: isMeetingDay(course, Day.Monday),
-        tuesday: isMeetingDay(course, Day.Tuesday),
-        wednesday: isMeetingDay(course, Day.Wednesday),
-        thursday: isMeetingDay(course, Day.Thursday),
-        friday: isMeetingDay(course, Day.Friday),
-        saturday: isMeetingDay(course, Day.Saturday),
-      },
-      prof: {
-        displayName: course.professors[0],
-        preferences: [],
-      },
-    };
-  });
+  const summerCourses = input.courses
+    .filter((c: CourseSectionInput) => {
+      return c.id.term === Term.Summer;
+    })
+    .map(courseSectionInputToCourse);
 
   // Fall Courses
-  const fallCourses = input.courses.map((course: CourseSectionInput) => {
-    if (course.id.term !== Term.Fall) {
-      return defaultValues;
-    }
-    return {
-      subject: course.id.subject,
-      courseNumber: course.id.code,
-      courseTitle: course.id.title,
-      numSections: 1,
-      courseCapacity: course.capacity,
-      sequenceNumber: course.sectionNumber ?? 'A01',
-      streamSequence: getSeqNumber(course.id.subject, course.id.code),
-      assignment: {
-        startDate: getFormattedDate(course.startDate),
-        endDate: getFormattedDate(course.endDate),
-        beginTime: getClassTime(course, 'beginTime'),
-        endTime: getClassTime(course, 'endTime'),
-        hoursWeek: course.hoursPerWeek,
-        sunday: isMeetingDay(course, Day.Sunday),
-        monday: isMeetingDay(course, Day.Monday),
-        tuesday: isMeetingDay(course, Day.Tuesday),
-        wednesday: isMeetingDay(course, Day.Wednesday),
-        thursday: isMeetingDay(course, Day.Thursday),
-        friday: isMeetingDay(course, Day.Friday),
-        saturday: isMeetingDay(course, Day.Saturday),
-      },
-      prof: {
-        displayName: course.professors[0],
-        preferences: [],
-      },
-    };
-  });
+  const fallCourses = input.courses
+    .filter((c: CourseSectionInput) => {
+      return c.id.term === Term.Fall;
+    })
+    .map(courseSectionInputToCourse);
 
   // Spring Courses
-  const springCourses = input.courses.map((course: CourseSectionInput) => {
-    if (course.id.term !== Term.Spring) {
-      return defaultValues;
-    }
-    return {
-      subject: course.id.subject,
-      courseNumber: course.id.code,
-      courseTitle: course.id.title,
-      numSections: 1,
-      courseCapacity: course.capacity,
-      sequenceNumber: course.sectionNumber ?? 'A01',
-      streamSequence: getSeqNumber(course.id.subject, course.id.code),
-      assignment: {
-        startDate: getFormattedDate(course.startDate),
-        endDate: getFormattedDate(course.endDate),
-        beginTime: getClassTime(course, 'beginTime'),
-        endTime: getClassTime(course, 'endTime'),
-        hoursWeek: course.hoursPerWeek,
-        sunday: isMeetingDay(course, Day.Sunday),
-        monday: isMeetingDay(course, Day.Monday),
-        tuesday: isMeetingDay(course, Day.Tuesday),
-        wednesday: isMeetingDay(course, Day.Wednesday),
-        thursday: isMeetingDay(course, Day.Thursday),
-        friday: isMeetingDay(course, Day.Friday),
-        saturday: isMeetingDay(course, Day.Saturday),
-      },
-      prof: {
-        displayName: course.professors[0],
-        preferences: [],
-      },
-    };
-  });
-
-  removeDefaultObjectFromArray(summerCourses);
-  removeDefaultObjectFromArray(fallCourses);
-  removeDefaultObjectFromArray(springCourses);
-  // console.log('SummerCourses: ', summerCourses);
-  // console.log('FallCourses: ', fallCourses);
-  // console.log('SpringCourses: ', springCourses);
+  const springCourses = input.courses
+    .filter((c: CourseSectionInput) => {
+      return c.id.term === Term.Spring;
+    })
+    .map(courseSectionInputToCourse);
 
   const payload: SchedulePostRequest = {
     coursesToSchedule: {

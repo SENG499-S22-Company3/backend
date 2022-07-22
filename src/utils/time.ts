@@ -112,10 +112,8 @@ export function getClassTime(course: CourseSectionInput, time: string) {
  * @returns true when match; false otherwise
  */
 
-export function isMeetingDay(course: CourseSectionInput, day: Day) {
-  const isDay = course.meetingTimes.map((m) => m.day === day);
-  for (let i = 0; i < isDay.length; i++) {
-    if (isDay[i]) return isDay[i];
-  }
-  return false;
+export function isMeetingDay(course: CourseSectionInput, day: Day): boolean {
+  const x = course.meetingTimes.find((m) => m.day === day);
+  if (!x) return false;
+  else return true;
 }
