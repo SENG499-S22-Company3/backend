@@ -4,9 +4,7 @@ import * as utils from '../utils';
 import { getTime, getDateTime } from '../utils/time';
 import { Assignment, Course } from '../client/algorithm1';
 
-export { findCourseSection, upsertCourses, getAllCourses };
-
-async function findCourseSection(courseterm: Term) {
+export async function findCourseSection(courseterm: Term) {
   const courses = await prisma.courseSection.findMany({
     where: {
       course: {
@@ -23,7 +21,7 @@ async function findCourseSection(courseterm: Term) {
  * Retrieve all the courses in the database. Used to retrieve a list
  * of courses that the professor can submit a preference for
  */
-async function getAllCourses() {
+export async function getAllCourses() {
   return await prisma.course.findMany();
 }
 
@@ -89,7 +87,7 @@ const getMinMaxDateTime = (
   };
 };
 
-async function upsertCourses(
+export async function createCourseSection(
   course: Course,
   term: Term,
   scheduleyear: number,
@@ -104,69 +102,38 @@ async function upsertCourses(
 
   const prof = await prisma.user.findFirst({
     where: {
-      displayName: course.prof?.displayName,
+      // connect assignments for TBA to TBA user
+      displayName: course.prof?.displayName ?? 'TBA',
     },
   });
 
-  // Grab the title from previous entries
-  const existingCourse = await prisma.course.findFirst({
-    where: {
-      courseCode: course.courseNumber,
-      subject: course.subject,
-    },
-  });
+  if (!prof)
+    throw new Error('Unable to find professor to assign course sections to.');
 
-  await prisma.course.upsert({
-    create: {
-      courseCode: course.courseNumber,
-      title: existingCourse?.title ?? course.courseTitle,
-      subject: course.subject,
-      term: term,
-      streamSequence: utils.getSeqNumber(course.subject, course.courseNumber),
-      courseSection: {
-        create: {
-          sectionNumber: course.sequenceNumber,
-          capacity: course.courseCapacity ?? 0,
-          startDate,
-          endDate,
-          hoursPerWeek: 0,
-          schedule: { connect: { id: schedule.id } },
-          meetingTime: {
-            create: assignmentToMeetingTime(course.assignment),
-          },
-          user: {
-            connect: {
-              id: prof?.id,
-            },
-          },
+  await prisma.courseSection.create({
+    data: {
+      sectionNumber: course.sequenceNumber,
+      capacity: course.courseCapacity ?? 0,
+      startDate,
+      endDate,
+      hoursPerWeek: 0,
+      schedule: { connect: { id: schedule.id } },
+      meetingTime: {
+        create: assignmentToMeetingTime(course.assignment),
+      },
+      user: {
+        connect: {
+          id: prof.id,
         },
       },
-    },
-    update: {
-      courseSection: {
-        create: {
-          sectionNumber: course.sequenceNumber,
-          capacity: course.courseCapacity ?? 0,
-          startDate,
-          endDate,
-          hoursPerWeek: course.assignment?.hoursWeek ?? 0,
-          schedule: { connect: { id: schedule.id } },
-          meetingTime: {
-            create: assignmentToMeetingTime(course.assignment),
-          },
-          user: {
-            connect: {
-              id: prof?.id,
-            },
+      course: {
+        connect: {
+          subject_courseCode_term: {
+            courseCode: course.courseNumber,
+            subject: course.subject,
+            term: term,
           },
         },
-      },
-    },
-    where: {
-      subject_courseCode_term: {
-        courseCode: course.courseNumber,
-        subject: course.subject,
-        term: term,
       },
     },
   });

@@ -14,8 +14,8 @@ import { CourseObject } from '../client/algorithm2';
 
 import {
   findCourseSection,
+  createCourseSection,
   getAllCourses,
-  upsertCourses,
 } from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
 import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
@@ -241,13 +241,13 @@ async function createSchedule(year: number, scheduleData: ScheduleAlgorithm) {
   const schedule = await initiateSchedule(year);
 
   scheduleData.fallCourses?.forEach(async (course) => {
-    await upsertCourses(course, Term.Fall, year, schedule);
+    await createCourseSection(course, Term.Fall, year, schedule);
   });
   scheduleData.springCourses?.forEach(async (course) => {
-    await upsertCourses(course, Term.Spring, year, schedule);
+    await createCourseSection(course, Term.Spring, year, schedule);
   });
   scheduleData.summerCourses?.forEach(async (course) => {
-    await upsertCourses(course, Term.Summer, year, schedule);
+    await createCourseSection(course, Term.Summer, year, schedule);
   });
 }
 
@@ -313,8 +313,6 @@ async function prepareScheduleWithCapacities(
     // default capacity to 0 if not found
     courseTitle: 'Untitled(New Course)',
     // Course title is returned by algo1 as we send it but they just send it back.
-    // The course title they send back matters when it's a course we don't have in
-    // our db. The new course gets inserted with this courseTitle.
     sequenceNumber: 'A01',
     streamSequence: getSeqNumber(input.subject, input.code),
   });
