@@ -6,7 +6,7 @@ import {
 } from '@prisma/client';
 
 // import { coursesquery } from '../../tests/typeDefs';
-// import { getTime, getDate } from '../utils/time';
+import { getClassTime, isMeetingDay, getFormattedDate } from '../utils/time';
 import {
   Professor,
   Schedule as ScheduleAlgorithm,
@@ -298,38 +298,7 @@ async function getCourseCapacities(
   return algorithm2Response;
 }
 
-function getFormattedDate(date: CourseSectionInput) {
-  const year = String(date).substring(0, 4);
-  const month = String(date).substring(4, 6);
-  const day = String(date).substring(6, 8);
-  const combined = year + ',' + month + ',' + day;
-  const formattedDate = new Date(combined).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-  });
-  return formattedDate;
-}
-
-function getClassTime(times: CourseSectionInput, input: string) {
-  if (input === 'beginTime')
-    return String(times.meetingTimes.map((m) => m.startTime)[0]);
-  else if (input === 'endTime')
-    return String(times.meetingTimes.map((m) => m.endTime)[0]);
-  return 'Incorrect input provided';
-}
-
-function isDay(days: CourseSectionInput, day: Day) {
-  const x = days.meetingTimes.map((m) => m.day === day);
-  console.log(x);
-  for (let i = 0; i < x.length; i++) {
-    if (x[i]) return x[i];
-  }
-  console.log('Only false');
-  return false;
-}
-
-function removeObjectFromArray(array: Course[]) {
+function removeDefaultObjectFromArray(array: Course[]) {
   for (let i = 0; i < array.length; i++) {
     if (array[i].subject == 'not found') {
       array.splice(i, 1);
@@ -392,6 +361,7 @@ async function checkSchedule(
       return defaultValues;
     }
     // returning the commented object 'courseMapping' here gives a type error in 'payload'
+    // return courseMapping
     return {
       subject: course.id.subject,
       courseNumber: course.id.code,
@@ -401,18 +371,18 @@ async function checkSchedule(
       sequenceNumber: course.sectionNumber ?? 'A01',
       streamSequence: getSeqNumber(course.id.subject, course.id.code),
       assignment: {
-        startDate: getFormattedDate(course.startDate), // 'Sep 05, 2018',
-        endDate: getFormattedDate(course.endDate), // 'Dec 05, 2018',
-        beginTime: getClassTime(course, 'beginTime'), // '1300',
-        endTime: getClassTime(course, 'endTime'), // '1420',
+        startDate: getFormattedDate(course.startDate),
+        endDate: getFormattedDate(course.endDate),
+        beginTime: getClassTime(course, 'beginTime'),
+        endTime: getClassTime(course, 'endTime'),
         hoursWeek: course.hoursPerWeek,
-        sunday: isDay(course, Day.Sunday), // false,
-        monday: isDay(course, Day.Monday), // true,
-        tuesday: isDay(course, Day.Tuesday), // false,
-        wednesday: isDay(course, Day.Wednesday), // false,
-        thursday: isDay(course, Day.Thursday), // true,
-        friday: isDay(course, Day.Friday), // false,
-        saturday: isDay(course, Day.Saturday), // false,
+        sunday: isMeetingDay(course, Day.Sunday),
+        monday: isMeetingDay(course, Day.Monday),
+        tuesday: isMeetingDay(course, Day.Tuesday),
+        wednesday: isMeetingDay(course, Day.Wednesday),
+        thursday: isMeetingDay(course, Day.Thursday),
+        friday: isMeetingDay(course, Day.Friday),
+        saturday: isMeetingDay(course, Day.Saturday),
       },
       prof: {
         displayName: course.professors[0],
@@ -437,19 +407,19 @@ async function checkSchedule(
       assignment: {
         startDate: getFormattedDate(course.startDate),
         endDate: getFormattedDate(course.endDate),
-        beginTime: getClassTime(course, 'beginTime'), // '1330',
+        beginTime: getClassTime(course, 'beginTime'),
         endTime: getClassTime(course, 'endTime'),
         hoursWeek: course.hoursPerWeek,
-        sunday: isDay(course, Day.Sunday), // false,
-        monday: isDay(course, Day.Monday), // true,
-        tuesday: isDay(course, Day.Tuesday), // false,
-        wednesday: isDay(course, Day.Wednesday), // false,
-        thursday: isDay(course, Day.Thursday), // true,
-        friday: isDay(course, Day.Friday), // false,
-        saturday: isDay(course, Day.Saturday), // false,
+        sunday: isMeetingDay(course, Day.Sunday),
+        monday: isMeetingDay(course, Day.Monday),
+        tuesday: isMeetingDay(course, Day.Tuesday),
+        wednesday: isMeetingDay(course, Day.Wednesday),
+        thursday: isMeetingDay(course, Day.Thursday),
+        friday: isMeetingDay(course, Day.Friday),
+        saturday: isMeetingDay(course, Day.Saturday),
       },
       prof: {
-        displayName: course.professors[0], // 'Wu, Kui',
+        displayName: course.professors[0],
         preferences: [],
       },
     };
@@ -474,13 +444,13 @@ async function checkSchedule(
         beginTime: getClassTime(course, 'beginTime'),
         endTime: getClassTime(course, 'endTime'),
         hoursWeek: course.hoursPerWeek,
-        sunday: isDay(course, Day.Sunday), // false,
-        monday: isDay(course, Day.Monday), // false,
-        tuesday: isDay(course, Day.Tuesday), // true,
-        wednesday: isDay(course, Day.Wednesday), // true,
-        thursday: isDay(course, Day.Thursday), // false,
-        friday: isDay(course, Day.Friday), // true,
-        saturday: isDay(course, Day.Saturday), // false,
+        sunday: isMeetingDay(course, Day.Sunday),
+        monday: isMeetingDay(course, Day.Monday),
+        tuesday: isMeetingDay(course, Day.Tuesday),
+        wednesday: isMeetingDay(course, Day.Wednesday),
+        thursday: isMeetingDay(course, Day.Thursday),
+        friday: isMeetingDay(course, Day.Friday),
+        saturday: isMeetingDay(course, Day.Saturday),
       },
       prof: {
         displayName: course.professors[0],
@@ -489,12 +459,12 @@ async function checkSchedule(
     };
   });
 
-  removeObjectFromArray(summerCourses);
-  removeObjectFromArray(fallCourses);
-  removeObjectFromArray(springCourses);
-  console.log('SummerCourses: ', summerCourses);
-  console.log('FallCourses: ', fallCourses);
-  console.log('SpringCourses: ', springCourses);
+  removeDefaultObjectFromArray(summerCourses);
+  removeDefaultObjectFromArray(fallCourses);
+  removeDefaultObjectFromArray(springCourses);
+  // console.log('SummerCourses: ', summerCourses);
+  // console.log('FallCourses: ', fallCourses);
+  // console.log('SpringCourses: ', springCourses);
 
   const payload: SchedulePostRequest = {
     coursesToSchedule: {

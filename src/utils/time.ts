@@ -1,6 +1,7 @@
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { Day } from '@prisma/client';
 import { parse } from 'date-fns';
+import { CourseSectionInput } from '../schema';
 
 const DATE_FORMAT = 'MMM d, yyyy HHmm';
 
@@ -60,3 +61,61 @@ export const getMeetingDays = (meetingTime: any): Day[] => {
 
   return days;
 };
+
+/**
+ *
+ * Takes a Date object in the format of 20180905, and
+ * converts it into a string format of MMM DD, YYYY
+ *
+ * @param date The date to be formatted
+ * @return formatted date in MMM DD, YYYY
+ */
+
+export function getFormattedDate(date: CourseSectionInput) {
+  const year = String(date).substring(0, 4);
+  const month = String(date).substring(4, 6);
+  const day = String(date).substring(6, 8);
+  const combined = year + ',' + month + ',' + day;
+  const formattedDate = new Date(combined).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+  });
+  return formattedDate;
+}
+
+/**
+ *
+ * Retrieves meeting times of a given course section and returns the time in string format
+ *
+ * @param course The course of which meetingTimes will be looked for
+ * @param time To compare with strings 'beginTime' or 'endTime'
+ * @return Begin or End time of a class based off @param time
+ */
+
+export function getClassTime(course: CourseSectionInput, time: string) {
+  if (time === 'beginTime')
+    // return time.startTime;
+    return String(course.meetingTimes.map((m) => m.startTime)[0]);
+  else if (time === 'endTime')
+    return String(course.meetingTimes.map((m) => m.endTime)[0]);
+  return 'Incorrect input provided';
+}
+
+/**
+ *
+ * Takes a course section and a day of a week as an input and
+ * checks if the course section has a meeting day on the inputted day
+ *
+ * @param course The course of which meeting day will be looked for
+ * @param day The day of the week to be compared with
+ * @returns true when match; false otherwise
+ */
+
+export function isMeetingDay(course: CourseSectionInput, day: Day) {
+  const isDay = course.meetingTimes.map((m) => m.day === day);
+  for (let i = 0; i < isDay.length; i++) {
+    if (isDay[i]) return isDay[i];
+  }
+  return false;
+}

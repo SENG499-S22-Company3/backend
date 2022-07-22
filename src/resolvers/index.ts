@@ -250,9 +250,9 @@ export const resolvers: Resolvers<Context> = {
           };
         }
 
-        console.log('ALG 1 checkSchedule response below');
+        // console.log('ALG 1 checkSchedule response below');
         console.log(validation.data);
-        console.log('END ALG 1 checkSchedule RESPONSE');
+        // console.log('END ALG 1 checkSchedule RESPONSE');
       }
 
       return await updateCurrentSchedule(input.id, input.courses);
