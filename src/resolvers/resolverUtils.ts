@@ -302,7 +302,17 @@ export function prepareCourseCapacities({
   return combinedRequest;
 }
 
-function removeDefaultObjectFromArray(array: Course[]) {
+type customCourse = {
+  subject: string;
+  courseNumber: string;
+  courseTitle: string;
+  numSections: number;
+  courseCapacity: number;
+  sequenceNumber: string;
+  streamSequence: string;
+};
+
+function removeDefaultObjectFromArray(array: customCourse[]) {
   for (let i = 0; i < array.length; i++) {
     if (array[i].subject == 'not found') {
       array.splice(i, 1);
@@ -327,45 +337,12 @@ async function checkSchedule(
     sequenceNumber: 'A01',
     streamSequence: 'not found',
   };
-  /*
-  // using this object gives type error in hardScheduled
-  const courseMapping = (course: CourseSectionInput): Course => {
-    return {
-      subject: course.id.subject,
-      courseNumber: course.id.code,
-      courseTitle: course.id.title,
-      numSections: 1,
-      courseCapacity: course.capacity,
-      sequenceNumber: course.sectionNumber ?? 'A01',
-      streamSequence: getSeqNumber(course.id.subject, course.id.code),
-      assignment: {
-        startDate: 'Sep 05, 2018',
-        endDate: 'Dec 05, 2018',
-        beginTime: '1300',
-        endTime: '1420',
-        hoursWeek: 3,
-        sunday: false,
-        monday: true,
-        tuesday: false,
-        wednesday: false,
-        thursday: true,
-        friday: false,
-        saturday: false,
-      },
-      prof: {
-        displayName: course.professors[0],
-        preferences: [],
-      },
-    };
-  };
-*/
+
   // Summer Courses
   const summerCourses = input.courses.map((course: CourseSectionInput) => {
     if (course.id.term !== Term.Summer) {
       return defaultValues;
     }
-    // returning the commented object 'courseMapping' here gives a type error in 'payload'
-    // return courseMapping
     return {
       subject: course.id.subject,
       courseNumber: course.id.code,
