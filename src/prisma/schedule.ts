@@ -40,49 +40,81 @@ async function initiateSchedule(scheduleyear: number) {
   return schedule;
 }
 
+async function getLatestSchedule() {
+  // Look for latest schedule if none given
+  const foundSchedule = await prisma.schedule.findFirst({
+    orderBy: {
+      createdOn: 'desc',
+    },
+  });
+
+  if (foundSchedule) {
+    return foundSchedule;
+  }
+
+  throw new Error("Couldn't find latest schedule");
+}
+
 async function updateCurrentSchedule(
-  scheduleId: any,
+  scheduleId: string | undefined,
   courses: CourseSectionInput[]
 ) {
   // Simply creates a new schedule instead of updating the current schedule
 
+  let scheduleToUpdateId;
+
+  if (!scheduleId) {
+    // Look for latest schedule if none given
+    try {
+      const foundSchedule = await getLatestSchedule();
+      scheduleToUpdateId = foundSchedule.id;
+    } catch (error) {
+      return {
+        success: false,
+        message: "Couldn't find latest schedule",
+        errors: error,
+      };
+    }
+  } else {
+    scheduleToUpdateId = parseInt(scheduleId);
+  }
+
   try {
-    const currentSchedule = await prisma.schedule.findFirst({
+    // Delete course sections linked to original schedule
+    await prisma.courseSection.deleteMany({
       where: {
-        id: parseInt(scheduleId),
+        scheduleId: scheduleToUpdateId,
       },
     });
-
-    if (currentSchedule) {
-      // Delete course sections linked to original schedule
-      await prisma.courseSection.deleteMany({
-        where: {
-          scheduleId: parseInt(scheduleId),
-        },
-      });
-
-      // Delete original schedule
-      await prisma.schedule.delete({
-        where: {
-          id: parseInt(scheduleId),
-        },
-      });
-    }
   } catch (error) {
     return {
       success: false,
-      message: 'Error deleting original schedule',
+      message: 'Error deleting original schedule course sections',
       errors: error,
     };
   }
 
-  const currentYear = new Date().getFullYear();
+  let currentSchedule;
+
+  try {
+    currentSchedule = await prisma.schedule.findFirst({
+      where: {
+        id: scheduleToUpdateId,
+      },
+    });
+  } catch (error) {
+    return {
+      success: false,
+      message: "Couldn't find schedule",
+      errors: error,
+    };
+  }
   let newSchedule;
 
   try {
     newSchedule = await prisma.schedule.create({
       data: {
-        year: currentYear,
+        year: currentSchedule?.year ?? new Date().getFullYear(),
       },
     });
   } catch (error) {
@@ -136,7 +168,13 @@ async function updateCurrentSchedule(
         },
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Error creating new course sections',
+      errors: error,
+    };
+  }
 
   return {
     success: true,
