@@ -34,7 +34,6 @@ import {
   User,
   CourseSectionInput,
   UpdateScheduleInput,
-  Company,
 } from '../schema';
 import { getSeqNumber, prefValue } from '../utils';
 import { Context } from 'apollo-server-core';
@@ -478,14 +477,7 @@ async function checkSchedule(
     ).filter((p) => p.preferences.length > 0),
   };
 
-  const alg1CheckSchedule = await ctx.algorithm(Company.Company3).algo1Cs;
-  const response = await alg1CheckSchedule?.(payload);
-  console.log(
-    'RESPONSE: ',
-    response?.status
-    // JSON.stringify(response?.config.data)
-  );
-  return response;
+  return payload;
 }
 
 async function prepareScheduleWithCapacities(

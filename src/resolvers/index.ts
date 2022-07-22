@@ -44,6 +44,12 @@ const noPerms = {
   success: false,
 };
 
+const noResponse = {
+  success: false,
+  message: 'Error: No response from algorithm 1',
+  errors: ['Error: No response from algorithm 1'],
+};
+
 const apiErrorHandler = (id: string, e: unknown, data: any = {}) => {
   console.error(id, e);
   if (e instanceof AxiosError) {
@@ -248,28 +254,33 @@ export const resolvers: Resolvers<Context> = {
       if (!input.skipValidation && input.validation === Company.Company3) {
         console.log('Validating schedule...');
         const users = await getAll();
-        let validation;
+
+        let validation: AxiosResponse<String, any> | undefined;
+        const algo1CSPayload = await checkSchedule(ctx, input, users);
+        if (algo1CSPayload === null) {
+          return noResponse;
+        }
         try {
-          validation = await checkSchedule(ctx, input, users);
+          validation = await ctx
+            .algorithm(Company.Company3)
+            .algo1Cs?.(algo1CSPayload);
+          console.log('RESPONSE: ', validation?.status);
         } catch (error) {
           console.log(`Failed to validate schedule: '${error}'`);
           return {
             success: false,
             message: `Failed to validate schedule: '${error}'`,
-            errors: error,
+            errors: [String(error)],
           };
         }
 
         if (!validation?.data) {
-          return {
-            success: false,
-            message: 'Error: No response from algorithm 1',
-            errors: [],
-          };
+          return noResponse;
         } else if (validation.data.match(/violation/)) {
           return {
             success: false,
             message: String(validation.data),
+            errors: [String(validation.data)],
           };
         }
 
