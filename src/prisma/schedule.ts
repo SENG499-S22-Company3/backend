@@ -112,9 +112,13 @@ async function updateCurrentSchedule(
   let newSchedule;
 
   try {
+    if (!currentSchedule) {
+      throw new Error(`Could not find schedule id: ${scheduleToUpdateId}`);
+    }
+
     newSchedule = await prisma.schedule.create({
       data: {
-        year: currentSchedule?.year ?? new Date().getFullYear(),
+        year: currentSchedule.year,
       },
     });
   } catch (error) {
