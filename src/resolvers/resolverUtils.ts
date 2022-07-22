@@ -5,18 +5,23 @@ import {
   User as PrismaUser,
 } from '@prisma/client';
 import {
+  Preference,
+  Professor,
   Schedule as ScheduleAlgorithm,
   SchedulePostRequest,
 } from '../client/algorithm1/api';
 import { CourseObject } from '../client/algorithm2';
-import { Context } from '../context';
-import { findCourseSection, upsertCourses } from '../prisma/course';
+
+import {
+  findCourseSection,
+  getAllCourses,
+  upsertCourses,
+} from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
 import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
 import {
   CourseInput,
   CourseSection,
-  Company,
   Day,
   GenerateScheduleInput,
   MeetingTime,
@@ -25,7 +30,9 @@ import {
   Term,
   User,
 } from '../schema';
-import { getSeqNumber } from '../utils';
+import { getSeqNumber, prefValue } from '../utils';
+
+const defaultPref = prefValue();
 
 export {
   getMe,
@@ -33,8 +40,7 @@ export {
   getUserByID,
   getCourses,
   getSchedule,
-  getCourseCapacities,
-  generateScheduleWithCapacities,
+  prepareScheduleWithCapacities,
   createSchedule,
   updateUserSurvey,
 };
@@ -245,14 +251,16 @@ async function createSchedule(year: number, scheduleData: ScheduleAlgorithm) {
   });
 }
 
-async function getCourseCapacities(
-  ctx: Context,
-  summerCourses: CourseInput[],
-  springCourses: CourseInput[],
-  fallCourses: CourseInput[],
-  company: Company
-) {
-  if (summerCourses.length + springCourses.length + fallCourses.length === 0) {
+export function prepareCourseCapacities({
+  fallCourses,
+  springCourses,
+  summerCourses,
+}: GenerateScheduleInput): CourseObject[] | null {
+  const fall = fallCourses ?? [];
+  const spring = springCourses ?? [];
+  const summer = summerCourses ?? [];
+
+  if (summer.length + spring.length + fall.length === 0) {
     return null;
   }
 
@@ -266,15 +274,15 @@ async function getCourseCapacities(
     };
   };
 
-  const summerRequest: CourseObject[] = summerCourses.map((course) =>
+  const summerRequest: CourseObject[] = summer.map((course) =>
     courseMapper(course, Term.Summer)
   );
 
-  const springRequest: CourseObject[] = springCourses.map((course) =>
+  const springRequest: CourseObject[] = spring.map((course) =>
     courseMapper(course, Term.Spring)
   );
 
-  const fallRequest: CourseObject[] = fallCourses.map((course) =>
+  const fallRequest: CourseObject[] = fall.map((course) =>
     courseMapper(course, Term.Fall)
   );
 
@@ -283,21 +291,11 @@ async function getCourseCapacities(
     springRequest,
     fallRequest
   );
-
-  const alg2 = ctx.algorithm(company).algo2;
-
-  const algorithm2Response = await alg2(combinedRequest);
-
-  return algorithm2Response;
+  return combinedRequest;
 }
 
-async function generateScheduleWithCapacities(
-  ctx: Context,
-  input: GenerateScheduleInput,
-  falltermCourses: CourseInput[],
-  summertermCourses: CourseInput[],
-  springtermCourses: CourseInput[],
-  users: User[] | null,
+async function prepareScheduleWithCapacities(
+  { fallCourses, springCourses, summerCourses }: GenerateScheduleInput,
   capacities: CourseObject[]
 ) {
   const courseToCourseInput = (term: Term) => (input: CourseInput) => ({
@@ -321,48 +319,70 @@ async function generateScheduleWithCapacities(
     streamSequence: getSeqNumber(input.subject, input.code),
   });
 
+  const users = await findAllUsers();
+  const courses = await getAllCourses();
+
+  const defaultCourses = 2;
+
+  const profs = users.map<Professor>((user) => {
+    // preferred number of courses to be taught by a prof in a given term
+    const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
+    const springTermCourses = user.preference.find((p) => p.springTermCourses);
+    const summerTermCourses = user.preference.find((p) => p.summerTermCourses);
+
+    // while the schema returns multiple instances of a teaching preference survey for a user
+    // we can only have one teaching pref for a given user by a unique contraint on the user id field.
+    const preferences = user.preference.flatMap<Preference>((teachingPref) =>
+      teachingPref.coursePreference.map(
+        ({ course: { subject, courseCode, term }, preference }) => ({
+          courseNum: `${subject}${courseCode}`,
+          preferenceNum: preference,
+          term,
+        })
+      )
+    );
+
+    const userPrefs = new Map<string, number>(
+      preferences.map((p) => [
+        `${p.courseNum}-${p.term ?? ''}`,
+        p.preferenceNum,
+      ])
+    );
+
+    // inject default values for preference if not found
+    const prefs = courses.map<Preference>(({ subject, courseCode, term }) => ({
+      courseNum: `${subject}${courseCode}`,
+      preferenceNum:
+        userPrefs.get(`${subject}${courseCode}-${term}`) ?? defaultPref,
+      term,
+    }));
+
+    return {
+      // fallback to username for display name
+      displayName: user.displayName ?? user.username,
+      // default values to pass into algorithm 1
+      fallTermCourses: fallTermCourses?.fallTermCourses ?? defaultCourses,
+      springTermCourses: springTermCourses?.springTermCourses ?? defaultCourses,
+      summerTermCourses: summerTermCourses?.summerTermCourses ?? defaultCourses,
+      preferences: prefs,
+    };
+  });
+
   const payload: SchedulePostRequest = {
     // in theory only one of the term arrays will be populated with values
     coursesToSchedule: {
-      fallCourses: falltermCourses.map(courseToCourseInput(Term.Fall)),
-      springCourses: springtermCourses.map(courseToCourseInput(Term.Spring)),
-      summerCourses: summertermCourses.map(courseToCourseInput(Term.Summer)),
+      fallCourses: fallCourses?.map(courseToCourseInput(Term.Fall)) ?? [],
+      springCourses: springCourses?.map(courseToCourseInput(Term.Spring)) ?? [],
+      summerCourses: summerCourses?.map(courseToCourseInput(Term.Summer)) ?? [],
     },
     hardScheduled: {
       fallCourses: [],
       springCourses: [],
       summerCourses: [],
     },
-    professors: (
-      users?.map((user) => {
-        return {
-          displayName: user.displayName ?? '',
-          fallTermCourses: 1,
-          springTermCourses: 1,
-          summerTermCourses: 1,
-          preferences:
-            user.preferences?.map((preference) => {
-              return {
-                courseNum: preference.id.subject + preference.id.code,
-                term: preference.id.term,
-                preferenceNum: preference.preference,
-              };
-            }) ?? [],
-        };
-      }) ?? []
-    ).filter((p) => p.preferences.length > 0),
+    // avoid sending profs with no preferences.
+    professors: profs.filter((prof) => prof.preferences.length > 0),
   };
 
-  const alg1 = ctx.algorithm(input.algorithm1).algo1;
-  //  const fs = require('fs');
-  //  await fs.promises.writeFile(
-  //    '/tmp/payload.json',
-  //    JSON.stringify(payload, null, 2),
-  //    'utf8'
-  //  );
-  //  console.log('Saved agl1 payload to /tmp/payload.json');
-
-  const response = await alg1(payload);
-
-  return response;
+  return payload;
 }

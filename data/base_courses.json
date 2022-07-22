@@ -1,0 +1,816 @@
+[
+  {
+    "title": "Requirements Engineering",
+    "term": "FALL",
+    "code": "321",
+    "subject": "SENG"
+  },
+  {
+    "title": "Requirements Engineering",
+    "term": "SPRING",
+    "code": "321",
+    "subject": "SENG"
+  },
+  {
+    "title": "Software System Scalability",
+    "term": "SPRING",
+    "code": "468",
+    "subject": "SENG"
+  },
+  {
+    "title": "Foundations of Computer Science",
+    "term": "FALL",
+    "code": "320",
+    "subject": "CSC"
+  },
+  {
+    "title": "Foundations of Computer Science",
+    "term": "SPRING",
+    "code": "320",
+    "subject": "CSC"
+  },
+  {
+    "title": "Foundations of Computer Science",
+    "term": "SUMMER",
+    "code": "320",
+    "subject": "CSC"
+  },
+  {
+    "title": "Social and Professional Issues",
+    "term": "SPRING",
+    "code": "401",
+    "subject": "SENG"
+  },
+  {
+    "title": "Digital Design",
+    "term": "FALL",
+    "code": "241",
+    "subject": "ECE"
+  },
+  {
+    "title": "Real Time Computer Systems Design Project",
+    "term": "SPRING",
+    "code": "455",
+    "subject": "ECE"
+  },
+  {
+    "title": "Antennas and Propagation",
+    "term": "SPRING",
+    "code": "453",
+    "subject": "ECE"
+  },
+  {
+    "title": "Fundamentals of Chemistry from Atoms to Materials",
+    "term": "FALL",
+    "code": "101",
+    "subject": "CHEM"
+  },
+  {
+    "title": "Communication Networks",
+    "term": "SPRING",
+    "code": "458",
+    "subject": "ECE"
+  },
+  {
+    "title": "Communication Networks",
+    "term": "SPRING",
+    "code": "458",
+    "subject": "ECE"
+  },
+  {
+    "title": "Fundamentals of Programming I",
+    "term": "FALL",
+    "code": "110",
+    "subject": "CSC"
+  },
+  {
+    "title": "Fundamentals of Programming I",
+    "term": "SPRING",
+    "code": "110",
+    "subject": "CSC"
+  },
+  {
+    "title": "Fundamentals of Programming I",
+    "term": "SUMMER",
+    "code": "110",
+    "subject": "CSC"
+  },
+  {
+    "title": "Electronic Devices I",
+    "term": "SPRING",
+    "code": "320",
+    "subject": "ECE"
+  },
+  {
+    "title": "Software Testing",
+    "term": "FALL",
+    "code": "275",
+    "subject": "SENG"
+  },
+  {
+    "title": "Software Testing",
+    "term": "SPRING",
+    "code": "275",
+    "subject": "SENG"
+  },
+  {
+    "title": "Software Testing",
+    "term": "SUMMER",
+    "code": "275",
+    "subject": "SENG"
+  },
+  {
+    "title": "Introductory Physics I",
+    "term": "FALL",
+    "code": "110",
+    "subject": "PHYS"
+  },
+  {
+    "title": "Introductory Physics I",
+    "term": "SPRING",
+    "code": "110",
+    "subject": "PHYS"
+  },
+  {
+    "title": "Introduction to Computer Architecture",
+    "term": "FALL",
+    "code": "230",
+    "subject": "CSC"
+  },
+  {
+    "title": "Introduction to Computer Architecture",
+    "term": "SPRING",
+    "code": "230",
+    "subject": "CSC"
+  },
+  {
+    "title": "Introduction to Computer Architecture",
+    "term": "SUMMER",
+    "code": "230",
+    "subject": "CSC"
+  },
+  {
+    "title": "Programming Languages",
+    "term": "SPRING",
+    "code": "330",
+    "subject": "CSC"
+  },
+  {
+    "title": "Numerical Analysis",
+    "term": "FALL",
+    "code": "349",
+    "subject": "CSC"
+  },
+  {
+    "title": "Numerical Analysis",
+    "term": "SPRING",
+    "code": "349",
+    "subject": "CSC"
+  },
+  {
+    "title": "Computer-Supported Cooperative Work",
+    "term": "SUMMER",
+    "code": "435",
+    "subject": "SENG"
+  },
+  {
+    "title": "Engineering Mechanics",
+    "term": "SPRING",
+    "code": "141",
+    "subject": "ENGR"
+  },
+  {
+    "title": "Engineering Mechanics",
+    "term": "SUMMER",
+    "code": "141",
+    "subject": "ENGR"
+  },
+  {
+    "title": "Electronic Circuits I",
+    "term": "SPRING",
+    "code": "330",
+    "subject": "ECE"
+  },
+  {
+    "title": "Algorithms and Data Structures I",
+    "term": "FALL",
+    "code": "225",
+    "subject": "CSC"
+  },
+  {
+    "title": "Algorithms and Data Structures I",
+    "term": "SPRING",
+    "code": "225",
+    "subject": "CSC"
+  },
+  {
+    "title": "Algorithms and Data Structures I",
+    "term": "SUMMER",
+    "code": "225",
+    "subject": "CSC"
+  },
+  {
+    "title": "Introduction to Artificial Intelligence",
+    "term": "FALL",
+    "code": "421",
+    "subject": "CSC"
+  },
+  {
+    "title": "Algorithms and Data Structures II",
+    "term": "FALL",
+    "code": "226",
+    "subject": "CSC"
+  },
+  {
+    "title": "Algorithms and Data Structures II",
+    "term": "SPRING",
+    "code": "226",
+    "subject": "CSC"
+  },
+  {
+    "title": "Algorithms and Data Structures II",
+    "term": "SUMMER",
+    "code": "226",
+    "subject": "CSC"
+  },
+  {
+    "title": "Computer Vision",
+    "term": "SPRING",
+    "code": "471",
+    "subject": "ECE"
+  },
+  {
+    "title": "Software Quality Engineering",
+    "term": "SUMMER",
+    "code": "426",
+    "subject": "SENG"
+  },
+  {
+    "title": "Electrical Properties of Materials",
+    "term": "SUMMER",
+    "code": "220",
+    "subject": "ECE"
+  },
+  {
+    "title": "Applied Electromagnetics and Photonics",
+    "term": "SPRING",
+    "code": "340",
+    "subject": "ECE"
+  },
+  {
+    "title": "Discrete Structures in Engineering",
+    "term": "SUMMER",
+    "code": "242",
+    "subject": "ECE"
+  },
+  {
+    "title": "Introduction to Electrical and Computer Engineering Design",
+    "term": "SUMMER",
+    "code": "299",
+    "subject": "ECE"
+  },
+  {
+    "title": "Digital Logic and Computer Organization",
+    "term": "FALL",
+    "code": "355",
+    "subject": "CSC"
+  },
+  {
+    "title": "Digital Logic and Computer Organization",
+    "term": "SPRING",
+    "code": "355",
+    "subject": "CSC"
+  },
+  {
+    "title": "Design and Analysis of Computer Networks",
+    "term": "FALL",
+    "code": "463",
+    "subject": "ECE"
+  },
+  {
+    "title": "Security Engineering",
+    "term": "FALL",
+    "code": "360",
+    "subject": "SENG"
+  },
+  {
+    "title": "Electricity and Magnetism",
+    "term": "FALL",
+    "code": "216",
+    "subject": "ECE"
+  },
+  {
+    "title": "Electricity and Magnetism",
+    "term": "SUMMER",
+    "code": "216",
+    "subject": "ECE"
+  },
+  {
+    "title": "Communications Theory and Systems I",
+    "term": "FALL",
+    "code": "350",
+    "subject": "ECE"
+  },
+  {
+    "title": "Microprocessor-Based Systems",
+    "term": "FALL",
+    "code": "355",
+    "subject": "ECE"
+  },
+  {
+    "title": "Fundamentals of Programming II",
+    "term": "FALL",
+    "code": "115",
+    "subject": "CSC"
+  },
+  {
+    "title": "Fundamentals of Programming II",
+    "term": "SPRING",
+    "code": "115",
+    "subject": "CSC"
+  },
+  {
+    "title": "Fundamentals of Programming II",
+    "term": "SUMMER",
+    "code": "115",
+    "subject": "CSC"
+  },
+  {
+    "title": "Engineering System Software",
+    "term": "FALL",
+    "code": "356",
+    "subject": "ECE"
+  },
+  {
+    "title": "Design Project II",
+    "term": "SPRING",
+    "code": "499",
+    "subject": "ECE"
+  },
+  {
+    "title": "Design Project II",
+    "term": "SUMMER",
+    "code": "499",
+    "subject": "ECE"
+  },
+  {
+    "title": "Operations Research: Linear Programming",
+    "term": "SUMMER",
+    "code": "445",
+    "subject": "CSC"
+  },
+  {
+    "title": "Fundamentals of Programming with Engineering Applications",
+    "term": "FALL",
+    "code": "111",
+    "subject": "CSC"
+  },
+  {
+    "title": "Fundamentals of Programming with Engineering Applications",
+    "term": "SPRING",
+    "code": "111",
+    "subject": "CSC"
+  },
+  {
+    "title": "Applications of Digital Signal Processing Techniques",
+    "term": "SPRING",
+    "code": "459",
+    "subject": "ECE"
+  },
+  {
+    "title": "Software Architecture and Design",
+    "term": "FALL",
+    "code": "350",
+    "subject": "SENG"
+  },
+  {
+    "title": "Control Theory and Systems I",
+    "term": "FALL",
+    "code": "360",
+    "subject": "ECE"
+  },
+  {
+    "title": "Control Theory and Systems I",
+    "term": "SPRING",
+    "code": "360",
+    "subject": "ECE"
+  },
+  {
+    "title": "Operating Systems",
+    "term": "FALL",
+    "code": "360",
+    "subject": "CSC"
+  },
+  {
+    "title": "Operating Systems",
+    "term": "SPRING",
+    "code": "360",
+    "subject": "CSC"
+  },
+  {
+    "title": "Operating Systems",
+    "term": "SUMMER",
+    "code": "360",
+    "subject": "CSC"
+  },
+  {
+    "title": "Computer Communications and Networks",
+    "term": "FALL",
+    "code": "361",
+    "subject": "CSC"
+  },
+  {
+    "title": "Computer Communications and Networks",
+    "term": "SPRING",
+    "code": "361",
+    "subject": "CSC"
+  },
+  {
+    "title": "Computer Communications and Networks",
+    "term": "SUMMER",
+    "code": "361",
+    "subject": "CSC"
+  },
+  {
+    "title": "Power Electronics",
+    "term": "SUMMER",
+    "code": "410",
+    "subject": "ECE"
+  },
+  {
+    "title": "Applied Electronics and Electrical Machines",
+    "term": "FALL",
+    "code": "365",
+    "subject": "ECE"
+  },
+  { "title": "Calculus I", "term": "FALL", "code": "100", "subject": "MATH" },
+  { "title": "Calculus I", "term": "SPRING", "code": "100", "subject": "MATH" },
+  { "title": "Calculus II", "term": "FALL", "code": "101", "subject": "MATH" },
+  {
+    "title": "Calculus II",
+    "term": "SPRING",
+    "code": "101",
+    "subject": "MATH"
+  },
+  {
+    "title": "Calculus II",
+    "term": "SUMMER",
+    "code": "101",
+    "subject": "MATH"
+  },
+  {
+    "title": "Embedded Systems",
+    "term": "SUMMER",
+    "code": "440",
+    "subject": "SENG"
+  },
+  {
+    "title": "Electrical Drive Systems",
+    "term": "SPRING",
+    "code": "482",
+    "subject": "ECE"
+  },
+  {
+    "title": "Data Analysis and Pattern Recognition",
+    "term": "SPRING",
+    "code": "485",
+    "subject": "ECE"
+  },
+  {
+    "title": "Electrical Power Systems",
+    "term": "SPRING",
+    "code": "488",
+    "subject": "ECE"
+  },
+  {
+    "title": "Database Systems",
+    "term": "FALL",
+    "code": "370",
+    "subject": "CSC"
+  },
+  {
+    "title": "Database Systems",
+    "term": "SPRING",
+    "code": "370",
+    "subject": "CSC"
+  },
+  {
+    "title": "Database Systems",
+    "term": "SUMMER",
+    "code": "370",
+    "subject": "CSC"
+  },
+  {
+    "title": "Music Retrieval Techniques",
+    "term": "SPRING",
+    "code": "475",
+    "subject": "CSC"
+  },
+  {
+    "title": "Electromechanical Energy Conversion",
+    "term": "FALL",
+    "code": "370",
+    "subject": "ECE"
+  },
+  {
+    "title": "Engineering Chemistry",
+    "term": "SPRING",
+    "code": "150",
+    "subject": "CHEM"
+  },
+  {
+    "title": "Optimization for Machine Learning",
+    "term": "FALL",
+    "code": "403",
+    "subject": "ECE"
+  },
+  {
+    "title": "Optimization for Machine Learning",
+    "term": "SUMMER",
+    "code": "403",
+    "subject": "ECE"
+  },
+  {
+    "title": "Biomedical Imaging Modalities",
+    "term": "SPRING",
+    "code": "402",
+    "subject": "ECE"
+  },
+  {
+    "title": "Error Control Coding",
+    "term": "SPRING",
+    "code": "405",
+    "subject": "ECE"
+  },
+  {
+    "title": "Randomized Algorithms",
+    "term": "SPRING",
+    "code": "423",
+    "subject": "CSC"
+  },
+  {
+    "title": "Advanced Programming Techniques for Robust Efficient Computing",
+    "term": "SUMMER",
+    "code": "475",
+    "subject": "SENG"
+  },
+  {
+    "title": "Data Mining",
+    "term": "SPRING",
+    "code": "474",
+    "subject": "SENG"
+  },
+  {
+    "title": "Design Project II",
+    "term": "SPRING",
+    "code": "499",
+    "subject": "SENG"
+  },
+  {
+    "title": "Design Project II",
+    "term": "SUMMER",
+    "code": "499",
+    "subject": "SENG"
+  },
+  {
+    "title": "Biophotonics",
+    "term": "SPRING",
+    "code": "434",
+    "subject": "ECE"
+  },
+  {
+    "title": "Introduction to Computer Graphics",
+    "term": "FALL",
+    "code": "305",
+    "subject": "CSC"
+  },
+  {
+    "title": "Introduction to Computer Graphics",
+    "term": "SPRING",
+    "code": "305",
+    "subject": "CSC"
+  },
+  {
+    "title": "Design and Analysis of Real-time Systems",
+    "term": "SPRING",
+    "code": "460",
+    "subject": "CSC"
+  },
+  {
+    "title": "Overlay and Peer-to-Peer Networking",
+    "term": "FALL",
+    "code": "466",
+    "subject": "CSC"
+  },
+  {
+    "title": "Overlay and Peer-to-Peer Networking",
+    "term": "FALL",
+    "code": "466",
+    "subject": "SENG"
+  },
+  {
+    "title": "World Wide Web and Mobile Applications",
+    "term": "FALL",
+    "code": "130",
+    "subject": "CSC"
+  },
+  {
+    "title": "World Wide Web and Mobile Applications",
+    "term": "SPRING",
+    "code": "130",
+    "subject": "CSC"
+  },
+  {
+    "title": "World Wide Web and Mobile Applications",
+    "term": "SUMMER",
+    "code": "130",
+    "subject": "CSC"
+  },
+  {
+    "title": "Practice of Information Security and Privacy",
+    "term": "SPRING",
+    "code": "460",
+    "subject": "SENG"
+  },
+  {
+    "title": "Electronic Circuits II",
+    "term": "FALL",
+    "code": "380",
+    "subject": "ECE"
+  },
+  {
+    "title": "Introduction to Probability and Statistics I",
+    "term": "FALL",
+    "code": "260",
+    "subject": "STAT"
+  },
+  {
+    "title": "Introduction to Probability and Statistics I",
+    "term": "SPRING",
+    "code": "260",
+    "subject": "STAT"
+  },
+  {
+    "title": "Introduction to Probability and Statistics I",
+    "term": "SUMMER",
+    "code": "260",
+    "subject": "STAT"
+  },
+  {
+    "title": "Linear Circuits II",
+    "term": "SPRING",
+    "code": "300",
+    "subject": "ECE"
+  },
+  {
+    "title": "Continuous-Time Signals and Systems",
+    "term": "FALL",
+    "code": "260",
+    "subject": "ECE"
+  },
+  {
+    "title": "Continuous-Time Signals and Systems",
+    "term": "SUMMER",
+    "code": "260",
+    "subject": "ECE"
+  },
+  {
+    "title": "Software Evolution",
+    "term": "SPRING",
+    "code": "371",
+    "subject": "SENG"
+  },
+  {
+    "title": "Digital Signal Processing I",
+    "term": "SPRING",
+    "code": "310",
+    "subject": "ECE"
+  },
+  {
+    "title": "Digital Signal Processing I",
+    "term": "SUMMER",
+    "code": "310",
+    "subject": "ECE"
+  },
+  {
+    "title": "Human Computer Interaction",
+    "term": "FALL",
+    "code": "310",
+    "subject": "SENG"
+  },
+  {
+    "title": "Human Computer Interaction",
+    "term": "SPRING",
+    "code": "310",
+    "subject": "SENG"
+  },
+  {
+    "title": "Human Computer Interaction",
+    "term": "SUMMER",
+    "code": "310",
+    "subject": "SENG"
+  },
+  {
+    "title": "Nanotechnology",
+    "term": "SPRING",
+    "code": "420",
+    "subject": "ECE"
+  },
+  {
+    "title": "Photovoltaics",
+    "term": "SPRING",
+    "code": "427",
+    "subject": "ECE"
+  },
+  { "title": "Robotics", "term": "SPRING", "code": "426", "subject": "ECE" },
+  {
+    "title": "Introduction to Computer Architecture",
+    "term": "FALL",
+    "code": "255",
+    "subject": "ECE"
+  },
+  {
+    "title": "Introduction to Computer Architecture",
+    "term": "FALL",
+    "code": "255",
+    "subject": "ECE"
+  },
+  {
+    "title": "Introduction to Computer Architecture",
+    "term": "SPRING",
+    "code": "255",
+    "subject": "ECE"
+  },
+  {
+    "title": "Advanced Methods for Human Computer Interaction",
+    "term": "SPRING",
+    "code": "411",
+    "subject": "SENG"
+  },
+  {
+    "title": "Linear Circuits I",
+    "term": "FALL",
+    "code": "250",
+    "subject": "ECE"
+  },
+  {
+    "title": "Linear Circuits I",
+    "term": "SUMMER",
+    "code": "250",
+    "subject": "ECE"
+  },
+  {
+    "title": "Computers and Information Processing",
+    "term": "FALL",
+    "code": "105",
+    "subject": "CSC"
+  },
+  {
+    "title": "Computers and Information Processing",
+    "term": "SPRING",
+    "code": "105",
+    "subject": "CSC"
+  },
+  {
+    "title": "The Practice of Computer Science",
+    "term": "FALL",
+    "code": "106",
+    "subject": "CSC"
+  },
+  {
+    "title": "The Practice of Computer Science",
+    "term": "SPRING",
+    "code": "106",
+    "subject": "CSC"
+  },
+  {
+    "title": "Design and Communication II",
+    "term": "SPRING",
+    "code": "120",
+    "subject": "ENGR"
+  },
+  {
+    "title": "Software Development Methods",
+    "term": "FALL",
+    "code": "265",
+    "subject": "SENG"
+  },
+  {
+    "title": "Software Development Methods",
+    "term": "SPRING",
+    "code": "265",
+    "subject": "SENG"
+  },
+  {
+    "title": "Software Development Methods",
+    "term": "SUMMER",
+    "code": "265",
+    "subject": "SENG"
+  },
+  {
+    "title": "Control Theory and Systems II",
+    "term": "SPRING",
+    "code": "460",
+    "subject": "ECE"
+  }
+]

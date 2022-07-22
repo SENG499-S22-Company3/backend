@@ -11,19 +11,18 @@ const prisma = new PrismaClient();
  * @param professor a professor object
  */
 
+const pwsalt = bcrypt.genSaltSync(10);
+const pwhash = bcrypt.hashSync('testpassword', pwsalt);
+
 export async function addTeachingAndCoursePreferences(professor: any) {
-  const firstName = professor.displayName.split(', ')[1];
-  const lastName = professor.displayName.split(', ')[0];
+  const [lastName, firstName] = professor.displayName.split(', ');
 
-  const generatedUsername = `${firstName}${lastName}`;
-
-  const pwsalt = bcrypt.genSaltSync(10);
-  const pwhash = bcrypt.hashSync('testpassword', pwsalt);
+  const username = `${firstName}${lastName}`.toLowerCase().replace(/\s/g, '');
 
   // Create professor user if not created
   let currentProf = await prisma.user.findFirst({
     where: {
-      username: generatedUsername,
+      username: username,
     },
   });
 
@@ -33,7 +32,7 @@ export async function addTeachingAndCoursePreferences(professor: any) {
         active: true,
         hasPeng: true,
         password: pwhash,
-        username: generatedUsername,
+        username: username,
         displayName: `${firstName} ${lastName}`,
         role: Role.USER,
       },

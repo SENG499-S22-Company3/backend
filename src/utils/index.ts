@@ -8,6 +8,8 @@ import {
 import { getISOTime, getMeetingDays } from './time';
 const isAdmin = (user: FullUser) => user.role === Role.ADMIN;
 
+const defaultPref = 2;
+
 export {
   getISOTime,
   isAdmin,
@@ -24,3 +26,13 @@ const appendDay = (isDay: boolean, day: Day, days: Day[]): Day[] => {
   }
   return days;
 };
+
+export function prefValue(): number {
+  const p = process.env.DEFAULT_PREF;
+  if (!p) return defaultPref;
+  try {
+    return parseInt(p, 10);
+  } catch (e) {
+    return defaultPref;
+  }
+}
