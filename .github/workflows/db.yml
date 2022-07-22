@@ -13,7 +13,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci --no-audit --no-progress --no-optional
-      - name: Code Linting
-        run: npx -y prisma migrate reset
+      - name: Prisma Migrate Reset
+        run: npx -y prisma migrate reset --force
         env: 
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
