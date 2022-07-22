@@ -156,18 +156,6 @@
     "subject": "CSC"
   },
   {
-    "title": "Numerical Analysis",
-    "term": "FALL",
-    "code": "349",
-    "subject": "CSC"
-  },
-  {
-    "title": "Numerical Analysis",
-    "term": "SPRING",
-    "code": "349",
-    "subject": "CSC"
-  },
-  {
     "title": "Computer-Supported Cooperative Work",
     "term": "SUMMER",
     "code": "435",
@@ -812,5 +800,47 @@
     "term": "SPRING",
     "code": "460",
     "subject": "ECE"
+  },
+  {
+    "code": "SENG",
+    "subject": "421",
+    "term": "SPRING",
+    "title": "Global Software Engineering"
+  },
+  {
+    "code": "ECON",
+    "subject": "180",
+    "term": "FALL",
+    "title": "Introduction to Principles of Microeconomics and Financial Project Evaluation"
+  },
+  {
+    "code": "ECON",
+    "subject": "180",
+    "term": "SPRING",
+    "title": "Introduction to Principles of Microeconomics and Financial Project Evaluation"
+  },
+  {
+    "code": "ECON",
+    "subject": "180",
+    "term": "SUMMER",
+    "title": "Introduction to Principles of Microeconomics and Financial Project Evaluation"
+  },
+  {
+    "code": "ECE",
+    "subject": "399",
+    "term": "FALL",
+    "title": "Design Project I"
+  },
+  {
+    "code": "CSC",
+    "subject": "349A",
+    "term": "FALL",
+    "title": "Numerical Analysis"
+  },
+  {
+    "code": "CSC",
+    "subject": "349A",
+    "term": "SPRING",
+    "title": "Numerical Analysis"
   }
 ]
