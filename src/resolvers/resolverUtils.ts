@@ -301,7 +301,7 @@ export function prepareCourseCapacities({
   return combinedRequest;
 }
 
-function courseSectionInputToCourse(course: CourseSectionInput): Course {
+function courseSectionInputToCourse(course: CourseSectionInput) {
   return {
     subject: course.id.subject,
     courseNumber: course.id.code,
