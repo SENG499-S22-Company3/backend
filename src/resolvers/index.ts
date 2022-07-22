@@ -232,7 +232,7 @@ export const resolvers: Resolvers<Context> = {
           console.log(`Failed to validate schedule: '${error}'`);
           return {
             success: false,
-            message: 'Error: No response from algorithm 1',
+            message: `Failed to validate schedule: '${error}'`,
             errors: error,
           };
         }
@@ -241,9 +241,9 @@ export const resolvers: Resolvers<Context> = {
           return {
             success: false,
             message: 'Error: No response from algorithm 1',
-            errors: [''],
+            errors: [],
           };
-        } else if (validation.data.match(/Error:/)) {
+        } else if (validation.data.match(/violation/)) {
           return {
             success: false,
             message: String(validation.data),
