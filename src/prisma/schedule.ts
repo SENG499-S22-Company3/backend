@@ -56,7 +56,7 @@ async function getLatestSchedule() {
 }
 
 async function updateCurrentSchedule(
-  scheduleId: string | null,
+  scheduleId: string | null | undefined,
   courses: CourseSectionInput[]
 ) {
   // Simply creates a new schedule instead of updating the current schedule
