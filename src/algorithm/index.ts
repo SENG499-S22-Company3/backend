@@ -15,6 +15,7 @@ export const algoUrl = {
     company4: process.env.ALGO2_COMPANY_4_URL || 'http://localhost:5000',
   },
 };
+// after importing the generated api
 
 const createSchedule =
   (instance: AxiosInstance) => (input: SchedulePostRequest) => {
@@ -24,6 +25,17 @@ const createSchedule =
 const createPredict = (instance: AxiosInstance) => (input: CourseObject[]) => {
   return instance.post<CourseObject[]>('/predict_class_size', input);
 };
+
+const checkSchedule =
+  (instance: AxiosInstance) => (input: SchedulePostRequest) => {
+    return instance.post<String>('/check_schedule', input);
+  };
+
+const algo1c3Cs = checkSchedule(
+  axios.create({
+    baseURL: algoUrl.algorithm1.company3,
+  })
+);
 
 const algo1c3 = createSchedule(
   axios.create({
@@ -54,6 +66,7 @@ export const request = (company: Company) => {
     return {
       algo1: algo1c3,
       algo2: algo2c3,
+      algo1Cs: algo1c3Cs,
     };
   }
   return {
