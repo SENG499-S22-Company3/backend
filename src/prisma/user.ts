@@ -11,7 +11,7 @@ async function findUserByUsername(username: string) {
       preference: {
         include: {
           coursePreference: {
-            include: { course: true },
+            include: { course: true, teachPreference: true },
           },
         },
       },
@@ -42,7 +42,7 @@ async function findAllUsers() {
       preference: {
         include: {
           coursePreference: {
-            include: { course: true },
+            include: { course: true, teachPreference: true },
           },
         },
       },

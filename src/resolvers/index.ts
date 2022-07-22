@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import {
   changePassword,
   createNewUser,
@@ -6,6 +6,8 @@ import {
   login,
   resetPassword,
 } from '../auth';
+import { Schedule } from '../client/algorithm1';
+import { CourseObject } from '../client/algorithm2';
 import { Context } from '../context';
 import { getAllCourses } from '../prisma/course';
 import { findUserById } from '../prisma/user';
@@ -14,13 +16,13 @@ import { Resolvers, Term, Company } from '../schema';
 import * as utils from '../utils';
 import {
   createSchedule,
-  generateScheduleWithCapacities,
   getAll,
-  getCourseCapacities,
   getCourses,
   getMe,
   getSchedule,
   getUserByID,
+  prepareCourseCapacities,
+  prepareScheduleWithCapacities,
   updateUserSurvey,
   checkSchedule,
 } from './resolverUtils';
@@ -42,18 +44,27 @@ const noPerms = {
   success: false,
 };
 
-const apiErrorHandler = (alg: string, e: unknown) => {
-  console.error(e);
+const apiErrorHandler = (id: string, e: unknown, data: any = {}) => {
+  console.error(id, e);
   if (e instanceof AxiosError) {
+    const error = {
+      message: `${id}: API call error: Bad Response:${e.message}:${e.response?.data}`,
+      status: e.response?.status,
+      ...data,
+    };
     return {
-      message: `API call error: Bad response from algorithm ${alg}:${e.message}:${e.response?.data}`,
+      message: JSON.stringify(error),
       success: false,
     };
-  } else
+  } else {
+    const error = {
+      message: `${id}: Backend ran into an internal server error:\n${e}`,
+    };
     return {
-      message: `Backend ran into an internal server error:\n${e}`,
+      message: JSON.stringify(error),
       success: false,
     };
+  }
 };
 
 export const resolvers: Resolvers<Context> = {
@@ -154,19 +165,25 @@ export const resolvers: Resolvers<Context> = {
       if (!ctx.user) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can generate schedule
 
-      const users = await getAll();
+      let capacityDataResponse: AxiosResponse<CourseObject[], any> | null;
+      const algo2Payload = prepareCourseCapacities(input);
+      if (algo2Payload === null) {
+        return {
+          success: false,
+          message: 'No courses selected',
+        };
+      }
 
-      let capacityDataResponse;
       try {
-        capacityDataResponse = await getCourseCapacities(
-          ctx,
-          input.summerCourses ?? [],
-          input.springCourses ?? [],
-          input.fallCourses ?? [],
-          input.algorithm2
-        );
+        capacityDataResponse = await ctx
+          .algorithm(input.algorithm2)
+          .algo2(algo2Payload);
       } catch (e) {
-        return apiErrorHandler('2', e);
+        return apiErrorHandler(`ALGORITHM2_${input.algorithm2}`, e, {
+          algorithm2: {
+            request: algo2Payload,
+          },
+        });
       }
 
       if (!capacityDataResponse) {
@@ -180,19 +197,25 @@ export const resolvers: Resolvers<Context> = {
       console.log(capacityDataResponse.data);
       console.log('END ALG 2 RESPONSE DATA');
 
-      let scheduleResponse;
+      let scheduleResponse: AxiosResponse<Schedule, any> | null;
+      const algo1Payload = await prepareScheduleWithCapacities(
+        input,
+        capacityDataResponse.data
+      );
       try {
-        scheduleResponse = await generateScheduleWithCapacities(
-          ctx,
-          input,
-          input.fallCourses ?? [],
-          input.summerCourses ?? [],
-          input.springCourses ?? [],
-          users,
-          capacityDataResponse.data
-        );
+        scheduleResponse = await ctx
+          .algorithm(input.algorithm1)
+          .algo1(algo1Payload);
       } catch (e) {
-        return apiErrorHandler('1', e);
+        return apiErrorHandler(`ALGORITHM1_${input.algorithm1}`, e, {
+          algorithm2: {
+            request: algo2Payload,
+            response: capacityDataResponse.data,
+          },
+          algorithm1: {
+            request: algo1Payload,
+          },
+        });
       }
 
       if (!scheduleResponse?.data) {
