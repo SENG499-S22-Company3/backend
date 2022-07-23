@@ -40,18 +40,66 @@ async function initiateSchedule(scheduleyear: number) {
   return schedule;
 }
 
+async function getLatestSchedule() {
+  // Look for latest schedule if none given
+  const foundSchedule = await prisma.schedule.findFirst({
+    orderBy: {
+      createdOn: 'desc',
+    },
+  });
+
+  if (foundSchedule) {
+    return foundSchedule;
+  }
+
+  throw new Error("Couldn't find latest schedule");
+}
+
 async function updateCurrentSchedule(
-  scheduleId: any,
+  scheduleId: string | null | undefined,
   courses: CourseSectionInput[]
 ) {
   // Simply creates a new schedule instead of updating the current schedule
+
+  let scheduleToUpdateId;
+
+  if (!scheduleId) {
+    // Look for latest schedule if none given
+    try {
+      const foundSchedule = await getLatestSchedule();
+      scheduleToUpdateId = foundSchedule.id;
+    } catch (error) {
+      return {
+        success: false,
+        message: "Couldn't find latest schedule",
+        errors: error,
+      };
+    }
+  } else {
+    scheduleToUpdateId = parseInt(scheduleId);
+  }
+
+  try {
+    // Delete course sections linked to original schedule
+    await prisma.courseSection.deleteMany({
+      where: {
+        scheduleId: scheduleToUpdateId,
+      },
+    });
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Error deleting original schedule course sections',
+      errors: error,
+    };
+  }
 
   let currentSchedule;
 
   try {
     currentSchedule = await prisma.schedule.findFirst({
       where: {
-        id: parseInt(scheduleId),
+        id: scheduleToUpdateId,
       },
     });
   } catch (error) {
@@ -61,13 +109,16 @@ async function updateCurrentSchedule(
       errors: error,
     };
   }
-
   let newSchedule;
 
   try {
+    if (!currentSchedule) {
+      throw new Error(`Could not find schedule id: ${scheduleToUpdateId}`);
+    }
+
     newSchedule = await prisma.schedule.create({
       data: {
-        year: currentSchedule?.year ?? 2022,
+        year: currentSchedule.year,
       },
     });
   } catch (error) {
@@ -121,7 +172,13 @@ async function updateCurrentSchedule(
         },
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Error creating new course sections',
+      errors: error,
+    };
+  }
 
   return {
     success: true,
