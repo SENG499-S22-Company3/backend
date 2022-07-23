@@ -24,6 +24,7 @@ import {
   prepareCourseCapacities,
   prepareScheduleWithCapacities,
   updateUserSurvey,
+  checkSchedule,
 } from './resolverUtils';
 
 const noLogin = {
@@ -41,6 +42,12 @@ const alreadyLoggedIn = {
 const noPerms = {
   message: 'Insufficient permisions',
   success: false,
+};
+
+const noResponse = {
+  success: false,
+  message: 'Error: No response from algorithm 1',
+  errors: ['Error: No response from algorithm 1'],
 };
 
 const apiErrorHandler = (id: string, e: unknown, data: any = {}) => {
@@ -243,10 +250,43 @@ export const resolvers: Resolvers<Context> = {
     updateSchedule: async (_, { input }, ctx) => {
       if (!ctx.user) return noLogin;
       else if (!utils.isAdmin(ctx.user)) return noPerms; // Only Admin can update schedule
+      // const err = [];
+      if (!input.skipValidation && input.validation === Company.Company3) {
+        console.log('Validating schedule...');
+        const users = await getAll();
 
-      if (!input.skipValidation && input.validation == Company.Company3) {
-        // TODO
-        console.log('Validate schedule');
+        let validation: AxiosResponse<String, any> | undefined;
+        const algo1CSPayload = await checkSchedule(ctx, input, users);
+        if (algo1CSPayload === null) {
+          return noResponse;
+        }
+        try {
+          validation = await ctx
+            .algorithm(Company.Company3)
+            .algo1Cs?.(algo1CSPayload);
+          console.log('RESPONSE: ', validation?.status);
+        } catch (error) {
+          return apiErrorHandler(`ALGORITHM1_${Company.Company3}`, error, {
+            algorithm1: {
+              request: algo1CSPayload,
+              response: validation?.data,
+            },
+          });
+        }
+
+        if (!validation?.data) {
+          return noResponse;
+        } else if (validation.data.match(/violation/)) {
+          return {
+            success: false,
+            message: String(validation.data),
+            errors: [String(validation.data)],
+          };
+        }
+
+        // console.log('ALG 1 checkSchedule response below');
+        console.log(validation.data);
+        // console.log('END ALG 1 checkSchedule RESPONSE');
       }
 
       return await updateCurrentSchedule(input.id, input.courses);
