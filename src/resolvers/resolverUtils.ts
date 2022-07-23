@@ -4,6 +4,9 @@ import {
   TeachingPreference,
   User as PrismaUser,
 } from '@prisma/client';
+
+// import { coursesquery } from '../../tests/typeDefs';
+import { getClassTime, isMeetingDay, getFormattedDate } from '../utils/time';
 import {
   Preference,
   Professor,
@@ -29,8 +32,11 @@ import {
   Schedule,
   Term,
   User,
+  CourseSectionInput,
+  UpdateScheduleInput,
 } from '../schema';
 import { getSeqNumber, prefValue } from '../utils';
+import { Context } from 'apollo-server-core';
 
 const defaultPref = prefValue();
 
@@ -43,6 +49,7 @@ export {
   prepareScheduleWithCapacities,
   createSchedule,
   updateUserSurvey,
+  checkSchedule,
 };
 /**
  * Prisma-based type representing the User model
@@ -135,6 +142,40 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
   if (!courses) return null;
 
   return courses.map<CourseSection>((course) => {
+    if (!course.user) {
+      return {
+        CourseID: {
+          code: course.course.courseCode,
+          subject: course.course.subject,
+          title: course.course.title,
+          term: course.course.term as any,
+        },
+        capacity: course.capacity,
+        hoursPerWeek: course.hoursPerWeek,
+        sectionNumber: course.sectionNumber,
+        startDate: course.startDate,
+        endDate: course.endDate,
+        meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
+          return meetingTime.days.map((day) => ({
+            day: day as Day,
+            endTime: meetingTime.endTime,
+            startTime: meetingTime.startTime,
+          }));
+        }),
+        professors: [
+          {
+            id: 0,
+            username: 'not found',
+            password: 'not found',
+            displayName: 'not found',
+            role: Role.User,
+            preferences: [],
+            active: false,
+            hasPeng: false,
+          },
+        ],
+      };
+    }
     return {
       CourseID: {
         code: course.course.courseCode,
@@ -153,6 +194,18 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
           startTime: meetingTime.startTime,
         }));
       }),
+      professors: [
+        {
+          id: course.user.id,
+          username: course.user.username,
+          password: course.user.password,
+          displayName: course.user.displayName,
+          role: course.user.role as Role,
+          preferences: prismaPrefsToGraphQLPrefs(course.user.preference),
+          active: course.user.active,
+          hasPeng: course.user.hasPeng,
+        },
+      ],
     };
   });
 }
@@ -292,6 +345,98 @@ export function prepareCourseCapacities({
     fallRequest
   );
   return combinedRequest;
+}
+
+function courseSectionInputToCourse(course: CourseSectionInput) {
+  return {
+    subject: course.id.subject,
+    courseNumber: course.id.code,
+    courseTitle: course.id.title,
+    numSections: 1,
+    courseCapacity: course.capacity,
+    sequenceNumber: course.sectionNumber ?? 'A01',
+    streamSequence: getSeqNumber(course.id.subject, course.id.code),
+    assignment: {
+      startDate: getFormattedDate(course.startDate),
+      endDate: getFormattedDate(course.endDate),
+      beginTime: getClassTime(course, 'beginTime'),
+      endTime: getClassTime(course, 'endTime'),
+      hoursWeek: course.hoursPerWeek,
+      sunday: isMeetingDay(course, Day.Sunday),
+      monday: isMeetingDay(course, Day.Monday),
+      tuesday: isMeetingDay(course, Day.Tuesday),
+      wednesday: isMeetingDay(course, Day.Wednesday),
+      thursday: isMeetingDay(course, Day.Thursday),
+      friday: isMeetingDay(course, Day.Friday),
+      saturday: isMeetingDay(course, Day.Saturday),
+    },
+    prof: {
+      displayName: course.professors[0],
+      preferences: [],
+    },
+  };
+}
+
+async function checkSchedule(
+  ctx: Context,
+  input: UpdateScheduleInput,
+  users: User[] | null
+) {
+  if (!input) return null;
+
+  // Summer Courses
+  const summerCourses = input.courses
+    .filter((c: CourseSectionInput) => {
+      return c.id.term === Term.Summer;
+    })
+    .map(courseSectionInputToCourse);
+
+  // Fall Courses
+  const fallCourses = input.courses
+    .filter((c: CourseSectionInput) => {
+      return c.id.term === Term.Fall;
+    })
+    .map(courseSectionInputToCourse);
+
+  // Spring Courses
+  const springCourses = input.courses
+    .filter((c: CourseSectionInput) => {
+      return c.id.term === Term.Spring;
+    })
+    .map(courseSectionInputToCourse);
+
+  const payload: SchedulePostRequest = {
+    coursesToSchedule: {
+      fallCourses: [],
+      springCourses: [],
+      summerCourses: [],
+    },
+    hardScheduled: {
+      fallCourses: fallCourses ?? [],
+      springCourses: springCourses ?? [],
+      summerCourses: summerCourses ?? [],
+    },
+    professors: (
+      users?.map<Professor>((user) => {
+        return {
+          displayName: user.displayName ?? '',
+          fallTermCourses: 2,
+          springTermCourses: 2,
+          summerTermCourses: 2,
+          preferences:
+            user.preferences?.map((preference) => {
+              return {
+                courseNum: preference.id.subject + preference.id.code,
+                // term: preference.id.term,
+                preferenceNum: preference.preference,
+              };
+            }) ?? [],
+        };
+      }) ?? []
+    ).filter((p) => p.preferences.length > 0),
+  };
+
+  return payload;
 }
 
 async function prepareScheduleWithCapacities(

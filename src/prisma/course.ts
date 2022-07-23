@@ -11,7 +11,22 @@ export async function findCourseSection(courseterm: Term) {
         term: courseterm,
       },
     },
-    include: { course: true, meetingTime: true, user: true, schedule: true },
+    include: {
+      course: true,
+      meetingTime: true,
+      user: {
+        include: {
+          preference: {
+            include: {
+              coursePreference: {
+                include: { course: true },
+              },
+            },
+          },
+        },
+      },
+      schedule: true,
+    },
   });
 
   return courses;
