@@ -64,7 +64,7 @@ export const getMeetingDays = (meetingTime: any): Day[] => {
 
 /**
  *
- * Takes a Date object in the format of 20180905, and
+ * Takes a Date object in the format of 2018-09-05T13:30:00.000Z, and
  * converts it into a string format of MMM DD, YYYY
  *
  * @param date The date to be formatted
@@ -72,34 +72,44 @@ export const getMeetingDays = (meetingTime: any): Day[] => {
  */
 
 export function getFormattedDate(date: CourseSectionInput) {
-  const year = String(date).substring(0, 4);
-  const month = String(date).substring(4, 6);
-  const day = String(date).substring(6, 8);
-  const combined = year + ',' + month + ',' + day;
-  const formattedDate = new Date(combined).toLocaleDateString('en-US', {
+  const dateString = String(date);
+  const formattedDate = new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
   });
+  // console.log('FormattedDate', formattedDate);
   return formattedDate;
 }
 
 /**
  *
- * Retrieves meeting times of a given course section and returns the time in string format
+ * Retrieves meeting times of a given course section as a DateTime object
+ * and converts it into HHMM format
  *
  * @param course The course of which meetingTimes will be looked for
  * @param time To compare with strings 'beginTime' or 'endTime'
- * @return Begin or End time of a class based off @param time
+ * @return the time in string format
  */
 
 export function getClassTime(course: CourseSectionInput, time: string) {
-  if (time === 'beginTime')
-    // return time.startTime;
-    return String(course.meetingTimes.map((m) => m.startTime)[0]);
-  else if (time === 'endTime')
-    return String(course.meetingTimes.map((m) => m.endTime)[0]);
-  return 'Incorrect input provided';
+  let stringInput = '';
+  if (time === 'beginTime') {
+    stringInput = String(course.meetingTimes.map((m) => m.startTime)[0]);
+  } else if (time === 'endTime') {
+    stringInput = String(course.meetingTimes.map((m) => m.endTime)[0]);
+  }
+  if (!stringInput || stringInput === '') return 'Incorrect time input';
+  const stringDateTime = stringInput.substring(0, stringInput.length - 1);
+  const getTime = new Date(stringDateTime)
+    .toLocaleTimeString('en-us', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+    .replace(':', '');
+  // console.log(getTime);
+  return getTime;
 }
 
 /**

@@ -21,7 +21,12 @@ import {
   upsertCourses,
 } from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
-import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
+import {
+  findAllUsers,
+  findUserById,
+  updateUserSurvey,
+  findUserByUsername,
+} from '../prisma/user';
 import {
   CourseInput,
   CourseSection,
@@ -301,15 +306,48 @@ export function prepareCourseCapacities({
   return combinedRequest;
 }
 
-function courseSectionInputToCourse(course: CourseSectionInput) {
+type CourseType = {
+  courseNumber: string;
+  subject: string;
+  sequenceNumber: string;
+  streamSequence: string;
+  courseTitle: string;
+  numSections: number;
+  courseCapacity: number;
+  assignment: {
+    startDate: string;
+    endDate: string;
+    beginTime: string;
+    endTime: string;
+    hoursWeek: number;
+    sunday: boolean;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+  };
+  prof: {
+    displayName: string;
+    preferences: [];
+  };
+};
+
+async function courseSectionInputToCourse(
+  course: CourseSectionInput
+): Promise<CourseType> {
+  const user = await findUserByUsername(course.professors[0]);
+  const displayName = user?.displayName ?? course.professors[0];
+
   return {
-    subject: course.id.subject,
     courseNumber: course.id.code,
+    subject: course.id.subject,
+    sequenceNumber: course.sectionNumber ?? 'A01',
+    streamSequence: getSeqNumber(course.id.subject, course.id.code),
     courseTitle: course.id.title,
     numSections: 1,
     courseCapacity: course.capacity,
-    sequenceNumber: course.sectionNumber ?? 'A01',
-    streamSequence: getSeqNumber(course.id.subject, course.id.code),
     assignment: {
       startDate: getFormattedDate(course.startDate),
       endDate: getFormattedDate(course.endDate),
@@ -325,7 +363,7 @@ function courseSectionInputToCourse(course: CourseSectionInput) {
       saturday: isMeetingDay(course, Day.Saturday),
     },
     prof: {
-      displayName: course.professors[0],
+      displayName: displayName, // course.professors[0],
       preferences: [],
     },
   };
@@ -333,31 +371,90 @@ function courseSectionInputToCourse(course: CourseSectionInput) {
 
 async function checkSchedule(
   ctx: Context,
-  input: UpdateScheduleInput,
-  users: User[] | null
+  input: UpdateScheduleInput
+  // users: User[] | null
 ) {
   if (!input) return null;
 
   // Summer Courses
-  const summerCourses = input.courses
-    .filter((c: CourseSectionInput) => {
-      return c.id.term === Term.Summer;
-    })
-    .map(courseSectionInputToCourse);
+  const summerCourses = await Promise.all(
+    input.courses
+      .filter((course: CourseSectionInput) => {
+        return course.id.term === Term.Summer;
+      })
+      .map(courseSectionInputToCourse)
+  );
 
   // Fall Courses
-  const fallCourses = input.courses
-    .filter((c: CourseSectionInput) => {
-      return c.id.term === Term.Fall;
-    })
-    .map(courseSectionInputToCourse);
+  const fallCourses = await Promise.all(
+    input.courses
+      .filter((course: CourseSectionInput) => {
+        return course.id.term === Term.Fall;
+      })
+      .map(courseSectionInputToCourse)
+  );
 
   // Spring Courses
-  const springCourses = input.courses
-    .filter((c: CourseSectionInput) => {
-      return c.id.term === Term.Spring;
-    })
-    .map(courseSectionInputToCourse);
+  const springCourses = await Promise.all(
+    input.courses
+      .filter((course: CourseSectionInput) => {
+        return course.id.term === Term.Spring;
+      })
+      .map(courseSectionInputToCourse)
+  );
+
+  console.log('fallCourses: ', fallCourses);
+  console.log('summerCourses', summerCourses);
+  console.log('springCourses', springCourses);
+  const users = await findAllUsers();
+
+  const courses = await getAllCourses();
+  const defaultCourses = 2;
+  const profs = users.map<Professor>((user) => {
+    // preferred number of courses to be taught by a prof in a given term
+    const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
+    const springTermCourses = user.preference.find((p) => p.springTermCourses);
+    const summerTermCourses = user.preference.find((p) => p.summerTermCourses);
+
+    // while the schema returns multiple instances of a teaching preference survey for a user
+    // we can only have one teaching pref for a given user by a unique contraint on the user id field.
+    const preferences = user.preference.flatMap<Preference>((teachingPref) =>
+      teachingPref.coursePreference.map(
+        ({ course: { subject, courseCode, term }, preference }) => ({
+          courseNum: `${subject}${courseCode}`,
+          preferenceNum: preference,
+          term,
+        })
+      )
+    );
+
+    const userPrefs = new Map<string, number>(
+      preferences.map((p) => [
+        `${p.courseNum}-${p.term ?? ''}`,
+        p.preferenceNum,
+      ])
+    );
+
+    // inject default values for preference if not found
+    const prefs = courses.map<Preference>(({ subject, courseCode, term }) => ({
+      courseNum: `${subject}${courseCode}`,
+      preferenceNum:
+        userPrefs.get(`${subject}${courseCode}-${term}`) ?? defaultPref,
+      term,
+    }));
+
+    return {
+      // fallback to username for display name
+      displayName: user.displayName ?? user.username,
+      // default values to pass into algorithm 1
+      fallTermCourses: fallTermCourses?.fallTermCourses ?? defaultCourses,
+      springTermCourses: springTermCourses?.springTermCourses ?? defaultCourses,
+      summerTermCourses: summerTermCourses?.summerTermCourses ?? defaultCourses,
+      preferences: prefs,
+    };
+  });
+
+  // console.log('professors: ', profs);
 
   const payload: SchedulePostRequest = {
     coursesToSchedule: {
@@ -370,7 +467,7 @@ async function checkSchedule(
       springCourses: springCourses ?? [],
       summerCourses: summerCourses ?? [],
     },
-    professors: (
+    professors: profs.filter((prof) => prof.preferences.length > 0) /* (
       users?.map<Professor>((user) => {
         return {
           displayName: user.displayName ?? '',
@@ -381,14 +478,15 @@ async function checkSchedule(
             user.preferences?.map((preference) => {
               return {
                 courseNum: preference.id.subject + preference.id.code,
-                // term: preference.id.term,
+                term: preference.id.term,
                 preferenceNum: preference.preference,
               };
             }) ?? [],
         };
       }) ?? []
-    ).filter((p) => p.preferences.length > 0),
+    ).filter((p) => p.preferences.length > 0),*/,
   };
+  // console.log(JSON.stringify(payload));
 
   return payload;
 }
