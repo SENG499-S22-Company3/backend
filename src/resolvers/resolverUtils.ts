@@ -21,7 +21,12 @@ import {
   getAllCourses,
 } from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
-import { findAllUsers, findUserById, updateUserSurvey } from '../prisma/user';
+import {
+  findAllUsers,
+  findUserById,
+  updateUserSurvey,
+  findUserByUsername,
+} from '../prisma/user';
 import {
   CourseInput,
   CourseSection,
@@ -35,8 +40,7 @@ import {
   CourseSectionInput,
   UpdateScheduleInput,
 } from '../schema';
-import { getSeqNumber, prefValue } from '../utils';
-import { Context } from 'apollo-server-core';
+import { CourseType, getSeqNumber, prefValue } from '../utils';
 
 const defaultPref = prefValue();
 
@@ -347,15 +351,20 @@ export function prepareCourseCapacities({
   return combinedRequest;
 }
 
-function courseSectionInputToCourse(course: CourseSectionInput) {
+async function courseSectionInputToCourse(
+  course: CourseSectionInput
+): Promise<CourseType> {
+  const user = await findUserByUsername(course.professors[0]);
+  const displayName = user?.displayName ?? course.professors[0];
+
   return {
-    subject: course.id.subject,
     courseNumber: course.id.code,
+    subject: course.id.subject,
+    sequenceNumber: course.sectionNumber ?? 'A01',
+    streamSequence: getSeqNumber(course.id.subject, course.id.code),
     courseTitle: course.id.title,
     numSections: 1,
     courseCapacity: course.capacity,
-    sequenceNumber: course.sectionNumber ?? 'A01',
-    streamSequence: getSeqNumber(course.id.subject, course.id.code),
     assignment: {
       startDate: getFormattedDate(course.startDate),
       endDate: getFormattedDate(course.endDate),
@@ -371,39 +380,88 @@ function courseSectionInputToCourse(course: CourseSectionInput) {
       saturday: isMeetingDay(course, Day.Saturday),
     },
     prof: {
-      displayName: course.professors[0],
+      displayName: displayName,
       preferences: [],
     },
   };
 }
 
-async function checkSchedule(
-  ctx: Context,
-  input: UpdateScheduleInput,
-  users: User[] | null
-) {
+async function checkSchedule(input: UpdateScheduleInput) {
   if (!input) return null;
+  const users = await findAllUsers();
+  const courses = await getAllCourses();
+  const defaultCourses = 2;
 
   // Summer Courses
-  const summerCourses = input.courses
-    .filter((c: CourseSectionInput) => {
-      return c.id.term === Term.Summer;
-    })
-    .map(courseSectionInputToCourse);
+  const summerCourses = await Promise.all(
+    input.courses
+      .filter((course: CourseSectionInput) => {
+        return course.id.term === Term.Summer;
+      })
+      .map(courseSectionInputToCourse)
+  );
 
   // Fall Courses
-  const fallCourses = input.courses
-    .filter((c: CourseSectionInput) => {
-      return c.id.term === Term.Fall;
-    })
-    .map(courseSectionInputToCourse);
+  const fallCourses = await Promise.all(
+    input.courses
+      .filter((course: CourseSectionInput) => {
+        return course.id.term === Term.Fall;
+      })
+      .map(courseSectionInputToCourse)
+  );
 
   // Spring Courses
-  const springCourses = input.courses
-    .filter((c: CourseSectionInput) => {
-      return c.id.term === Term.Spring;
-    })
-    .map(courseSectionInputToCourse);
+  const springCourses = await Promise.all(
+    input.courses
+      .filter((course: CourseSectionInput) => {
+        return course.id.term === Term.Spring;
+      })
+      .map(courseSectionInputToCourse)
+  );
+
+  const profs = users.map<Professor>((user) => {
+    // preferred number of courses to be taught by a prof in a given term
+    const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
+    const springTermCourses = user.preference.find((p) => p.springTermCourses);
+    const summerTermCourses = user.preference.find((p) => p.summerTermCourses);
+
+    // while the schema returns multiple instances of a teaching preference survey for a user
+    // we can only have one teaching pref for a given user by a unique contraint on the user id field.
+    const preferences = user.preference.flatMap<Preference>((teachingPref) =>
+      teachingPref.coursePreference.map(
+        ({ course: { subject, courseCode, term }, preference }) => ({
+          courseNum: `${subject}${courseCode}`,
+          preferenceNum: preference,
+          term,
+        })
+      )
+    );
+
+    const userPrefs = new Map<string, number>(
+      preferences.map((p) => [
+        `${p.courseNum}-${p.term ?? ''}`,
+        p.preferenceNum,
+      ])
+    );
+
+    // inject default values for preference if not found
+    const prefs = courses.map<Preference>(({ subject, courseCode, term }) => ({
+      courseNum: `${subject}${courseCode}`,
+      preferenceNum:
+        userPrefs.get(`${subject}${courseCode}-${term}`) ?? defaultPref,
+      term,
+    }));
+
+    return {
+      // fallback to username for display name
+      displayName: user.displayName ?? user.username,
+      // default values to pass into algorithm 1
+      fallTermCourses: fallTermCourses?.fallTermCourses ?? defaultCourses,
+      springTermCourses: springTermCourses?.springTermCourses ?? defaultCourses,
+      summerTermCourses: summerTermCourses?.summerTermCourses ?? defaultCourses,
+      preferences: prefs,
+    };
+  });
 
   const payload: SchedulePostRequest = {
     coursesToSchedule: {
@@ -416,26 +474,8 @@ async function checkSchedule(
       springCourses: springCourses ?? [],
       summerCourses: summerCourses ?? [],
     },
-    professors: (
-      users?.map<Professor>((user) => {
-        return {
-          displayName: user.displayName ?? '',
-          fallTermCourses: 2,
-          springTermCourses: 2,
-          summerTermCourses: 2,
-          preferences:
-            user.preferences?.map((preference) => {
-              return {
-                courseNum: preference.id.subject + preference.id.code,
-                // term: preference.id.term,
-                preferenceNum: preference.preference,
-              };
-            }) ?? [],
-        };
-      }) ?? []
-    ).filter((p) => p.preferences.length > 0),
+    professors: profs.filter((prof) => prof.preferences.length > 0),
   };
-
   return payload;
 }
 
