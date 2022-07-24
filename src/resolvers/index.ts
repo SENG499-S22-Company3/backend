@@ -253,10 +253,9 @@ export const resolvers: Resolvers<Context> = {
       // const err = [];
       if (!input.skipValidation && input.validation === Company.Company3) {
         console.log('Validating schedule...');
-        const users = await getAll();
 
         let validation: AxiosResponse<String, any> | undefined;
-        const algo1CSPayload = await checkSchedule(ctx, input, users);
+        const algo1CSPayload = await checkSchedule(input);
         if (algo1CSPayload === null) {
           return noResponse;
         }
