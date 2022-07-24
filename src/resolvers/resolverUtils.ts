@@ -17,8 +17,8 @@ import { CourseObject } from '../client/algorithm2';
 
 import {
   findCourseSection,
+  createCourseSection,
   getAllCourses,
-  upsertCourses,
 } from '../prisma/course';
 import { findSchedule, initiateSchedule } from '../prisma/schedule';
 import {
@@ -147,6 +147,40 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
   if (!courses) return null;
 
   return courses.map<CourseSection>((course) => {
+    if (!course.user) {
+      return {
+        CourseID: {
+          code: course.course.courseCode,
+          subject: course.course.subject,
+          title: course.course.title,
+          term: course.course.term as any,
+        },
+        capacity: course.capacity,
+        hoursPerWeek: course.hoursPerWeek,
+        sectionNumber: course.sectionNumber,
+        startDate: course.startDate,
+        endDate: course.endDate,
+        meetingTimes: course.meetingTime.flatMap<MeetingTime>((meetingTime) => {
+          return meetingTime.days.map((day) => ({
+            day: day as Day,
+            endTime: meetingTime.endTime,
+            startTime: meetingTime.startTime,
+          }));
+        }),
+        professors: [
+          {
+            id: 0,
+            username: 'not found',
+            password: 'not found',
+            displayName: 'not found',
+            role: Role.User,
+            preferences: [],
+            active: false,
+            hasPeng: false,
+          },
+        ],
+      };
+    }
     return {
       CourseID: {
         code: course.course.courseCode,
@@ -165,6 +199,18 @@ async function getCourses(term: Term): Promise<CourseSection[] | null> {
           startTime: meetingTime.startTime,
         }));
       }),
+      professors: [
+        {
+          id: course.user.id,
+          username: course.user.username,
+          password: course.user.password,
+          displayName: course.user.displayName,
+          role: course.user.role as Role,
+          preferences: prismaPrefsToGraphQLPrefs(course.user.preference),
+          active: course.user.active,
+          hasPeng: course.user.hasPeng,
+        },
+      ],
     };
   });
 }
@@ -253,13 +299,13 @@ async function createSchedule(year: number, scheduleData: ScheduleAlgorithm) {
   const schedule = await initiateSchedule(year);
 
   scheduleData.fallCourses?.forEach(async (course) => {
-    await upsertCourses(course, Term.Fall, year, schedule);
+    await createCourseSection(course, Term.Fall, year, schedule);
   });
   scheduleData.springCourses?.forEach(async (course) => {
-    await upsertCourses(course, Term.Spring, year, schedule);
+    await createCourseSection(course, Term.Spring, year, schedule);
   });
   scheduleData.summerCourses?.forEach(async (course) => {
-    await upsertCourses(course, Term.Summer, year, schedule);
+    await createCourseSection(course, Term.Summer, year, schedule);
   });
 }
 
@@ -510,8 +556,6 @@ async function prepareScheduleWithCapacities(
     // default capacity to 0 if not found
     courseTitle: 'Untitled(New Course)',
     // Course title is returned by algo1 as we send it but they just send it back.
-    // The course title they send back matters when it's a course we don't have in
-    // our db. The new course gets inserted with this courseTitle.
     sequenceNumber: 'A01',
     streamSequence: getSeqNumber(input.subject, input.code),
   });
