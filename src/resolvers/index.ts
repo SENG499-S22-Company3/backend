@@ -255,7 +255,7 @@ export const resolvers: Resolvers<Context> = {
         console.log('Validating schedule...');
 
         let validation: AxiosResponse<String, any> | undefined;
-        const algo1CSPayload = await checkSchedule(ctx, input);
+        const algo1CSPayload = await checkSchedule(input);
         if (algo1CSPayload === null) {
           return noResponse;
         }

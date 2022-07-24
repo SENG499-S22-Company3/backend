@@ -36,3 +36,32 @@ export function prefValue(): number {
     return defaultPref;
   }
 }
+
+// To match type 'Course' in hardScheduled
+export type CourseType = {
+  courseNumber: string;
+  subject: string;
+  sequenceNumber: string;
+  streamSequence: string;
+  courseTitle: string;
+  numSections: number;
+  courseCapacity: number;
+  assignment: {
+    startDate: string;
+    endDate: string;
+    beginTime: string;
+    endTime: string;
+    hoursWeek: number;
+    sunday: boolean;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+  };
+  prof: {
+    displayName: string;
+    preferences: [];
+  };
+};

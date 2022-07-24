@@ -40,8 +40,7 @@ import {
   CourseSectionInput,
   UpdateScheduleInput,
 } from '../schema';
-import { getSeqNumber, prefValue } from '../utils';
-import { Context } from 'apollo-server-core';
+import { CourseType, getSeqNumber, prefValue } from '../utils';
 
 const defaultPref = prefValue();
 
@@ -352,34 +351,6 @@ export function prepareCourseCapacities({
   return combinedRequest;
 }
 
-type CourseType = {
-  courseNumber: string;
-  subject: string;
-  sequenceNumber: string;
-  streamSequence: string;
-  courseTitle: string;
-  numSections: number;
-  courseCapacity: number;
-  assignment: {
-    startDate: string;
-    endDate: string;
-    beginTime: string;
-    endTime: string;
-    hoursWeek: number;
-    sunday: boolean;
-    monday: boolean;
-    tuesday: boolean;
-    wednesday: boolean;
-    thursday: boolean;
-    friday: boolean;
-    saturday: boolean;
-  };
-  prof: {
-    displayName: string;
-    preferences: [];
-  };
-};
-
 async function courseSectionInputToCourse(
   course: CourseSectionInput
 ): Promise<CourseType> {
@@ -409,18 +380,17 @@ async function courseSectionInputToCourse(
       saturday: isMeetingDay(course, Day.Saturday),
     },
     prof: {
-      displayName: displayName, // course.professors[0],
+      displayName: displayName,
       preferences: [],
     },
   };
 }
 
-async function checkSchedule(
-  ctx: Context,
-  input: UpdateScheduleInput
-  // users: User[] | null
-) {
+async function checkSchedule(input: UpdateScheduleInput) {
   if (!input) return null;
+  const users = await findAllUsers();
+  const courses = await getAllCourses();
+  const defaultCourses = 2;
 
   // Summer Courses
   const summerCourses = await Promise.all(
@@ -449,13 +419,6 @@ async function checkSchedule(
       .map(courseSectionInputToCourse)
   );
 
-  console.log('fallCourses: ', fallCourses);
-  console.log('summerCourses', summerCourses);
-  console.log('springCourses', springCourses);
-  const users = await findAllUsers();
-
-  const courses = await getAllCourses();
-  const defaultCourses = 2;
   const profs = users.map<Professor>((user) => {
     // preferred number of courses to be taught by a prof in a given term
     const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
@@ -500,8 +463,6 @@ async function checkSchedule(
     };
   });
 
-  // console.log('professors: ', profs);
-
   const payload: SchedulePostRequest = {
     coursesToSchedule: {
       fallCourses: [],
@@ -513,27 +474,8 @@ async function checkSchedule(
       springCourses: springCourses ?? [],
       summerCourses: summerCourses ?? [],
     },
-    professors: profs.filter((prof) => prof.preferences.length > 0) /* (
-      users?.map<Professor>((user) => {
-        return {
-          displayName: user.displayName ?? '',
-          fallTermCourses: 2,
-          springTermCourses: 2,
-          summerTermCourses: 2,
-          preferences:
-            user.preferences?.map((preference) => {
-              return {
-                courseNum: preference.id.subject + preference.id.code,
-                term: preference.id.term,
-                preferenceNum: preference.preference,
-              };
-            }) ?? [],
-        };
-      }) ?? []
-    ).filter((p) => p.preferences.length > 0),*/,
+    professors: profs.filter((prof) => prof.preferences.length > 0),
   };
-  // console.log(JSON.stringify(payload));
-
   return payload;
 }
 
