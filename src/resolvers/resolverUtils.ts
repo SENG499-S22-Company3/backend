@@ -435,7 +435,7 @@ async function checkSchedule(input: UpdateScheduleInput) {
   return payload;
 }
 
-async function prepareProfPrefs() {
+export async function prepareProfPrefs() {
   const users = await findAllUsers();
   const courses = await getAllCourses();
 
