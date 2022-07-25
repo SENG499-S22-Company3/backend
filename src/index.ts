@@ -7,6 +7,7 @@ import path from 'path';
 import { algoUrl } from './algorithm';
 import { createContext } from './context';
 import { resolvers } from './resolvers';
+import { prepareProfPrefs } from './resolvers/resolverUtils';
 import { Resolvers } from './schema';
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 4000;
@@ -56,6 +57,11 @@ app.get('/healthcheck', (_req, res) => {
 
 app.get('/runtime', (_req, res) => {
   res.json(algoUrl);
+});
+
+app.get('/prefs', async (_req, res) => {
+  const prefs = await prepareProfPrefs();
+  res.json(prefs);
 });
 
 async function main() {
