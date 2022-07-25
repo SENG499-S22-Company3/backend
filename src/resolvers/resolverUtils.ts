@@ -298,31 +298,16 @@ async function createSchedule(year: number, scheduleData: ScheduleAlgorithm) {
   const schedule = await initiateSchedule(year);
 
   if (scheduleData.fallCourses)
-    for (let i = 0; i < scheduleData.fallCourses.length; i++) {
-      await createCourseSection(
-        scheduleData.fallCourses[i],
-        Term.Fall,
-        year,
-        schedule
-      );
+    for (const course of scheduleData.fallCourses) {
+      await createCourseSection(course, Term.Fall, year, schedule);
     }
   if (scheduleData.springCourses)
-    for (let i = 0; i < scheduleData.springCourses.length; i++) {
-      await createCourseSection(
-        scheduleData.springCourses[i],
-        Term.Fall,
-        year,
-        schedule
-      );
+    for (const course of scheduleData.springCourses) {
+      await createCourseSection(course, Term.Spring, year, schedule);
     }
   if (scheduleData.summerCourses)
-    for (let i = 0; i < scheduleData.summerCourses.length; i++) {
-      await createCourseSection(
-        scheduleData.summerCourses[i],
-        Term.Fall,
-        year,
-        schedule
-      );
+    for (const course of scheduleData.summerCourses) {
+      await createCourseSection(course, Term.Summer, year, schedule);
     }
 }
 
