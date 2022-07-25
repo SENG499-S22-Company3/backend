@@ -4,8 +4,6 @@ import {
   TeachingPreference,
   User as PrismaUser,
 } from '@prisma/client';
-
-// import { coursesquery } from '../../tests/typeDefs';
 import { getClassTime, isMeetingDay, getFormattedDate } from '../utils/time';
 import {
   Preference,
@@ -42,7 +40,8 @@ import {
 } from '../schema';
 import { CourseType, getSeqNumber, prefValue } from '../utils';
 
-const defaultPref = prefValue();
+const DEFAULT_NUM_COURSES = prefValue();
+const DEFAULT_SUBJECT_COURSES = ['CSC', 'SENG', 'ECE'];
 
 export {
   getMe,
@@ -391,10 +390,6 @@ async function courseSectionInputToCourse(
 
 async function checkSchedule(input: UpdateScheduleInput) {
   if (!input) return null;
-  const users = await findAllUsers();
-  const courses = await getAllCourses();
-  const defaultCourses = 2;
-
   // Summer Courses
   const summerCourses = await Promise.all(
     input.courses
@@ -422,6 +417,28 @@ async function checkSchedule(input: UpdateScheduleInput) {
       .map(courseSectionInputToCourse)
   );
 
+  const profs = await prepareProfPrefs();
+
+  const payload: SchedulePostRequest = {
+    coursesToSchedule: {
+      fallCourses: [],
+      springCourses: [],
+      summerCourses: [],
+    },
+    hardScheduled: {
+      fallCourses: fallCourses ?? [],
+      springCourses: springCourses ?? [],
+      summerCourses: summerCourses ?? [],
+    },
+    professors: profs.filter((prof) => prof.preferences.length > 0),
+  };
+  return payload;
+}
+
+async function prepareProfPrefs() {
+  const users = await findAllUsers();
+  const courses = await getAllCourses();
+
   const profs = users.map<Professor>((user) => {
     // preferred number of courses to be taught by a prof in a given term
     const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
@@ -451,7 +468,10 @@ async function checkSchedule(input: UpdateScheduleInput) {
     const prefs = courses.map<Preference>(({ subject, courseCode, term }) => ({
       courseNum: `${subject}${courseCode}`,
       preferenceNum:
-        userPrefs.get(`${subject}${courseCode}-${term}`) ?? defaultPref,
+        userPrefs.get(`${subject}${courseCode}-${term}`) ??
+        DEFAULT_SUBJECT_COURSES.some((s) => s === subject)
+          ? DEFAULT_NUM_COURSES // if the subject is in the default subjects list, use the default pref (ie. inside of the faculty)
+          : 0, // otherwise, use 0 (ie. outside of the faculty)
       term,
     }));
 
@@ -459,27 +479,15 @@ async function checkSchedule(input: UpdateScheduleInput) {
       // fallback to username for display name
       displayName: user.displayName ?? user.username,
       // default values to pass into algorithm 1
-      fallTermCourses: fallTermCourses?.fallTermCourses ?? defaultCourses,
-      springTermCourses: springTermCourses?.springTermCourses ?? defaultCourses,
-      summerTermCourses: summerTermCourses?.summerTermCourses ?? defaultCourses,
+      fallTermCourses: fallTermCourses?.fallTermCourses ?? DEFAULT_NUM_COURSES,
+      springTermCourses:
+        springTermCourses?.springTermCourses ?? DEFAULT_NUM_COURSES,
+      summerTermCourses:
+        summerTermCourses?.summerTermCourses ?? DEFAULT_NUM_COURSES,
       preferences: prefs,
     };
   });
-
-  const payload: SchedulePostRequest = {
-    coursesToSchedule: {
-      fallCourses: [],
-      springCourses: [],
-      summerCourses: [],
-    },
-    hardScheduled: {
-      fallCourses: fallCourses ?? [],
-      springCourses: springCourses ?? [],
-      summerCourses: summerCourses ?? [],
-    },
-    professors: profs.filter((prof) => prof.preferences.length > 0),
-  };
-  return payload;
+  return profs;
 }
 
 async function prepareScheduleWithCapacities(
@@ -505,54 +513,7 @@ async function prepareScheduleWithCapacities(
     streamSequence: getSeqNumber(input.subject, input.code),
   });
 
-  const users = await findAllUsers();
-  const courses = await getAllCourses();
-
-  const defaultCourses = 2;
-
-  const profs = users.map<Professor>((user) => {
-    // preferred number of courses to be taught by a prof in a given term
-    const fallTermCourses = user.preference.find((p) => p.fallTermCourses);
-    const springTermCourses = user.preference.find((p) => p.springTermCourses);
-    const summerTermCourses = user.preference.find((p) => p.summerTermCourses);
-
-    // while the schema returns multiple instances of a teaching preference survey for a user
-    // we can only have one teaching pref for a given user by a unique contraint on the user id field.
-    const preferences = user.preference.flatMap<Preference>((teachingPref) =>
-      teachingPref.coursePreference.map(
-        ({ course: { subject, courseCode, term }, preference }) => ({
-          courseNum: `${subject}${courseCode}`,
-          preferenceNum: preference,
-          term,
-        })
-      )
-    );
-
-    const userPrefs = new Map<string, number>(
-      preferences.map((p) => [
-        `${p.courseNum}-${p.term ?? ''}`,
-        p.preferenceNum,
-      ])
-    );
-
-    // inject default values for preference if not found
-    const prefs = courses.map<Preference>(({ subject, courseCode, term }) => ({
-      courseNum: `${subject}${courseCode}`,
-      preferenceNum:
-        userPrefs.get(`${subject}${courseCode}-${term}`) ?? defaultPref,
-      term,
-    }));
-
-    return {
-      // fallback to username for display name
-      displayName: user.displayName ?? user.username,
-      // default values to pass into algorithm 1
-      fallTermCourses: fallTermCourses?.fallTermCourses ?? defaultCourses,
-      springTermCourses: springTermCourses?.springTermCourses ?? defaultCourses,
-      summerTermCourses: summerTermCourses?.summerTermCourses ?? defaultCourses,
-      preferences: prefs,
-    };
-  });
+  const profs = await prepareProfPrefs();
 
   const payload: SchedulePostRequest = {
     // in theory only one of the term arrays will be populated with values
