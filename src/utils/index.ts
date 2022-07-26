@@ -8,8 +8,6 @@ import {
 import { getISOTime, getMeetingDays } from './time';
 const isAdmin = (user: FullUser) => user.role === Role.ADMIN;
 
-const defaultPref = 2;
-
 export {
   getISOTime,
   isAdmin,
@@ -27,13 +25,14 @@ const appendDay = (isDay: boolean, day: Day, days: Day[]): Day[] => {
   return days;
 };
 
-export function prefValue(): number {
-  const p = process.env.DEFAULT_PREF;
-  if (!p) return defaultPref;
+export function getEnvValue(key: string, defaultValue: number): number {
+  const value = process.env[key];
+  if (!value) return defaultValue;
   try {
-    return parseInt(p, 10);
+    return parseInt(value, 10);
   } catch (e) {
-    return defaultPref;
+    console.error(`Failed to parse ${key} as number ${value}`);
+    return defaultValue;
   }
 }
 
