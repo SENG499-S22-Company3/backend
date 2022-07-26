@@ -38,9 +38,10 @@ import {
   CourseSectionInput,
   UpdateScheduleInput,
 } from '../schema';
-import { CourseType, getSeqNumber, prefValue } from '../utils';
+import { CourseType, getSeqNumber, getEnvValue } from '../utils';
 
-const DEFAULT_NUM_COURSES = prefValue();
+const DEFAULT_NUM_COURSES = getEnvValue('DEFAULT_NUM_COURSES', 2);
+const DEFAULT_PREF = getEnvValue('DEFAULT_PREF', 3);
 const DEFAULT_SUBJECT_COURSES = ['CSC', 'SENG', 'ECE'];
 
 const isFacultyCourse = (subject: string): boolean =>
@@ -473,7 +474,7 @@ export async function prepareProfPrefs() {
       preferenceNum:
         userPrefs.get(`${subject}${courseCode}-${term}`) ??
         (isFacultyCourse(subject)
-          ? DEFAULT_NUM_COURSES // if the subject is in the default subjects list, use the default pref (ie. inside of the faculty)
+          ? DEFAULT_PREF // if the subject is in the default subjects list, use the default pref (ie. inside of the faculty)
           : 0), // otherwise, use 0 (ie. outside of the faculty)
       term,
     }));
