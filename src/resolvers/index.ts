@@ -235,6 +235,28 @@ export const resolvers: Resolvers<Context> = {
       console.log(scheduleResponse.data);
       console.log('END ALG 1 RESPONSE DATA');
 
+      const { fallCourses, springCourses, summerCourses } =
+        scheduleResponse.data;
+      if (
+        fallCourses.length + springCourses.length + summerCourses.length ===
+        0
+      ) {
+        return apiErrorHandler(
+          `ALGORITHM1_${input.algorithm1}_BACKEND`,
+          new Error('Schedule from algorithm 1 contains no courses'),
+          {
+            algorithm2: {
+              request: algo2Payload,
+              response: capacityDataResponse.data,
+            },
+            algorithm1: {
+              request: algo1Payload,
+              response: scheduleResponse.data,
+            },
+          }
+        );
+      }
+
       try {
         await createSchedule(input.year, scheduleResponse.data);
       } catch (e) {
