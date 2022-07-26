@@ -43,6 +43,9 @@ import { CourseType, getSeqNumber, prefValue } from '../utils';
 const DEFAULT_NUM_COURSES = prefValue();
 const DEFAULT_SUBJECT_COURSES = ['CSC', 'SENG', 'ECE'];
 
+const isFacultyCourse = (subject: string): boolean =>
+  DEFAULT_SUBJECT_COURSES.some((s) => s === subject);
+
 export {
   getMe,
   getAll,
@@ -469,9 +472,9 @@ export async function prepareProfPrefs() {
       courseNum: `${subject}${courseCode}`,
       preferenceNum:
         userPrefs.get(`${subject}${courseCode}-${term}`) ??
-        DEFAULT_SUBJECT_COURSES.some((s) => s === subject)
+        (isFacultyCourse(subject)
           ? DEFAULT_NUM_COURSES // if the subject is in the default subjects list, use the default pref (ie. inside of the faculty)
-          : 0, // otherwise, use 0 (ie. outside of the faculty)
+          : 0), // otherwise, use 0 (ie. outside of the faculty)
       term,
     }));
 
